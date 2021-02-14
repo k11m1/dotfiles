@@ -74,3 +74,11 @@ fi
 [ -f "/home/klimi/.ghcup/env" ] && source "/home/klimi/.ghcup/env" # ghcup-env
 
 . .bash_aliases
+
+# Use Alt+H for man
+run-help() { help "$READLINE_LINE" 2>/dev/null || man "$READLINE_LINE"; }
+bind -m vi-insert -x '"\eh": run-help'
+bind -m emacs -x     '"\eh": run-help'
+
+# command not found !requires pkgfile!
+source /usr/share/doc/pkgfile/command-not-found.bash
