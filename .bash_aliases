@@ -14,6 +14,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# ls
+alias la='ls -al'
+
 # youtube-dl
 alias yta-aac="youtube-dl --extract-audio --audio-format aac "
 alias yta-best="youtube-dl --extract-audio --audio-format best "
@@ -51,4 +54,5 @@ alias yaysyu="yay -Syu "                         # update standard pkgs and AUR 
 alias unlock="sudo rm /var/lib/pacman/db.lck"    # remove pacman lock
 alias cleanup='sudo pacman -Rns $(pacman -Qtdq)' # remove orphaned packages
 
+alias lock="i3lock -c 000000"
 alias screencastvga='ffmpeg -f x11grab -r xllgrab -r 15 -s 1280x1024 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video2'
