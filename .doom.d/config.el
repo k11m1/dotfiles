@@ -14,13 +14,11 @@
 ;;
 ;; + `doom-font'
 ;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for presentations or streaming.
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
- (setq doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
-       doom-variable-pitch-font (font-spec :family "sans" :size 25))
+ (setq doom-font (font-spec :family "monospace" :size 20 :weight 'semi-light)
+       doom-variable-pitch-font (font-spec :family "sans" :size 20))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -55,6 +53,13 @@
 
 (after! org
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+
+(setq org-agenda-start-on-weekday nil)
+(setq org-agenda-span 1)
+(setq org-agenda-start-day "-0d")
+
+; Remember to clock out the clock on exit
+(setq org-remember-clock-out-on-exit t)
 
   )
 
