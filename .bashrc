@@ -4,7 +4,8 @@
 
 
 export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
-export VISUAL="emacsclient -c -a emacs"   # $VISUAL use Emacs in GUI mode
+export VISUAL="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
+#export VISUAL="emacsclient -c -a emacs"   # $VISUAL use Emacs in GUI mode
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
