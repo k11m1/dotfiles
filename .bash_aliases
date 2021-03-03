@@ -41,7 +41,7 @@ alias .5='cd ../../../../..'
 
 # vim and emacs
 alias em="/usr/bin/emacs -nw"
-alias emacs="emacsclient -c -a 'emacs'"
+alias emacs="emacsclient -c -a -t 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
 alias doomdoctor="~/.emacs.d/bin/doom doctor"
 alias doomupgrade="~/.emacs.d/bin/doom upgrade"
@@ -57,3 +57,6 @@ alias cleanup='sudo pacman -Rns $(pacman -Qtdq)' # remove orphaned packages
 alias lock="i3lock -c 000000"
 alias screencastvga='ffmpeg -f x11grab -r xllgrab -r 15 -s 1280x1024 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video2'
 alias screencasteDP='ffmpeg -f x11grab -r xllgrab -r 15 -s 1920x1080 -i :0.0+1280,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video2'
+
+#neovim
+alias n='nvim'
