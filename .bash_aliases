@@ -1,5 +1,8 @@
 # Dotfiles 
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias dts='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME status'
+alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --verbose'
+alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
 
 # Termite hack
 alias ssh='TERM=xterm-256color ssh '
@@ -60,3 +63,4 @@ alias screencasteDP='ffmpeg -f x11grab -r xllgrab -r 15 -s 1920x1080 -i :0.0+128
 
 #neovim
 alias n='nvim'
+
