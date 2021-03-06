@@ -2,10 +2,8 @@
 # ~/.bashrc
 #
 
-
-export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
-export VISUAL="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
-#export VISUAL="emacsclient -c -a emacs"   # $VISUAL use Emacs in GUI mode
+export EDITOR='nvim'
+#export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -18,10 +16,9 @@ shopt -s cdspell
 shopt -s cmdhist
 shopt -s dotglob
 shopt -s expand_aliases
-shopt -s checkwinsize
 
 #ignore upper and lowercase when TAB completion
-bind "set completion-ignore-case on"
+#bind "set completion-ignore-case on"
 
 ### ARCHIVE EXTRACTION
 # usage: ex <file>
@@ -83,3 +80,4 @@ bind -m emacs -x     '"\eh": run-help'
 source $HOME/.bash_aliases
 # command not found !requires pkgfile!
 source /usr/share/doc/pkgfile/command-not-found.bash
+export HISTCONTROL=ignoreboth:erasedups
