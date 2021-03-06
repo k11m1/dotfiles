@@ -3,6 +3,7 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias dts='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME status'
 alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --verbose'
 alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
+alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
 # Termite hack
 alias ssh='TERM=xterm-256color ssh '
