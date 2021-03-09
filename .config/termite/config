@@ -1,6 +1,8 @@
 [options]
 font = Source Code Pro 13
 cursor_blink = off
+scrollback_lines = -1
+scrollbar = right
 
 [colors]
 # Gruvbox colorscheme from https://github.com/morhetz/gruvbox-contrib/blob/master/termite/gruvbox-dark
