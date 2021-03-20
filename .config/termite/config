@@ -9,7 +9,8 @@ scrollbar = right
 
 # hard contrast: background = #1d2021
 #background = #282828
-background = rgba(50,48,47,0.7)
+#background = rgba(50,48,47,0.7)
+background = rgba(50,48,47,255)
 foreground = #ebdbb2
 foreground_bold = #ebdbb2
 
