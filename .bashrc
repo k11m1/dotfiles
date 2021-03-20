@@ -16,6 +16,7 @@ shopt -s cdspell
 shopt -s cmdhist
 shopt -s dotglob
 shopt -s expand_aliases
+shopt -s direxpand
 
 #ignore upper and lowercase when TAB completion
 #bind "set completion-ignore-case on"
