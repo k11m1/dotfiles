@@ -10,6 +10,7 @@ Plug 'Shougo/deoplete.nvim' , { 'do' : ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
 Plug 'romgrk/doom-one.vim'
 Plug 'dense-analysis/ale'
+Plug 'ActivityWatch/aw-watcher-vim'
 
 " Functionalities
 Plug 'scrooloose/nerdtree'
