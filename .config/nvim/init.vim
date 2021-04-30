@@ -26,6 +26,8 @@ highlight Comment gui=bold
 highlight Normal gui=none
 highlight NonText guibg=none
 highlight Normal guibg=NONE ctermbg=NONE
+highlight ExtraWhitespace ctermbg=darkred guibg=lightgreen
+match     ExtraWhitespace /\s\+$/
 
 filetype plugin indent on
 
@@ -86,3 +88,25 @@ nnoremap <space>r :lrewind<CR>
 if has("autocmd")
     nnoremap <space>f :w <enter> :silent !autopep8 -i "%" <enter> :e <enter> 
 endif
+
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+
+autocmd BufWrite *.c      :call DeleteTrailingWS()
+autocmd BufWrite *.cpp    :call DeleteTrailingWS()
+autocmd BufWrite *.cs     :call DeleteTrailingWS()
+autocmd BufWrite *.h      :call DeleteTrailingWS()
+autocmd BufWrite *.hpp    :call DeleteTrailingWS()
+autocmd BufWrite *.java   :call DeleteTrailingWS()
+autocmd BufWrite Makefile :call DeleteTrailingWS()
+autocmd BufWrite *.pl     :call DeleteTrailingWS()
+autocmd BufWrite *.py     :call DeleteTrailingWS()
+autocmd BufWrite *.rc     :call DeleteTrailingWS()
+autocmd BufWrite *.sh     :call DeleteTrailingWS()
+map <F4> :call DeleteTrailingWS()<C-M>
+
+
+
