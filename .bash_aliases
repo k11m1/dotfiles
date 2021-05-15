@@ -6,6 +6,10 @@ alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --ver
 alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
 alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
+# Git
+alias gita='git add'
+alias gitc='git commit --verbose'
+
 # Termite hack
 alias ssh='TERM=xterm-256color ssh '
 
@@ -66,3 +70,4 @@ alias screencasteDP='ffmpeg -f x11grab -r xllgrab -r 15 -s 1920x1080 -i :0.0+128
 #neovim
 alias n='nvim'
 
+alias ssh-vanilla='ssh -F /dev/null -o PreferredAuthentications=password'
