@@ -3,7 +3,7 @@
 #
 
 export EDITOR='nvim'
-#export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal 
+#export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -40,7 +40,7 @@ ex ()
       *.7z)        7z x $1      ;;
       *.deb)       ar x $1      ;;
       *.tar.xz)    tar xf $1    ;;
-      *.tar.zst)   unzstd $1    ;;      
+      *.tar.zst)   unzstd $1    ;;
       *)           echo "'$1' cannot be extracted via ex()" ;;
     esac
   else
