@@ -82,3 +82,4 @@ source $HOME/.bash_aliases
 # command not found !requires pkgfile!
 source /usr/share/doc/pkgfile/command-not-found.bash
 export HISTCONTROL=ignoreboth:erasedups
+source <(kitty + complete setup bash)
