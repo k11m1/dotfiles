@@ -12,7 +12,14 @@ an executable
 
 O.format_on_save = true
 O.completion.autocomplete = true
-O.colorscheme = "zephyr"
+vim.g.gruvbox_material_background = "hard"
+vim.g.gruvbox_material_diagnostic_text_highlight = 1
+vim.g.gruvbox_material_diagnostic_virtual_text = 'colored'
+vim.g.gruvbox_material_statusline_style = 'original'
+vim.g.gruvbox_material_diagnostic_line_highlight = 1
+vim.g.gruvbox_material_palette = 'original'
+O.colorscheme = "gruvbox-material"
+--O.colorscheme = "zephyr"
 O.auto_close_tree = 0
 O.default_options.wrap = true
 O.default_options.timeoutlen = 100
@@ -57,12 +64,17 @@ O.lang.tsserver.linter = nil
 
 
 
+
 -- require('onedark').setup()
 O.user_plugins = {
   -- {"glepnir/zephyr-nvim"}, 
   {"ActivityWatch/aw-watcher-vim"}, {"savq/melange"}, 
   {"eddyekofo94/gruvbox-flat.nvim"},
   {"k11m1/zephyr-nvim"}, 
+    {"sainnhe/gruvbox-material"},
+    {"bluz71/vim-nightfly-guicolors"},
+    {"bluz71/vim-moonfly-colors"},
+    {"ray-x/aurora"},
   -- {"norcalli/nvim-colorizer.lua"},
   {
         "ray-x/lsp_signature.nvim",
