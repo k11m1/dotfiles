@@ -6,6 +6,9 @@ alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --ver
 alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
 alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
+#yay
+alias yay='nice -n 16 yay'
+
 # Git
 alias gta='git add'
 alias gtc='git commit --verbose'
