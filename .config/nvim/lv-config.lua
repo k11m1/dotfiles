@@ -63,6 +63,7 @@ O.lang.tsserver.linter = nil
 -- }
 
 
+require'lspconfig'.rnix.setup{}
 
 
 -- require('onedark').setup()
@@ -75,6 +76,26 @@ O.user_plugins = {
     {"bluz71/vim-nightfly-guicolors"},
     {"bluz71/vim-moonfly-colors"},
     {"ray-x/aurora"},
+    {
+        "vhyrro/neorg",
+    config = function()
+        require('neorg').setup {
+            -- Tell Neorg what modules to load
+            load = {
+                ["core.defaults"] = {}, -- Load all the default modules
+                ["core.norg.concealer"] = {}, -- Allows for use of icons
+                ["core.norg.dirman"] = { -- Manage your directories with Neorg
+                    config = {
+                        workspaces = {
+                            my_workspace = "~/neorg"
+                        }
+                    }
+                }
+            },
+        }
+    end,
+    requires = "nvim-lua/plenary.nvim"
+    },
   -- {"norcalli/nvim-colorizer.lua"},
   {
         "ray-x/lsp_signature.nvim",
@@ -136,3 +157,7 @@ vim.cmd("set mouse=")
 vim.api.nvim_command("set mouse=")
 -- vim.o.mouse = 'NONE'
 -- require'colorizer'.setup()
+vim.cmd("highlight ExtraWhitespace ctermbg=darkred guibg=lightgreen")
+vim.cmd('match     ExtraWhitespace /\\s\\+$/')
+vim.cmd("highlight ExtraWhitespace ctermbg=darkred guibg=lightgreen")
+vim.cmd("nnoremap z?  :exe ':spellrare  ' . expand('<cWORD>')<CR>")
