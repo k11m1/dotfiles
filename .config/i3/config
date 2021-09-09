@@ -82,8 +82,11 @@ exec setkeyboard
 #exec setxkbmap -option compose:caps
 bindsym Print exec selection-screenshot
 
-exec xinput set-prop 10 314 1
-exec xinput set-prop 10 296 1
+#exec xinput set-prop 10 314 1
+#exec xinput set-prop 10 296 1
+exec xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Natural Scrolling Enabled" 1
+exec xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Tapping Enabled" 1
+
 exec xset r rate 250 30
 
 exec light -S 45
@@ -96,7 +99,8 @@ bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+s exec "rofi -show ssh"
+#bindsym $mod+s exec "rofi -show ssh"
+bindsym $mod+s exec "rofi -show run"
 
 # change focus
 bindsym $mod+j focus left
