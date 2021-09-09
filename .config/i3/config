@@ -82,13 +82,12 @@ exec setkeyboard
 #exec setxkbmap -option compose:caps
 bindsym Print exec selection-screenshot
 
-#exec xinput set-prop 10 314 1
-#exec xinput set-prop 10 296 1
+# set the touchpad
 exec xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Natural Scrolling Enabled" 1
 exec xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Tapping Enabled" 1
-
+# set keyboard repeating
 exec xset r rate 250 30
-
+# set the brightness to 45% by default
 exec light -S 45
 
 
