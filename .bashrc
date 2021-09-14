@@ -2,7 +2,7 @@
 # ~/.bashrc
 #
 
-export EDITOR='nvim'
+export EDITOR='lvim'
 #export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal
 
 # If not running interactively, don't do anything
@@ -49,6 +49,10 @@ ex ()
 }
 
 
+vnc ()
+{
+	ssh -CJ xklimes5@{aisa,$1}.fi.muni.cz -L 9999:localhost:9999
+}
 
 
 
