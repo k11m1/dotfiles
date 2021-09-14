@@ -6,6 +6,10 @@ alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --ver
 alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
 alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
+#todo
+alias wtn='todo new -l klimi@unix'
+alias tommorow='todo new -l klimi@unix --due "+1d 10:00" '
+
 #yay
 alias yay='nice -n 16 yay'
 
@@ -77,5 +81,6 @@ alias screencasteDP='ffmpeg -f x11grab -r xllgrab -r 15 -s 1920x1080 -i :0.0+128
 
 #neovim
 alias n='nvim'
+alias l='lvim'
 
 alias ssh-vanilla='ssh -F /dev/null -o PreferredAuthentications=password'
