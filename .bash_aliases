@@ -8,7 +8,12 @@ alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
 #todo
 alias wtn='todo new -l klimi@unix'
+alias t='todo new -l klimi@unix'
+alias ti='todo new -l inbox'
+alias tm='todo new -l muni'
+alias tp='todo new -l personal'
 alias tommorow='todo new -l klimi@unix --due "+1d 10:00" '
+alias work='todo --humanize list klimi@unix --startable '
 
 #yay
 alias yay='nice -n 16 yay'
@@ -17,8 +22,8 @@ alias yay='nice -n 16 yay'
 alias gta='git add'
 alias gtc='git commit --verbose'
 alias gtp='git push'
-alias gts='git status'
-
+alias gts='git status' 
+alias mkgitcommit="git commit --author 'Martin Klimeš <xklimes5@fi.muni.cz>' --verbose"
 # Termite hack
 alias ssh='TERM=xterm-256color ssh '
 
@@ -31,12 +36,16 @@ if [ -x /usr/bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
+take ()
+{
+    mkdir -p -- "$1" && cd -P -- "$1"
+}
 
 # ls
 alias la='ls -al'
 
-# youtube-dl
-alias yta="youtube-dl --extract-audio --audio-format best --write-thumbnail "
+# youtube-dl or maybe yt-dlp ? idk
+alias yta='youtube-dl --extract-audio --audio-format best -o "%(title)s.%(ext)s"'
 alias ytap="youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --embed-subs --add-metadata -o '%(playlist)s/%(playlist_index)s - %(title)s-%(id)s.%(ext)s'"
 alias yta-aac="youtube-dl --extract-audio --audio-format aac "
 alias yta-best="youtube-dl --extract-audio --audio-format best "
