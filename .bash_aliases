@@ -6,6 +6,9 @@ alias dtc='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME commit --ver
 alias dta='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME add'
 alias dtp='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME push'
 
+#courses
+alias pb006="cd $HOME/fi/pb006"
+
 #todo
 alias wtn='todo new -l klimi@unix'
 alias t='todo new -l klimi@unix'
