@@ -1,0 +1,2 @@
+# Partial fix for keeping the dpi sane
+Xft.dpi: 96
