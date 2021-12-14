@@ -14,11 +14,17 @@
 ;;
 ;; + `doom-font'
 ;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for presentations or streaming.
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+
+;; (setq doom-font (font-spec :family "Fira Mono" :size 16))
+(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 18))
+
+;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
- (setq doom-font (font-spec :family "monospace" :size 20 :weight 'semi-light)
-       doom-variable-pitch-font (font-spec :family "sans" :size 20))
+;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -51,32 +57,14 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(after! org
-(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+(setq org-clock-x11idle-program-name 'xprintidle)
+(setq org-clock-idle-time 10)
 
-(setq org-agenda-start-on-weekday nil)
-(setq org-agenda-span 1)
-(setq org-agenda-start-day "-0d")
+;;(defun load-light-theme ()
+;;    (load-theme 'adwaita) )
 
-; Remember to clock out the clock on exit
-(setq org-remember-clock-out-on-exit t)
+;;(advice-add 'plantuml-mode :before #' load-light-theme)
 
-  )
-
-; (after! solaire-mode
-;   (solaire-global-mode -1))
-;
-; (custom-set-faces
-;   '(default ((t (:background "#282a36"))))
-;   ;'(default ((t (:background "#232121"))))
-;  )
-
-;(setq doom-theme (if (display-graphic-p) 'gui-theme 'tty-theme))
-
-;(add-hook! 'after-make-frame-functions
-;  (defun switch-theme (frame)
-;    (if (display-graphic-p frame)
-;        (load-theme 'gui-theme t)
-;      (load-theme 'tty-theme t))))
-
-;(custom-set-faces! '(default :background nil))
+(custom-set-variables
+ '(org-directory "~/Documents/org")
+ '(org-agenda-files (list org-directory)))
