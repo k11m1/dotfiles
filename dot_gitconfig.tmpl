@@ -1,0 +1,11 @@
+[user]
+	email = xklimes5@fi.muni.cz
+	name = {{ .name }}
+	signingkey = B187FDC8CC7A96FA6FD0B5E3DA0A5620ED11B815
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[core]
+	autocrlf = input

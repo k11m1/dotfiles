@@ -1,0 +1,93 @@
+theme = "slick"
+icons = "awesome"
+
+
+[[block]]
+block = "net"
+hide_inactive = true
+device = "wlo1"
+format = "{ssid} {signal_strength} {speed_down;K*B} {speed_up;K*B}"
+interval = 5
+
+[[block]]
+block = "net"
+hide_inactive = true
+device = "enp4s0f3u1u4u4"
+format = "{speed_down;K*B} {speed_up;K*B}"
+interval = 5
+
+[[block]]
+block = "music"
+buttons = ["play", "next"]
+interface_name_exclude = [".*kdeconnect.*"]
+
+[[block]]
+block = "disk_space"
+path = "/"
+alias = "/"
+info_type = "available"
+unit = "GB"
+interval = 20
+warning = 50.0
+alert = 20.0
+alert_absolute = true
+format = "{icon} {available}"
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{mem_used}/{mem_free}"
+format_swap = "{swap_used}/{swap_total}({swap_used_percents})"
+
+[[block]]
+block = "cpu"
+interval = 1
+
+[[block]]
+block = "temperature"
+collapsed = true
+interval = 10
+format = "{min} min, {max} max, {average} avg"
+chip = "*-isa-*"
+
+[[block]]
+block = "custom"
+command = ''' cat /sys/class/thermal/thermal_zone0/temp | awk '{printf("%.0f\n",$1/1000)}' '''
+
+[[block]]
+block = "load"
+interval = 1
+format = "{1m}"
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "battery"
+interval = 10
+format = "{percentage}{time}"
+good = 61
+info = 54
+warning = 35
+critical = 20
+full_threshold = 100
+
+[[block]]
+block = "notify"
+
+[[block]]
+block = "custom"
+command = 'light'
+
+#[[block]]
+#block = "networkmanager"
+#on_click = "kitty -e nmtui"
+#interface_name_exclude = ["br\\-[0-9a-f]{12}", "docker\\d+"]
+#interface_name_include = []
+#ap_format = "{ssid^8}"
+
+[[block]]
+block = "time"
+interval = 5
+format = "%a %d/%m %R:%S"
+

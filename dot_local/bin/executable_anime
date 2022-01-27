@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo $@
+set +x
+name="$@"
+res=$(xdcc-search "$name 1080p" nibl | head -n 1 | sed 's/^.*\"(.*)\".*$/\1/' -E)
+xdcc-dl "$res"

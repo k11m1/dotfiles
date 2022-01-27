@@ -1,0 +1,8 @@
+#!/bin/sh
+setxkbmap us -option compose:menu
+setxkbmap -option compose:caps
+
+#xinput set-prop 10 314 1
+#xinput set-prop 10 296 1
+xset r rate 250 30
+

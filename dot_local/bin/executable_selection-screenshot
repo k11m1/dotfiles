@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+file="Screenshot-$(date +%Y-%m-%d-%H-%M-%S).png"
+
+maim -us $HOME/Pictures/maim/$file
+xclip -selection clipboard -t image/png < $HOME/Pictures/maim/$file
+# chmod o-rw /tmp/"$USER"screenshot.png
+notify-send -t 1000 "$file copied to clipboard"
