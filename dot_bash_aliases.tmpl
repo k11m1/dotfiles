@@ -11,14 +11,14 @@ alias pb006="cd $HOME/fi/pb006"
 alias mb152="cd $HOME/fi/mb152"
 
 #todo
-alias wtn='todo new -l {{ .chezmoi.group }}@unix'
-alias t='todo new -l {{ .chezmoi.group }}@unix'
+alias wtn='todo new -l klimi@unix'
+alias t='todo new -l klimi@unix'
 alias ti='todo new -l inbox'
 alias tm='todo new -l muni'
 alias tp='todo new -l personal'
-alias ti='todo new -l ideas'
-alias tommorow='todo new -l {{ .chezmoi.group }}@unix --due "+1d 10:00" '
-alias work='todo --humanize list {{ .chezmoi.group }}@unix --startable '
+#alias ti='todo new -l ideas'
+alias tommorow='todo new -l klimi@unix --due "+1d 10:00" '
+alias work='todo --humanize list klimi@unix --startable '
 
 #yay
 alias yay='nice -n 16 yay'
@@ -29,7 +29,7 @@ alias gtc='git commit --verbose'
 alias gtp='git push'
 alias gts='git status' 
 alias gic='git commit -vS'
-alias mkgitcommit="git commit --author '{{ .name }} <xklimes5@fi.muni.cz>' --verbose"
+alias mkgitcommit="git commit --author 'Martin Klimeš <xklimes5@fi.muni.cz>' --verbose"
 # Termite hack
 alias ssh='TERM=xterm-256color ssh '
 
