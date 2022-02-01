@@ -91,7 +91,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- ---@usage setup a server -- see: https://www.lunarvim.org/languages/#overriding-the-default-configuration
 local opts = {} -- check the lspconfig documentation for a list of all possible options
 require("lvim.lsp.manager").setup("pyright", opts)
-require("lvim.lsp.manager").setup("ccls", opts)
+--require("lvim.lsp.manager").setup("ccls", opts)
 require("lvim.lsp.manager").setup("clangd", opts)
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
@@ -139,13 +139,15 @@ require("lvim.lsp.manager").setup("clangd", opts)
 -- }
 
 -- Additional Plugins
--- lvim.plugins = {
---     {"folke/tokyonight.nvim"},
---     {
---       "folke/trouble.nvim",
---       cmd = "TroubleToggle",
---     },
--- }
+lvim.plugins = {
+--    {"folke/tokyonight.nvim"},
+-- { "Pocco81/DAPInstall.nvim" },
+    {
+      "folke/trouble.nvim",
+      cmd = "TroubleToggle",
+    },
+  { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} },
+}
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- lvim.autocommands.custom_groups = {
