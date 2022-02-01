@@ -65,14 +65,14 @@ env:
   # Window title
   #title: Alacritty
 
-  # Window class ({{ .chezmoi.kernel.ostype }}/BSD only):
+  # Window class (Linux/BSD only):
   #class:
     # Application instance name
     #instance: Alacritty
     # General application class
     #general: Alacritty
 
-  # GTK theme variant ({{ .chezmoi.kernel.ostype }}/BSD only)
+  # GTK theme variant (Linux/BSD only)
   #
   # Override the variant of the GTK theme. Commonly supported values are `dark` and `light`.
   # Set this to `None` to use the default theme variant.
@@ -95,7 +95,7 @@ font:
     #
     # Default:
     #   - (macOS) Menlo
-    #   - ({{ .chezmoi.kernel.ostype }}/BSD) monospace
+    #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     #family: monospace
     #family: FiraCode Nerd Font Mono
@@ -497,7 +497,7 @@ selection:
 #
 # Default:
 #   - (macOS) /bin/bash --login
-#   - ({{ .chezmoi.kernel.ostype }}/BSD) user login shell
+#   - (Linux/BSD) user login shell
 #   - (Windows) powershell
 shell:
   program: /bin/zsh
@@ -545,7 +545,7 @@ shell:
     #
     # Default:
     #   - (macOS) open
-    #   - ({{ .chezmoi.kernel.ostype }}/BSD) xdg-open
+    #   - (Linux/BSD) xdg-open
     #   - (Windows) explorer
     #launcher:
     #  program: xdg-open
@@ -687,7 +687,7 @@ shell:
 # at once.
 key_bindings:
   - { key: Return,   mods: Control|Shift, action: SpawnNewInstance }
-  # (Windows, {{ .chezmoi.kernel.ostype }}, and BSD only)
+  # (Windows, Linux, and BSD only)
   #- { key: V,        mods: Control|Shift, action: Paste            }
   #- { key: C,        mods: Control|Shift, action: Copy             }
   #- { key: Insert,   mods: Shift,         action: PasteSelection   }
