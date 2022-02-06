@@ -76,6 +76,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "haskell",
 }
 
+
 -- lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
 
@@ -147,6 +148,7 @@ lvim.plugins = {
       cmd = "TroubleToggle",
     },
   { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} },
+  {"alker0/chezmoi.vim"},
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
