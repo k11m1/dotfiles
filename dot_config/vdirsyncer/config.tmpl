@@ -18,5 +18,5 @@ type = "caldav"
 
 # We can simplify this URL here as well. In theory it shouldn't matter.
 url = "{{ keyring "caldav" "url" }}"
-username = "{{ (keyring "caldav" "user" }}"
-password = "{{ (keyring "caldav" "pass").Password }}"
+username = "{{ keyring "caldav" "user" }}"
+password = "{{ keyring "caldav" "pass" }}"
