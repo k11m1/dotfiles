@@ -121,5 +121,5 @@ alias nozsh='DISABLE_MAGIC_FUNCTIONS=true zsh'
      gpgconf --reload gpg-agent
  }
 
-export CLOCKIFY_TOKEN="{{ keepassxcAttribute "trezor/clockify.me" "token" }}"
+export CLOCKIFY_TOKEN="{{ keyring "clockify" "token" }}"
 
