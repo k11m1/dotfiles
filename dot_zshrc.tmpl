@@ -104,7 +104,7 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 #     done
 # }
 
-{{ if eq .chezmoi.hostname "k11book"}}
+{{ if eq .chezmoi.hostname "k11book" }}
 PATH="{{ .chezmoi.homeDir }}/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="{{ .chezmoi.homeDir }}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="{{ .chezmoi.homeDir }}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
