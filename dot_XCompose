@@ -120,6 +120,12 @@ include "%L"
 <Multi_key> <o> <k>  : "✔" U2714 # HEAVY CHECK MARK
 <Multi_key> <n> <o> <k>  : "✘" U2718 # HEAVY BALLOT X
 
+<Multi_key> <less> <comma> : "‹"
+<Multi_key> <greater> <period> : "›"
+<Multi_key> <less> <greater> : "‹"
+<Multi_key> <greater> <less> : "›"
+# ‹play›
+
 # Emoji
 <Multi_key> <dollar> <w> <i> <n> <k> :   "( ͡° ͜ʖ ͡°)" # wink
 <Multi_key> <dollar> <s> <h> <r> <u> <g> : "¯\\_(ツ)_/¯" # shrug
@@ -128,5 +134,5 @@ include "%L"
 <Multi_key> <dollar> <c> <o> <n> : "(☉_☉)" # confused
 
 <Multi_key> <s> <f> : "¯\\_(ツ)_/¯" # shrug  
-<Multi_key> <g> <i> <t> : "git commit --author 'Martin Klimeš <{{ .fiemail }}>' --verbose "
+<Multi_key> <g> <i> <t> : "git commit --author 'Martin Klimeš <xklimes5@fi.muni.cz>' --verbose "
 <Multi_key> <d> <u> <e> : "📅" # due date signifier 📅

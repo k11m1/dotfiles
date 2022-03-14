@@ -1,15 +1,15 @@
 theme = "slick"
 icons = "awesome"
 
-[[block]]
-block = "speedtest"
-interval = 30
+#[[block]]
+#block = "speedtest"
+#interval = 300
 
 [[block]]
 block = "net"
 hide_inactive = true
 device = "wlp4s0"
-format = "{ssid} {signal_strength} {speed_down;K*B} {speed_up;K*B}"
+format = "{ssid} {signal_strength} {speed_down;K} {speed_up;K}"
 interval = 5
 
 [[block]]
@@ -35,6 +35,9 @@ interval = 5
 #alert = 20.0
 #alert_absolute = true
 #format = "{icon} {available}"
+
+[[block]]
+block = "kdeconnect"
 
 [[block]]
 block = "memory"
@@ -93,4 +96,3 @@ command = 'light'
 block = "time"
 interval = 5
 format = "%a %d/%m %R:%S"
-
