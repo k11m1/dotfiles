@@ -65,7 +65,7 @@ export PS1="\[\e[0;36m\]\u\[\e[0;37m\]@\[\e[0;33m\]\H\[\e[0;32m\]\w\[\e[0;37m\]$
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-[ -f "/home/klimi/.ghcup/env" ] && source "/home/klimi/.ghcup/env" # ghcup-env
+[ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
 
 # Use Alt+H for man
@@ -75,21 +75,22 @@ bind -m emacs -x     '"\eh": run-help'
 
 source $HOME/.bash_aliases
 # command not found !requires pkgfile!
-source /usr/share/doc/pkgfile/command-not-found.bash
+# source /usr/share/doc/pkgfile/command-not-found.bash
 export HISTCONTROL=ignoreboth:erasedups
-source <(kitty + complete setup bash)
+# source <(kitty + complete setup bash)
 countdown () { for (( rem=$(($1 * 60)); $rem ; rem=rem-1 )); do echo -en "\rRemaining $rem sec."; sleep 1; done; echo; }
 source ~/.config/bash/cpv.sh
 
-export QSYS_ROOTDIR="/home/klimi/.cache/yay/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/21.1/quartus/sopc_builder/bin"
+# export QSYS_ROOTDIR="/home/klimi/.cache/yay/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/21.1/quartus/sopc_builder/bin"
 
 
 # BEGIN_KITTY_SHELL_INTEGRATION
-if test -n "$KITTY_INSTALLATION_DIR" -a -e "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; then source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; fi
+# if test -n "$KITTY_INSTALLATION_DIR" -a -e "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; then source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; fi
 # END_KITTY_SHELL_INTEGRATION
-
+{{ if eq .chezmoi.hostname "k11book"}}
 PATH="/home/k11m1/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="/home/k11m1/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="/home/k11m1/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"/home/k11m1/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=/home/k11m1/perl5"; export PERL_MM_OPT;
+{{ end }}
