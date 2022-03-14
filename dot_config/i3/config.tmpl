@@ -62,6 +62,8 @@ bindsym $meh+h exec mpc stop
 
 bindsym $mod+Delete exec i3lock -c 000000 -i /home/k11m1/Pictures/wallpapers/scenery.png
 bindsym $mod+Shift+Delete exec lock.sh
+bindsym $mod+BackSpace exec xset dpms force off && sleep 0.5 && xset dpms force off
+bindsym $mod+Shift+BackSpace exec i3lock -c 000000 -i /home/k11m1/Pictures/wallpaper/landscape.png && sleep 0.5 && xset dpms force off
 
 bindsym ctrl+space exec dunstctl close
 bindsym $mod+grave exec dunstctl history-pop
