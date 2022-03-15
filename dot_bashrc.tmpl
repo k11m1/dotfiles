@@ -79,7 +79,6 @@ source $HOME/.bash_aliases
 export HISTCONTROL=ignoreboth:erasedups
 # source <(kitty + complete setup bash)
 countdown () { for (( rem=$(($1 * 60)); $rem ; rem=rem-1 )); do echo -en "\rRemaining $rem sec."; sleep 1; done; echo; }
-source ~/.config/bash/cpv.sh
 
 # export QSYS_ROOTDIR="/home/klimi/.cache/yay/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/21.1/quartus/sopc_builder/bin"
 
