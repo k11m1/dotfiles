@@ -12,6 +12,7 @@ an executable
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "onedarker"
+lvim.builtin.dap.active = true;
 
 vim.opt.shiftwidth = 4 -- the number of spaces inserted for each indentation
 vim.opt.tabstop = 4 -- insert 4 spaces for a tab
@@ -157,11 +158,12 @@ lvim.plugins = {
       "folke/trouble.nvim",
       cmd = "TroubleToggle",
     },
-  { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} },
+  { "rcarriga/nvim-dap-ui"},
   {"alker0/chezmoi.vim"},
     {"bfredl/nvim-ipy"},
     {"npxbr/glow.nvim"},
     {"folke/todo-comments.nvim"},
+    {"danymat/neogen"},
 -- {
 --   "folke/todo-comments.nvim",
 --   event = "BufRead",
@@ -175,8 +177,24 @@ lvim.plugins = {
 --   ft = {"markdown"}
 --   -- run = "yay -S glow"
 -- },
+    {
+"nvim-neorg/neorg",
+    config = function()
+        require('neorg').setup {
+                load = {
+        ["core.defaults"] = {}
+    }
+        }
+    end,
+    requires = "nvim-lua/plenary.nvim"
+    },
     {"ray-x/lsp_signature.nvim"},
 }
+
+require('neogen').setup({ snippet_engine = "luasnip" })
+require("dapui").setup()
+
+
 -- cfg = {
 --   debug = false, -- set to true to enable debug logging
 --   log_path = vim.fn.stdpath("cache") .. "/lsp_signature.log", -- log dir when debug is on
@@ -236,33 +254,70 @@ require'todo-comments'.setup() -- no need to specify bufnr if you don't use togg
 -- require'lsp_signature'.on_attach(cfg, bufnr) -- no need to specify bufnr if you don't use toggle_key
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
--- lvim.autocommands.custom_groups = {
---   { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
--- }
+lvim.autocommands.custom_groups = {
+  -- { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
+  { "BufNewFile", "*.pl", "0r ~/.config/lvim/templates/skeleton.pl" },
+}
 
 require'lspconfig'.perlls.setup{}
 require'lspconfig'.hls.setup{}
 
+local dap = require('dap')
+dap.adapters.cppdbg = {
+  id = 'cppdbg',
+  type = 'executable',
+  command = '/home/k11m1/Downloads/cpptools/extension/debugAdapters/bin/OpenDebugAD7',
+}
+dap.configurations.cpp = {
+  {
+    name = "Launch file",
+    type = "cppdbg",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = true,
+  },
+  {
+    name = 'Attach to gdbserver :1234',
+    type = 'cppdbg',
+    request = 'launch',
+    MIMode = 'gdb',
+    miDebuggerServerAddress = 'localhost:1234',
+    miDebuggerPath = '/usr/bin/gdb',
+    cwd = '${workspaceFolder}',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+  },
+}
 
--- Debugger
-lvim.builtin.dap.on_config_done = function(dap)
-    dap.adapters.lldb = {
-      type = 'executable',
-      command = '/usr/bin/lldb-vscode',
-      name = "lldb"
-    }
+-- -- Debugger
+-- lvim.builtin.dap.on_config_done = function(dap)
+--     dap.adapters.lldb = {
+--       type = 'executable',
+--       command = '/usr/bin/lldb-vscode',
+--       name = "lldb"
+--     }
 
-    dap.configurations.cpp = {
-        {
-            name = "Launch",
-            type = "lldb",
-            request = "launch",
-            program = "${workspaceFolder}/build/binary_name",
-            cwd = "${workspaceFolder}/build",
-            stopOnEntry = false,
-            args = {},
-            runInTerminal = false,
-        },
-    }
-    dap.configurations.c = dap.configurations.cpp
-end
+--     dap.configurations.cpp = {
+--         {
+--             name = "Launch",
+--             type = "lldb",
+--             request = "launch",
+--             program = "${workspaceFolder}/build/binary_name",
+--             cwd = "${workspaceFolder}/build",
+--             stopOnEntry = false,
+--             args = {},
+--             runInTerminal = false,
+--         },
+--     }
+--     dap.configurations.c = dap.configurations.cpp
+-- end
+
+
+require('snips')
+
+
+
