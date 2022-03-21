@@ -63,11 +63,15 @@ lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.show_icons.git = 0
+lvim.builtin.treesitter.rainbow.enable = true
+vim.opt.undofile = true -- enable persistent undo
+vim.opt.scrolloff = 8 -- is one of my fav
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "c",
+  "cpp",
   "javascript",
   "json",
   "lua",
@@ -94,9 +98,41 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- vim.list_extend(lvim.lsp.override, { "pyright" })
 
 -- ---@usage setup a server -- see: https://www.lunarvim.org/languages/#overriding-the-default-configuration
-local opts = {} -- check the lspconfig documentation for a list of all possible options
-require("lvim.lsp.manager").setup("pyright", opts)
+-- local opts = {} -- check the lspconfig documentation for a list of all possible options
+-- require("lvim.lsp.manager").setup("pyright", opts) // TODO: 
 --require("lvim.lsp.manager").setup("ccls", opts)
+
+-- some settings can only passed as commandline flags `clangd --help`
+local clangd_flags = {
+  "--all-scopes-completion",
+  "--suggest-missing-includes",
+  "--background-index",
+  "--pch-storage=disk",
+  "--cross-file-rename",
+  "--log=info",
+  "--completion-style=detailed",
+  "--enable-config", -- clangd 11+ supports reading from .clangd configuration file
+  "--clang-tidy",
+  -- "--std=c++1z",
+  -- "--clang-tidy-checks=-*,llvm-*,clang-analyzer-*,modernize-*,-modernize-use-trailing-return-type",
+  -- "--fallback-style=Google",
+  -- "--header-insertion=never",
+  -- "--query-driver=<list-of-white-listed-complers>"
+}
+
+local clangd_bin = "clangd"
+
+local custom_on_attach = function(client, bufnr)
+  require("lvim.lsp").common_on_attach(client, bufnr)
+  local opts = { noremap = true, silent = true }
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>lh", "<Cmd>ClangdSwitchSourceHeader<CR>", opts)
+end
+
+local opts = {
+  cmd = { clangd_bin, unpack(clangd_flags) },
+  on_attach = custom_on_attach,
+}
+
 require("lvim.lsp.manager").setup("clangd", opts)
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
@@ -164,6 +200,24 @@ lvim.plugins = {
     {"npxbr/glow.nvim"},
     {"folke/todo-comments.nvim"},
     {"danymat/neogen"},
+    -- {"rafamadriz/neon"},
+    {"NTBBloodbath/doom-one.nvim"},
+    -- {"ldelossa/vimdark"},
+    -- {"kyazdani42/blue-moon"},
+    -- {"folke/tokyonight.nvim"},
+    -- {"ishan9299/modus-theme-vim"},
+    {"sainnhe/edge"},
+    -- {"theniceboy/nvim-deus"},
+    -- {"yonlu/omni.vim"},
+    -- {"ray-x/aurora"},
+    -- {"https://git.sr.ht/~novakane/kosmikoa.nvim"},
+    -- {"tanvirtin/monokai.nvim"},
+    -- {"lourenci/github-colors"},
+    -- {"sainnhe/gruvbox-material"},
+    -- {"glepnir/zephyr-nvim"},
+    {"projekt0n/github-nvim-theme"},
+
+--    {"k11m1/zephyr-nvim"},
 -- {
 --   "folke/todo-comments.nvim",
 --   event = "BufRead",
@@ -320,4 +374,22 @@ dap.configurations.cpp = {
 require('snips')
 
 
+-- Example config in Lua
+require("github-theme").setup({
+  theme_style = "light",
+  function_style = "italic",
+  sidebars = {"qf", "vista_kind", "terminal", "packer"},
 
+  -- Change the "hint" color to the "orange" color, and make the "error" color bright red
+  colors = {hint = "orange", error = "#ff0000"},
+
+  -- Overwrite the highlight groups
+  overrides = function(c)
+    return {
+      htmlTag = {fg = c.red, bg = "#282c34", sp = c.hint, style = "underline"},
+      DiagnosticHint = {link = "LspDiagnosticsDefaultHint"},
+      -- this will remove the highlight groups
+      TSField = {},
+    }
+  end
+})
