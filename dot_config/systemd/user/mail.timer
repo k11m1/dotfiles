@@ -1,0 +1,11 @@
+[Unit]
+Description=Run mail synchronization
+#ConditionPathExists=/tmp/network_up
+
+[Timer]
+#; OnBootSec=15min
+#; OnUnitActiveSec=1min
+OnCalendar= hourly
+
+[Install]
+WantedBy=timers.target

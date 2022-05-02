@@ -1,0 +1,19 @@
+[Unit]
+Description=Synchronize mailboxes
+; After=network-online.target
+Requires=network-online.target
+ConditionPathExists=/tmp/network_up
+
+[Service]
+Environment=DISPLAY=:0
+Type=oneshot
+#ExecPreStart=/bin/sh -c 'until ping -c1 dares.fi.muni.cz; do sleep 1; done;'
+ExecStart=mbsync -a
+ExecStartPost={{ .chezmoi.homeDir }}/.local/libexec/new_mail_notification.sh
+
+[Install]
+WantedBy=default.target
+
+# source ~/.Xdbus;
+
+
