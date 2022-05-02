@@ -1,0 +1,37 @@
+# vim: filetype=neomuttrc
+source /usr/share/mutt-wizard/mutt-wizard.muttrc
+source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .fiemail }}.muttrc
+macro index,pager i1 '<sync-mailbox><enter-command>source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .fiemail }}.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to {{ .fiemail }}"
+macro index,pager i2 '<sync-mailbox><enter-command>source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .email }}.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to {{ .email }}"
+macro index,pager i3 '<sync-mailbox><enter-command>source {{ .chezmoi.homeDir }}/.config/mutt/accounts/514433@mail.muni.cz.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to 514433@mail.muni.cz"
+source {{ .chezmoi.homeDir }}/.config/mutt/diffsyntax
+
+set sidebar_width = 25
+set sidebar_divider_char = '│'
+# Pretty line-drawing character
+set sidebar_short_path
+# Shorten mailbox names
+set sidebar_delim_chars="/"
+# Delete everything up to the last / character
+set sidebar_folder_indent
+# Indent folders whose names we've shortened
+set sidebar_indent_string="  "
+# Indent with two spaces
+bind index ii limit-current-thread
+virtual-mailboxes "inbox" "notmuch://?query=tag:inbox"
+virtual-mailboxes "unread" "notmuch://?query=tag:unread"
+# virtual-mailboxes "archive" "notmuch://?query=tag:archive"
+# virtual-mailboxes "sent" "notmuch://?query=tag:sent"
+# virtual-mailboxes "newsletters" "notmuch://?query=tag:newsletters"
+virtual-mailboxes "answered" "notmuch://?query=tag:answered"
+tag-transforms "attachment" "@" \
+               "encrypted"  "" \
+               "signed"     "✎"
+
+# set virtual_spoolfile=yes
+
+set sort = 'threads'
+
+set new_mail_command="notify-send --icon='{{ .chezmoi.homeDir }}/newmail.jpg' \
+'New Email' '%n new messages, %u unread.' &"
+bind index,pager \` modify-labels
