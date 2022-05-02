@@ -6,6 +6,12 @@ icons = "awesome"
 #interval = 300
 
 [[block]]
+block = "bluetooth"
+mac = "14:3F:A6:10:87:73"
+format = "WH {percentage}"
+format_unavailable = "WH"
+
+[[block]]
 block = "net"
 hide_inactive = true
 device = "wlp4s0"

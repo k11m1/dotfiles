@@ -36,6 +36,8 @@ exec --no-startup-id aw-qt
 exec --no-startup-id /usr/lib/kdeconnectd
 exec --no-startup-id kdeconnect-indicator
 
+exec systemctl --user import-environment DBUS_SESSION_BUS_ADDRESS
+exec systemctl --user start dbus-import.service
 #exec --no-startup-id mpd
 
 # Use pactl to adjust volume in PulseAudio.
@@ -60,10 +62,11 @@ bindsym $meh+g exec mpc next
 bindsym $meh+d exec mpc toggle
 bindsym $meh+h exec mpc stop
 
-bindsym $mod+Delete exec i3lock -c 000000 -i /home/k11m1/Pictures/wallpapers/scenery.png
+bindsym $mod+Delete exec /home/k11m1/.local/bin/fancylock.sh
 bindsym $mod+Shift+Delete exec lock.sh
 bindsym $mod+BackSpace exec xset dpms force off && sleep 0.5 && xset dpms force off
-bindsym $mod+Shift+BackSpace exec i3lock -c 000000 -i /home/k11m1/Pictures/wallpaper/landscape.png && sleep 0.5 && xset dpms force off
+bindsym $mod+Ctrl+BackSpace exec touch /tmp/nolock && xset dpms force off && systemctl suspend && xset dpms force off && sleep 10 && rm /tmp/nolock
+bindsym $mod+Shift+BackSpace exec /home/k11m1/.local/bin/fancylock.sh && sleep 0.5 && xset dpms force off
 
 bindsym ctrl+space exec dunstctl close
 bindsym $mod+grave exec dunstctl history-pop
@@ -124,6 +127,7 @@ bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 #bindsym $mod+s exec "rofi -show ssh"
 bindsym $mod+s exec "rofi -show run"
+bindsym $mod+i exec rofimoji
 
 # change focus
 bindsym $mod+j focus left
@@ -171,6 +175,8 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
+
+bindsym $mod+Shift+t exec killall telegram-desktop && telegram-desktop
 
 # focus the child container
 #bindsym $mod+d focus child

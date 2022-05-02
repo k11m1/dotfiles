@@ -11,7 +11,6 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "onedarker"
 lvim.builtin.dap.active = true;
 
 vim.opt.shiftwidth = 4 -- the number of spaces inserted for each indentation
@@ -45,16 +44,16 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- }
 
 -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
--- lvim.builtin.which_key.mappings["t"] = {
---   name = "+Trouble",
---   r = { "<cmd>Trouble lsp_references<cr>", "References" },
---   f = { "<cmd>Trouble lsp_definitions<cr>", "Definitions" },
---   d = { "<cmd>Trouble lsp_document_diagnostics<cr>", "Diagnostics" },
---   q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
---   l = { "<cmd>Trouble loclist<cr>", "LocationList" },
---   w = { "<cmd>Trouble lsp_workspace_diagnostics<cr>", "Diagnostics" },
--- }
+lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
+lvim.builtin.which_key.mappings["t"] = {
+  name = "+Trouble",
+  r = { "<cmd>Trouble lsp_references<cr>", "References" },
+  f = { "<cmd>Trouble lsp_definitions<cr>", "Definitions" },
+  d = { "<cmd>Trouble lsp_document_diagnostics<cr>", "Diagnostics" },
+  q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
+  l = { "<cmd>Trouble loclist<cr>", "LocationList" },
+  w = { "<cmd>Trouble lsp_workspace_diagnostics<cr>", "Diagnostics" },
+}
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -181,7 +180,22 @@ require("lvim.lsp.manager").setup("clangd", opts)
 
 -- Additional Plugins
 lvim.plugins = {
---    {"folke/tokyonight.nvim"},
+   {"folke/tokyonight.nvim"},
+{
+  "norcalli/nvim-colorizer.lua",
+    config = function()
+      require("colorizer").setup({ "*" }, {
+          RGB = true, -- #RGB hex codes
+          RRGGBB = true, -- #RRGGBB hex codes
+          RRGGBBAA = true, -- #RRGGBBAA hex codes
+          rgb_fn = true, -- CSS rgb() and rgba() functions
+          hsl_fn = true, -- CSS hsl() and hsla() functions
+          css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+          css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+          })
+  end,
+},
+
 -- { "Pocco81/DAPInstall.nvim" },
     -- {
     --     "ray-x/lsp_signature.nvim",
@@ -209,7 +223,7 @@ lvim.plugins = {
     {"sainnhe/edge"},
     -- {"theniceboy/nvim-deus"},
     -- {"yonlu/omni.vim"},
-    -- {"ray-x/aurora"},
+    {"ray-x/aurora"},
     -- {"https://git.sr.ht/~novakane/kosmikoa.nvim"},
     -- {"tanvirtin/monokai.nvim"},
     -- {"lourenci/github-colors"},
@@ -243,10 +257,41 @@ lvim.plugins = {
     requires = "nvim-lua/plenary.nvim"
     },
     {"ray-x/lsp_signature.nvim"},
+    {"jupyter-vim/jupyter-vim"},
+    {'GCBallesteros/jupytext.vim'},
+    {'marko-cerovac/material.nvim'},
+    {'catppuccin/nvim'},
+    {'rktjmp/lush.nvim'},
+    {'~/source/lush-template/'},
+    {'nvim-orgmode/orgmode'},
 }
+
+require('orgmode').setup_ts_grammar()
+
+-- Tree-sitter configuration
+require'nvim-treesitter.configs'.setup {
+  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
+  highlight = {
+    enable = true,
+    disable = {'org'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
+    additional_vim_regex_highlighting = {'org'}, -- Required since TS highlighter doesn't support all syntax features (conceal)
+  },
+  ensure_installed = {'org'}, -- Or run :TSUpdate org
+}
+
+require('orgmode').setup({
+    org_agenda_files = {'~/org/*'},
+    org_default_notes_file = '~/org/refile.org',
+    org_agenda_span = 'day',
+    org_agenda_skip_scheduled_if_done = true,
+    org_agenda_skip_deadline_if_done = true,
+
+})
+
 
 require('neogen').setup({ snippet_engine = "luasnip" })
 require("dapui").setup()
+require('material').setup()
 
 
 -- cfg = {
@@ -371,25 +416,176 @@ dap.configurations.cpp = {
 -- end
 
 
-require('snips')
+-- require('snips')
 
 
 -- Example config in Lua
-require("github-theme").setup({
-  theme_style = "light",
-  function_style = "italic",
-  sidebars = {"qf", "vista_kind", "terminal", "packer"},
+-- require("github-theme").setup({
+--   theme_style = "light",
+--   function_style = "italic",
+--   sidebars = {"qf", "vista_kind", "terminal", "packer"},
 
-  -- Change the "hint" color to the "orange" color, and make the "error" color bright red
-  colors = {hint = "orange", error = "#ff0000"},
+--   -- Change the "hint" color to the "orange" color, and make the "error" color bright red
+--   colors = {hint = "orange", error = "#ff0000"},
 
-  -- Overwrite the highlight groups
-  overrides = function(c)
-    return {
-      htmlTag = {fg = c.red, bg = "#282c34", sp = c.hint, style = "underline"},
-      DiagnosticHint = {link = "LspDiagnosticsDefaultHint"},
-      -- this will remove the highlight groups
-      TSField = {},
-    }
+--   -- Overwrite the highlight groups
+--   overrides = function(c)
+--     return {
+--       htmlTag = {fg = c.red, bg = "#282c34", sp = c.hint, style = "underline"},
+--       DiagnosticHint = {link = "LspDiagnosticsDefaultHint"},
+--       -- this will remove the highlight groups
+--       TSField = {},
+--     }
+--   end
+-- })
+
+
+vim.api.nvim_set_keymap('n', '<leader>mm', [[<Cmd>lua require('material.functions').toggle_style()<CR>]], { noremap = true, silent = true })
+function toggle_background()
+  if vim.opt.background:get() == 'dark' then
+    vim.opt.background = 'light'
+  else
+    vim.opt.background = 'dark'
   end
+end
+
+vim.api.nvim_set_keymap('n', 'tb', ':lua toggle_background()<CR>', {
+  silent = true,
+  noremap = true,
 })
+
+vim.g.material_style = "deep ocean"
+require('material').setup({
+
+	contrast = {
+		sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
+		floating_windows = false, -- Enable contrast for floating windows
+		line_numbers = false, -- Enable contrast background for line numbers
+		sign_column = false, -- Enable contrast background for the sign column
+		cursor_line = false, -- Enable darker background for the cursor line
+		non_current_windows = false, -- Enable darker background for non-current windows
+		popup_menu = false, -- Enable lighter background for the popup menu
+	},
+
+	italics = {
+		comments = false, -- Enable italic comments
+		keywords = false, -- Enable italic keywords
+		functions = false, -- Enable italic functions
+		strings = false, -- Enable italic strings
+		variables = false -- Enable italic variables
+	},
+
+	contrast_filetypes = { -- Specify which filetypes get the contrasted (darker) background
+		"terminal", -- Darker terminal background
+		"packer", -- Darker packer background
+		"qf" -- Darker qf list background
+	},
+
+	high_visibility = {
+		lighter = false, -- Enable higher contrast text for lighter style
+		darker = false -- Enable higher contrast text for darker style
+	},
+
+	disable = {
+		borders = false, -- Disable borders between verticaly split windows
+		background = false, -- Prevent the theme from setting the background (NeoVim then uses your teminal background)
+		term_colors = false, -- Prevent the theme from setting terminal colors
+		eob_lines = false -- Hide the end-of-buffer lines
+	},
+
+	lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
+
+	async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
+
+	custom_highlights = {} -- Overwrite highlights with your own
+})
+vim.api.nvim_set_keymap('n', '<leader>m', [[<Cmd>lua require('material.functions').toggle_style()<CR>]], { noremap = true, silent = true })
+
+
+
+
+
+-- local catppuccin = require("catppuccin")
+
+-- -- configure it
+-- catppuccin.setup(
+--     {
+-- 		transparent_background = false,
+-- 		term_colors = false,
+-- 		styles = {
+-- 			comments = "italic",
+-- 			functions = "italic",
+-- 			keywords = "italic",
+-- 			strings = "NONE",
+-- 			variables = "NONE",
+-- 		},
+-- 		integrations = {
+-- 			treesitter = true,
+-- 			native_lsp = {
+-- 				enabled = true,
+-- 				virtual_text = {
+-- 					errors = "italic",
+-- 					hints = "italic",
+-- 					warnings = "italic",
+-- 					information = "italic",
+-- 				},
+-- 				underlines = {
+-- 					errors = "underline",
+-- 					hints = "underline",
+-- 					warnings = "underline",
+-- 					information = "underline",
+-- 				},
+-- 			},
+-- 			lsp_trouble = false,
+-- 			lsp_saga = false,
+-- 			gitgutter = false,
+-- 			gitsigns = false,
+-- 			telescope = false,
+-- 			nvimtree = {
+-- 				enabled = false,
+-- 				show_root = false,
+-- 			},
+-- 			which_key = false,
+-- 			indent_blankline = {
+-- 				enabled = false,
+-- 				colored_indent_levels = false,
+-- 			},
+-- 			dashboard = false,
+-- 			neogit = false,
+-- 			vim_sneak = false,
+-- 			fern = false,
+-- 			barbar = false,
+-- 			bufferline = false,
+-- 			markdown = false,
+-- 			lightspeed = false,
+-- 			ts_rainbow = false,
+-- 			hop = false,
+-- 		},
+-- 	}
+-- )
+
+-- Example config in Lua
+vim.g.tokyonight_style = "night"
+-- vim.g.tokyonight_italic_functions = true
+-- vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
+
+-- Change the "hint" color to the "orange" color, and make the "error" color bright red
+-- vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
+
+-- vim.g.tokyonight_style = "day"
+-- Load the colorscheme
+-- vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
+-- #ccff00 
+-- vim.g.tokyonight_colors = {comment = "#ff1493"}
+-- vim.g.tokyonight_colors = {comment = "#3399ff"}
+-- #66ff33
+-- vim.g.tokyonight_style = "night"
+-- vim.cmd[[colorscheme tokyonight]]
+-- vim.g.tokyonight_style = "night"
+-- lvim.colorscheme = "tokyonight"
+-- vim.g.jupytext_fmt='py'
+
+-- my theme
+vim.cmd[[colorscheme lush_template]]
+lvim.colorscheme = "lush_template"
+

@@ -4,6 +4,8 @@ export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
 
 source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
+#exec dbus-launch cinnamon-session
+#exec awesome
 #exec xmonad
  exec dbus-launch i3
 

@@ -91,10 +91,24 @@
 [telegramstuff]
    appname = Telegram Desktop
    urgency = low
-   script = "/home/klimi/.local/bin2/play_noti.sh"
+   script = "/home/k11m1/.local/libexec/new_mail_notification.sh"
 
 [kdeconnect]
     appname = KDE Connect
     background = "#0047b3"
     foreground = "#dbf9d1"
     frame_color = "#3399ff"
+[testnotify]
+    appname = testnotify
+    width = 260
+    frame_color = "#232323"
+    max_icon_size = 32
+    geometry = "300x5-30+20"
+[profanity]
+    appname = Profanity
+    timeout = 10
+    script = "/home/k11m1/.local/libexec/play_notification.sh"
+    frame_color = "#cf0ddd"
+[Cmus]
+    appname = Cmus
+    set_stack_tag = cmus_notification
