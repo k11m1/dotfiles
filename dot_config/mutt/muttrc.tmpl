@@ -1,5 +1,9 @@
 # vim: filetype=neomuttrc
+{{- if eq .chezmoi.hostname "k11book" }}
 source /usr/share/mutt-wizard/mutt-wizard.muttrc
+{{- else }}
+source /usr/local/share/mutt-wizard/mutt-wizard.muttrc
+{{- end }}
 source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .fiemail }}.muttrc
 macro index,pager i1 '<sync-mailbox><enter-command>source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .fiemail }}.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to {{ .fiemail }}"
 macro index,pager i2 '<sync-mailbox><enter-command>source {{ .chezmoi.homeDir }}/.config/mutt/accounts/{{ .email }}.muttrc<enter><change-folder>!<enter>;<check-stats>' "switch to {{ .email }}"
