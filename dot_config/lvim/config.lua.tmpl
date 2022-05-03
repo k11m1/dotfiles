@@ -356,6 +356,7 @@ require'todo-comments'.setup() -- no need to specify bufnr if you don't use togg
 lvim.autocommands.custom_groups = {
   -- { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
   { "BufNewFile", "*.pl", "0r ~/.config/lvim/templates/skeleton.pl" },
+  { "BufNewFile", "*.pm", "0r ~/.config/lvim/templates/skeleton.pm" },
 }
 
 require'lspconfig'.perlls.setup{}
