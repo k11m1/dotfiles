@@ -262,8 +262,10 @@ lvim.plugins = {
     {'marko-cerovac/material.nvim'},
     {'catppuccin/nvim'},
     {'rktjmp/lush.nvim'},
+{{ if eq .chezmoi.hostname "k11book"}}
     {'~/source/lush-template/'},
     {'nvim-orgmode/orgmode'},
+{{ end }}
 }
 
 require('orgmode').setup_ts_grammar()
@@ -587,6 +589,11 @@ vim.g.tokyonight_style = "night"
 -- vim.g.jupytext_fmt='py'
 
 -- my theme
+{{ if eq .chezmoi.hostname "k11book"}}
 vim.cmd[[colorscheme lush_template]]
 lvim.colorscheme = "lush_template"
+{{ else }}
+vim.g.tokyonight_style = "night"
+lvim.colorscheme = "tokyonight"
+{{ end }}
 
