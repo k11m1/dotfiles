@@ -51,7 +51,7 @@ take ()
 alias la='ls -al'
 
 # youtube-dl or maybe yt-dlp ? idk
-alias yta='yt-dlp --extract-audio --audio-format best -o "%(title)s.%(ext)s"'
+alias yta='yt-dlp --extract-audio --embed-thumbnail --add-metadata --audio-format best -o "%(title)s.%(ext)s"'
 alias ytap="youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --embed-subs --add-metadata -o '%(playlist)s/%(playlist_index)s - %(title)s-%(id)s.%(ext)s'"
 alias yta-aac="youtube-dl --extract-audio --audio-format aac "
 alias yta-best="youtube-dl --extract-audio --audio-format best "
@@ -76,7 +76,7 @@ alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
 
 # vim and emacs
-alias em="/usr/bin/emacs -nw"
+alias em="/usr/bin/emacsclient -nw -c"
 # alias emacs="emacsclient -c -a -t 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
 alias doomdoctor="~/.emacs.d/bin/doom doctor"
@@ -84,11 +84,11 @@ alias doomupgrade="~/.emacs.d/bin/doom upgrade"
 alias doompurge="~/.emacs.d/bin/doom purge"
 
 # pacman and yay
-alias pacsyu='sudo pacman -Syyu'                 # update only standard pkgs
-alias yaysua="yay -Sua "              		 # update only AUR pkgs
-alias yaysyu="yay -Syu "                         # update standard pkgs and AUR pkgs
-alias unlock="sudo rm /var/lib/pacman/db.lck"    # remove pacman lock
-alias cleanup='sudo pacman -Rns $(pacman -Qtdq)' # remove orphaned packages
+alias pacsyu='sudo pacman -Syyu'                    # update only standard pkgs
+alias yaysua="yay -Sua "                            # update only AUR pkgs
+alias yaysyu="yay -Syu "                            # update standard pkgs and AUR pkgs
+alias unlock="sudo rm /var/lib/pacman/db.lck"       # remove pacman lock
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'    # remove orphaned packages
 
 alias lock="i3lock -c 000000"
 alias screencastvga='ffmpeg -f x11grab -r xllgrab -r 15 -s 1280x1024 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video2'

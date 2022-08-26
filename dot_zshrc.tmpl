@@ -113,15 +113,14 @@ PERL_MM_OPT="INSTALL_BASE=/home/k11m1/perl5"; export PERL_MM_OPT;
 
 
 alias nozsh='DISABLE_MAGIC_FUNCTIONS=true zsh'
- gpg-reload(){
-     pkill scdaemon
-     pkill gpg-agent
-     gpg-connect-agent /bye >/dev/null 2>&1
-     gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
-     gpgconf --reload gpg-agent
- }
+    gpg-reload(){
+        pkill scdaemon
+        pkill gpg-agent
+        gpg-connect-agent /bye >/dev/null 2>&1
+        gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+        gpgconf --reload gpg-agent
+    }
 
-export CLOCKIFY_TOKEN="ZGI2ZmY3NTItNjU0MC00ZjcyLWI1NzAtZTgyNDI5MjEyYzQ3"
 alias ch='chezmoi'
 alias stacktrace='gdb -ex "set confirm off" -ex r -ex bt -ex q -ex "set confirm off" -ex q'
 

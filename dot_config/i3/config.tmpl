@@ -68,7 +68,7 @@ bindsym $mod+BackSpace exec xset dpms force off && sleep 0.5 && xset dpms force 
 bindsym $mod+Ctrl+BackSpace exec touch /tmp/nolock && xset dpms force off && systemctl suspend && xset dpms force off && sleep 10 && rm /tmp/nolock
 bindsym $mod+Shift+BackSpace exec /home/k11m1/.local/bin/fancylock.sh && sleep 0.5 && xset dpms force off
 
-bindsym ctrl+space exec dunstctl close
+bindsym $mod+ctrl+space exec dunstctl close
 bindsym $mod+grave exec dunstctl history-pop
 
 #bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
@@ -97,6 +97,15 @@ bindsym $mod+Return exec alacritty msg create-window || alacritty
 
 # start an editor
 bindsym $mod+Shift+Return exec emacsclient -c -a 'emacs'
+# Org agenda
+bindsym $mod+o exec emacsclient -c -e '(org-agenda-list)'
+bindsym $mod+Shift+o exec emacsclient -e '(org-agenda-list)'
+
+#Thunar
+bindsym $mod+t exec thunar
+
+bindsym $mod+q exec emacsclient --eval "(emacs-everywhere)"
+for_window [title="Emacs Everywhere ::.*"] floating enable
 
 # kill focused window
 bindsym $mod+Shift+q kill

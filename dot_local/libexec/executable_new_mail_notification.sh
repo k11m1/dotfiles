@@ -33,6 +33,7 @@ acc='xklimes5@fi.muni.cz'
     fi
 
 
+# mu index
 
 #Create a touch file that indicates the time of the last run of mailsync
 touch "${XDG_CONFIG_HOME:-$HOME/.config}/mutt/.mailsynclastrun"

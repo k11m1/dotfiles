@@ -4,8 +4,8 @@ Description=Run mail synchronization
 
 [Timer]
 #; OnBootSec=15min
-#; OnUnitActiveSec=1min
-OnCalendar= hourly
+OnUnitActiveSec=5min
+;OnCalendar= hourly
 
 [Install]
 WantedBy=timers.target
