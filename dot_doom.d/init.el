@@ -1,4 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
+(setq native-comp-deferred-compilation nil)
+(after! (doom-packages straight)
+  (setq straight--native-comp-available t))
 
 ;; This file controls what Doom modules are enabled and what order they load
 ;; in. Remember to run 'doom sync' after modifying it!
@@ -13,6 +16,9 @@
 ;;
 ;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
 ;;      directory (for easy access to its source code).
+;(setq native-comp-deferred-compilation nil)
+;(after! (doom-packages straight)
+;(setq straight--native-comp-available t))
 
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
@@ -61,8 +67,8 @@
        ;;lispy             ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
-       parinfer          ; turn lisp into python, sort of
-       ;;rotate-text       ; cycle region at point between text candidates
+       ;parinfer          ; turn lisp into python, sort of
+       rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        word-wrap         ; soft wrapping with language-aware indent
 
@@ -70,7 +76,7 @@
        (dired +icons)             ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
        (ibuffer +icons)         ; interactive buffer management
-       (undo)              ; persistent, smarter undo for your inevitable mistakes
+       (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -110,7 +116,7 @@
 
        :os
        (:if IS-MAC macos)  ; improve compatibility with macOS
-       ;;tty               ; improve the terminal Emacs experience
+       ;(tty +osc)               ; improve the terminal Emacs experience
 
        :lang
        (agda +local)              ; types of types of types of types...
@@ -128,7 +134,7 @@
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
-       ;;ess               ; emacs speaks statistics
+       (ess +stan +lsp)               ; emacs speaks statistics
        ;;factor
        ;;faust             ; dsp, but you get to keep your soul
        ;;fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)
@@ -155,7 +161,7 @@
        ;;ocaml             ; an objective camel
        (org +dragndrop +pretty +hugo +pandoc +roam2 +journal +pomodoro)               ; organize your plain life in plain text
        ; +brain +dragndrop +gnuplot +hugo +ipython +journal +jupyter +noter +pandoc +pomodoro +present +pretty +roam
-       php               ; perl's insecure younger brother
+       ;php               ; perl's insecure younger brother
        plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        python            ; beautiful is better than ugly
@@ -178,7 +184,7 @@
        ;;zig               ; C, but simpler
 
        :email
-       (mu4e +org +gmail)
+       (mu4e +org) ; +gmail
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -186,10 +192,10 @@
        calendar
        emms
        everywhere        ; *leave* Emacs!? You must be joking
-       ;;irc               ; how neckbeards socialize
-       ;;(rss +org)        ; emacs as an RSS reader
+       irc               ; how neckbeards socialize
+       (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       literate
+       ;;literate
        (default +bindings +smartparens))

@@ -1,0 +1,457 @@
+;; default
+(setq user-full-name "Martin Klimeš"
+      user-mail-address "{{ .email }}"
+      user-login-name "{{ .chezmoi.username }}")
+
+(setq org-directory "~/org/")
+(setq org-deadline-warning-days 7)
+
+
+(setq auto-save-interval 200) ; default is 300
+
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+(setq scroll-margin 0) ; 0 everywhere but 5 in mu4e:headers
+
+
+;; fonts
+(after! unicode-fonts
+  (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
+  (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
+
+(setq doom-font (font-spec :family "JetBrains Mono" :size 22 :weight 'semi-light))
+(setq doom-unicode-font doom-font)
+
+(setq all-the-icons-scale-factor 1.0) ;; fixes the issue of rightmost characters not fitting.
+
+
+;; wakatime
+(global-wakatime-mode)
+
+;; org
+;; org agenda
+(setq org-columns-default-format "%60ITEM(Task) %6Effort(Estim){:}")
+
+;; mu4e
+
+(after! mu4e
+  ;; mu4e - accounts
+(load "~/.doom.d/mu4eaccounts.el")
+
+  ;; mu4e - sendmail
+ (setq sendmail-program "/usr/bin/msmtp"
+       send-mail-function 'smtpmail-send-it
+       message-sendmail-f-is-evil t
+       message-sendmail-extra-arguments '("--read-envelope-from")
+       message-send-mail-function 'message-send-mail-with-sendmail)
+
+  ;;  mu4e - contacts
+  (setq mu4e-compose-complete-only-personal 't)
+  (setq mu4e-org-contacts-file  "~/org/contacts.org")
+  (add-to-list 'mu4e-headers-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t)
+  (add-to-list 'mu4e-view-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t)
+
+  (setq gnus-icalendar-org-capture-file "~/org/notes.org")
+  (setq gnus-icalendar-org-capture-headline '("Calendar"))
+  (gnus-icalendar-org-setup)
+
+;; mu4e - main
+
+ (setq mu4e-update-interval 300)             ;; update every 5 minutes
+ (setq mu4e-view-auto-mark-as-read nil)
+
+ ;;(setq mu4e-headers-thread-first-child-prefix '("o " . "o ")) ; zmena!
+
+
+ (setq mu4e-headers-fields
+       '(
+         (:account-stripe . 1)
+         (:human-date . 8)
+         (:flags . 6)
+         (:to . 15)
+         (:from-or-to . 20)
+         (:recipnum . 2)
+         (:subject . 94))
+
+       +mu4e-min-header-frame-width 143
+       mu4e-headers-date-format "%d/%m/%y"
+       mu4e-headers-time-format "⧖ %H:%M"
+       ;mu4e-headers-time-format "  %H:%M"
+       mu4e-search-results-limit 1000
+       mu4e-index-cleanup t)
+; (setq mu4e-headers-unread-mark    '("u" . "▰"))
+
+
+;; mu4e - bookmarks
+
+ (setq mu4e-bookmarks
+ '(( :name  "Unread messages"
+     :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
+     :key ?u)
+   ( :name "Today's messages"
+     :query "date:today..now"
+     :key ?t)
+   ( :name "Last 7 days"
+     :query "date:7d..now"
+     :hide-unread t
+     :key ?w)
+   ( :name "Messages with images"
+     :query "mime:image/*"
+     :key ?p)
+
+  ;(:name "Unread messages" :query "flag:unread AND NOT flag:trashed AND NOT /{{ .fiemail }}/mailbox.spam" :key ?u)
+  (:name "Yesterday's messages" :query "date:2d..1d" :key ?y)
+  (:name "Inbox fi" :query "maildir:/{{ .fiemail }}/INBOX" :key ?i)
+  (:name "CVT important" :query "(maildir:/{{ .fiemail }}/CVT/Unix OR maildir:/{{ .fiemail }}/CVT/cvt) and flag:unread" :key ?c)
+  (:name "Unread Monitoring" :query "maildir:/{{ .fiemail }}/Monitoring/ and flag:unread" :key ?m)
+
+                ))
+
+ ;; mu4e - colors
+
+
+ (setq +mu4e-compose-org-msg-toggle-next nil)
+;(setq mu4e-alert-icon "/usr/share/icons/Papirus/64x64/apps/evolution.svg")
+ (setq message-cite-prefix-regexp "\\([ 	]*\\(\\w\\|[_.]\\)+>+\\|[ 	]*[>:|]\\)+")
+
+;; mu4e - diary - icalendar test
+ (require 'mu4e-icalendar)
+ (setq mu4e-icalendar-diary-file "~/org/diary")
+ (mu4e-icalendar-setup)
+
+ ;; HACK: mu4e - mu4e-alert FIX
+
+(defun mu4e-alert-klimi-grouped-mail-notification-formatter (mail-group all-mails)
+  (start-process "mu4e-alert-bell" nil (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd))
+  (let* ((mail-count (length mail-group))
+         (total-mails (length all-mails))
+         (first-mail (car mail-group))
+         (title-prefix (format "You have [%d/%d] unread email%s"
+                               mail-count
+                               total-mails
+                               (if (> mail-count 1) "s" "")))
+         (field-value (mu4e-alert--get-group first-mail))
+         (title-suffix (format (pcase mu4e-alert-group-by
+                                 (`:from "from %s:")
+                                 (`:to "to %s:")
+                                 (`:maildir "in %s:")
+                                 (`:priority "with %s priority:")
+                                 (`:flags "with %s flags:"))
+                               field-value))
+         (title (format "%s %s\n" title-prefix title-suffix)))
+    (list :title title
+          :body (concat "• "
+                        (s-join "\n• "
+                                (mapcar (lambda (mail)
+                                          (plist-get mail :subject))
+                                        mail-group))))))
+  (setq mu4e-alert-grouped-mail-notification-formatter #'mu4e-alert-klimi-grouped-mail-notification-formatter)
+ ;; mu4e - after end
+  )
+
+;; mu4e - scroll margin
+;;
+
+(add-hook 'mu4e-headers-mode-hook
+          (lambda ()
+            (make-local-variable 'scroll-margin)
+            (setq scroll-margin 5)))
+(add-hook 'mu4e-main-mode-mode
+          (lambda ()
+            (make-local-variable 'scroll-margin)
+            (setq scroll-margin 3)))
+
+;; org publish
+
+(setq org-export-with-sub-superscripts nil)
+(setq org-pandoc-options-for-html5 '((standalone . t) (self-contained . t)))
+
+
+;; Load the publishing system
+(require 'ox-publish)
+
+;; Customize the HTML output
+(setq org-html-validation-link nil            ;; Don't show validation link
+      org-html-head-include-scripts nil       ;; Use our own scripts
+      org-html-head-include-default-style nil ;; Use our own styles
+      org-html-head "<link rel=\"stylesheet\" href=\"https://cdn.simplecss.org/simple.min.css\" />")
+
+;; Define the publishing project
+(setq org-publish-project-alist
+      '(
+        ("blog-img"
+         :base-directory "~/org/web/img"
+         :base-extension "png\\|jpg"
+         :publishing-directory "~/public_html/img"
+;     :publishing-directory "/ssh:merlin:/var/www/blog/img"
+         :publishing-function org-publish-attachment)
+
+        ("blog-org"
+         :base-directory "~/org/web"
+         :publishing-directory "~/public_html"
+;     :publishing-directory "/ssh:merlin:/var/www/blog"
+         :publishing-function org-html-publish-to-html
+         :auto-preamble t
+         :recursive t
+         :sitemap-title "K11m1's blog"
+         :sitemap-filename "index.org"
+         :sitemap-sort-files anti-chronologically
+         :auto-sitemap t
+         :with-author nil           ;; Don't include author name
+         :with-creator nil          ;; Include Emacs and Org versions in footer
+         :with-toc nil              ;; Don't include a table of contents
+         :section-numbers nil       ;; Don't include section numbers
+         :time-stamp-file nil)
+
+        ("myprojectweb" :components("blog-org" "blog-img"))))
+
+
+;; org configuration
+;;
+(after! org
+
+;; org - agenda
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+
+(setq diary-file "~/org/diary")
+(setq org-agenda-include-diary t)
+
+; Show today
+(setq org-agenda-start-day "+0d")
+(setq org-agenda-span 1)
+
+(setq org-agenda-custom-commands
+      '(("h" "Agenda and "
+         ((tags-todo "phone")(agenda "")
+
+          ))
+        ("o" "Agenda and Office-related tasks"
+         ((agenda "")
+          (tags-todo "unix"))
+
+         ((org-agenda-tag-filter '("+unix"))))))
+
+;; org - source block templates
+
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src elisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+
+;; ;; org - wild notification
+;; (org-wild-notifier-mode)
+;; (setq org-wild-notifier-alert-time '(15 5))
+
+;; org - org-alert
+(setq alert-default-style 'libnotify)
+(setq org-alert-interval 300
+      org-alert-notify-cutoff 10
+      org-alert-notify-after-event-cutoff 10)
+
+;; org - capture templates
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
+         "* TODO %?\n:CREATED: %U\n  %i\n  %a")
+        ("u" "Unix Todo" entry (file+headline "~/org/unix.org" "Tasks")
+         "* TODO %?\n:CREATED: %U\n  %i\n  %a")))
+
+;; INFO: Org - habit
+;; (setq org-modules '(org-habit))
+
+;; org - auto save advices
+;;
+
+(defmacro η (fnc)
+  "Return function that ignores its arguments and invokes FNC."
+  `(lambda (&rest _rest)
+     (funcall ,fnc)))
+
+(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
+(advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
+
+(setq org-clock-persist t)
+
+;; Org - journal
+
+(setq org-journal-date-format "%a, %Y-%m-%d"
+      org-journal-file-format "%Y-%m-%d.org")
+
+;; org end
+  )
+
+;;; Calendar
+
+(defun calendar-helper () ;; doesn't have to be interactive
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+        (cfw:org-create-source "Purple")
+        (cfw:ical-create-source "unix@fi" "{{ keyring "cfw" "unixfi" }}" "SpringGreen4")
+        (cfw:ical-create-source "Google:priv" "{{ keyring "cfw" "google" }}" "DodgerBlue"))))
+(defun calendar-init ()
+  ;; switch to existing calendar buffer if applicable
+  (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
+                           (doom-visible-windows)
+                           :key #'window-buffer))
+      (select-window win)
+    (calendar-helper)))
+(defun =my-calendar ()
+  "Activate (or switch to) *my* `calendar' in its workspace."
+  (interactive)
+  (if (modulep! :ui workspaces) ;; create workspace (if enabled)
+      (progn
+        (+workspace-switch "Calendar" t)
+        (doom/switch-to-scratch-buffer)
+       (calendar-init)
+
+       (+workspace/display))
+    (setq +calendar--wconf (current-window-configuration))
+
+    (delete-other-windows)
+    (switch-to-buffer (doom-fallback-buffer))
+    (calendar-init)))
+(after! calfw
+
+ (setq cfw:render-line-breaker 'cfw:render-line-breaker-simple))
+
+;; Languages - C/C++
+
+(setq c-default-style "k&r"
+      c-basic-offset 4
+      indent-tabs-mode nil)
+
+; TODO: Opravdu tohle chci?
+(setq font-lock-comment-face  '(:foreground "#b4f7a5"))
+
+;; Langes - C/C++ - oprava enteru na autocomplete
+(after! cc
+  (dolist (key '("<return>" "RET"))
+    ;; Here we are using an advanced feature of define-key that lets
+    ;; us pass an "extended menu item" instead of an interactive
+    ;; function. Doing this allows RET to regain its usual
+    ;; functionality when the user has not explicitly interacted with
+    ;; Company.
+    (define-key company-active-map (kbd key)
+      `(menu-item nil company-complete
+                  :filter ,(lambda (cmd)
+                             (when (company-explicit-action-p)
+                               cmd)))))
+ (setq company-auto-complete-chars nil))
+
+;; TODO: MAGIT
+;;
+(setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+
+;;; TODO: diary settings
+(add-hook 'calendar-load-hook
+          (lambda ()
+            (calendar-set-date-style 'european)))
+
+(setq calendar-date-style 'european)
+(calendar-set-date-style 'european)
+
+;; ;;; TODO: chezmoi [it doesn't really work atm]
+
+
+;; (require 'chezmoi)
+;; (defun chezmoi--evil-insert-state-enter ()
+;;   "Run after evil-insert-state-entry."
+;;   (chezmoi-template-buffer-display nil (point))
+;;   (remove-hook 'after-change-functions #'chezmoi-template--after-change 1))
+
+;; (defun chezmoi--evil-insert-state-exit ()
+;;   "Run after evil-insert-state-exit."
+;;   (chezmoi-template-buffer-display nil)
+;;   (chezmoi-template-buffer-display t)
+;;   (add-hook 'after-change-functions #'chezmoi-template--after-change nil 1))
+
+;; (defun chezmoi-evil ()
+;;   (if chezmoi-mode
+;;       (progn
+;;         (add-hook 'evil-insert-state-entry-hook #'chezmoi--evil-insert-state-enter nil 1)
+;;         (add-hook 'evil-insert-state-exit-hook #'chezmoi--evil-insert-state-exit nil 1))
+;;     (progn
+;;       (remove-hook 'evil-insert-state-entry-hook #'chezmoi--evil-insert-state-enter 1)
+;;       (remove-hook 'evil-insert-state-exit-hook #'chezmoi--evil-insert-state-exit 1))))
+;; (add-hook 'chezmoi-mode-hook #'chezmoi-evil)
+
+;;; vterm shell
+(setq vterm-shell "/bin/zsh")
+(setq vterm-tramp-shells '(("docker" "/bin/sh")("sshx" "/bin/bash")))
+;(setq vterm-shell (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))
+
+;;; native compilation
+(setq native-comp-async-jobs-number 5) ; use 5 cores when native compiling
+
+;;; compilation - hide compilation if successful
+
+ (add-hook 'compilation-start-hook 'compilation-started)
+  (add-hook 'compilation-finish-functions 'hide-compile-buffer-if-successful)
+
+  (defcustom auto-hide-compile-buffer-delay 1
+    "Time in seconds before auto hiding compile buffer."
+    :group 'compilation
+    :type 'number
+  )
+
+  (defun hide-compile-buffer-if-successful (buffer string)
+    (setq compilation-total-time (time-subtract nil compilation-start-time))
+    (setq time-str (concat " (Time: " (format-time-string "%s.%3N" compilation-total-time) "s)"))
+
+    (if
+      (or
+        (string-match ".*exited abnormally.*" string)
+
+        ;; Delete it, if Hide Warnings too.
+        (with-current-buffer buffer
+          (goto-char (point-min))
+          (search-forward "warning" nil t)
+        )
+      )
+
+      ;;If Warnings/Errors then
+      (message (concat "Compiled with Warnings/Errors" time-str))
+
+      ;;If Compiled Successfully then
+      (progn
+        (bury-buffer buffer)
+        (run-with-timer auto-hide-compile-buffer-delay nil 'delete-window (get-buffer-window buffer 'visible))
+        (message (concat "Compiled Successfully" time-str))
+      )
+    )
+  )
+
+  (make-variable-buffer-local 'compilation-start-time)
+
+  (defun compilation-started (proc)
+    (setq compilation-start-time (current-time))
+  )
+
+;;; cdlatex (yasnisppet overrides cdlatex in latex mode)
+;; (map! :map cdlatex-mode-map
+;;       :i "TAB" #'cdlatex-tab)
+
+;;; fix org capture
+;;;
+(after! org
+  (defadvice! dan/+org--restart-mode-h-careful-restart (fn &rest args)
+    :around #'+org--restart-mode-h
+    (let ((old-org-capture-current-plist (and (bound-and-true-p org-capture-mode)
+                                              (bound-and-true-p org-capture-current-plist))))
+      (apply fn args)
+      (when old-org-capture-current-plist
+        (setq-local org-capture-current-plist old-org-capture-current-plist)
+        (org-capture-mode +1)))))
+
+(after! ispell
+  (setq ispell-dictionary "cs_CZ,en_US")
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "cs_CZ,en_US")
+
+
+  )
