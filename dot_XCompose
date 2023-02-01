@@ -116,8 +116,9 @@ include "%L"
 
 <Multi_key> <slash> <y>     : "✔" U2714 # HEAVY CHECK MARK
 <Multi_key> <slash> <x>     : "✘" U2718 # HEAVY BALLOT X
-
-<Multi_key> <o> <k>  : "✔" U2714 # HEAVY CHECK MARK
+  
+<Multi_key> <o> <k>  : "✓"
+#<Multi_key> <o> <k>  : "✔" U2714 # HEAVY CHECK MARK
 <Multi_key> <n> <o> <k>  : "✘" U2718 # HEAVY BALLOT X
 
 <Multi_key> <less> <comma> : "‹"
@@ -136,3 +137,8 @@ include "%L"
 <Multi_key> <s> <f> : "¯\\_(ツ)_/¯" # shrug  
 <Multi_key> <g> <i> <t> : "git commit --author 'Martin Klimeš <xklimes5@fi.muni.cz>' --verbose "
 <Multi_key> <d> <u> <e> : "📅" # due date signifier 📅
+
+# TODO 🤦
+
+
+
