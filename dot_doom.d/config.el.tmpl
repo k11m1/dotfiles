@@ -113,6 +113,15 @@
 {{ end }}
  (setq mu4e-view-auto-mark-as-read nil)
 
+ {{ if eq .chezmoi.hostname "k11book" }}
+ ; faster mail download
+  (setq +mu4e-backend nil)
+(after! mu4e
+;(setq mu4e-context-policy 'ask-if-none
+;      mu4e-compose-context-policy 'always-ask)
+  (setq mu4e-get-mail-command "/home/k11m1/.local/bin/get_mail.sh"))
+{{ end }}
+
  ;;(setq mu4e-headers-thread-first-child-prefix '("o " . "o ")) ; zmena!
 
 
