@@ -16,12 +16,29 @@
 
 
 ;; fonts
+{{ if eq .chezmoi.hostname "dares"}}
+(after! unicode-fonts
+  (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
+  (push "Asanb Math monospacified for DejaVu Sans Mono" (cadr (assoc "Miscellaneous Mathematical Symbols-B" unicode-fonts-block-font-mapping)))
+  (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
+{{ end }}
+{{ if eq .chezmoi.hostname "k11book" }}
 (after! unicode-fonts
   (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
   (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
+{{ end }}
 
+{{ if eq .chezmoi.hostname "dares"}}
+;(setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 22 :weight 'semi-light))
+;(setq doom-font (font-spec :family "Ubuntu Nerd Font Mono" :size 22 :weight 'semi-light))
+(setq doom-font (font-spec :family "DejaVuSansMono Nerd Font" :size 16 :weight 'semi-light))
+;(setq doom-font (font-spec :family "JetBrains Mono" :size 22 :weight 'semi-light))
+{{ end }}
+{{ if eq .chezmoi.hostname "k11book" }}
 ;(setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'semi-light))
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16))
+{{ end }}
+
 (setq doom-unicode-font doom-font)
 
 (setq all-the-icons-scale-factor 1.0) ;; fixes the issue of rightmost characters not fitting.
@@ -55,6 +72,13 @@
 
 ;; mu4e
 
+{{ if eq .chezmoi.hostname "dares" }}
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.13")
+  (setq +mu4e-backend nil)
+(after! mu4e
+  (setq mu4e-get-mail-command "/home/xklimes5/.local/bin/get_mail.sh"))
+{{ end }}
+
 (after! mu4e
   ;; mu4e - accounts
 (load "~/.doom.d/mu4eaccounts.el")
@@ -81,7 +105,12 @@
 ;; mu4e - main
 
   (setq mu4e-compose-in-new-frame t)
+{{ if eq .chezmoi.hostname "k11book" }}
  (setq mu4e-update-interval 300)             ;; update every 5 minutes
+ {{ end }}
+{{ if eq .chezmoi.hostname "dares"}}
+ (setq mu4e-update-interval 60)             ;; update every 5 minutes
+{{ end }}
  (setq mu4e-view-auto-mark-as-read nil)
 
  ;;(setq mu4e-headers-thread-first-child-prefix '("o " . "o ")) ; zmena!
