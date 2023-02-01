@@ -13,6 +13,7 @@ lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.builtin.dap.active = true;
 
+
 vim.opt.shiftwidth = 4 -- the number of spaces inserted for each indentation
 vim.opt.tabstop = 4 -- insert 4 spaces for a tab
 
@@ -43,6 +44,10 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 --   },
 -- }
 
+-- Change theme settings
+-- lvim.builtin.theme.options.dim_inactive = true
+-- lvim.builtin.theme.options.style = "storm"
+
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 lvim.builtin.which_key.mappings["t"] = {
@@ -57,14 +62,11 @@ lvim.builtin.which_key.mappings["t"] = {
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
-lvim.builtin.dashboard.active = true
-lvim.builtin.notify.active = true
+lvim.builtin.alpha.active = true
+lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.show_icons.git = 0
-lvim.builtin.treesitter.rainbow.enable = true
-vim.opt.undofile = true -- enable persistent undo
-vim.opt.scrolloff = 8 -- is one of my fav
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -76,6 +78,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "lua",
   "python",
   "typescript",
+  "tsx",
   "css",
   "rust",
   "java",
@@ -89,50 +92,34 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- generic LSP settings
 
+-- -- make sure server will always be installed even if the server is in skipped_servers list
+-- lvim.lsp.installer.setup.ensure_installed = {
+--     "sumneko_lua",
+--     "jsonls",
+-- }
+-- -- change UI setting of `LspInstallInfo`
+-- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
+-- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
+-- lvim.lsp.installer.setup.ui.border = "rounded"
+-- lvim.lsp.installer.setup.ui.keymaps = {
+--     uninstall_server = "d",
+--     toggle_server_expand = "o",
+-- }
+
 -- ---@usage disable automatic installation of servers
--- lvim.lsp.automatic_servers_installation = false
+-- lvim.lsp.installer.setup.automatic_installation = false
 
--- ---@usage Select which servers should be configured manually. Requires `:LvimCacheRest` to take effect.
--- See the full default list `:lua print(vim.inspect(lvim.lsp.override))`
--- vim.list_extend(lvim.lsp.override, { "pyright" })
-
--- ---@usage setup a server -- see: https://www.lunarvim.org/languages/#overriding-the-default-configuration
+-- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
+-- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
+-- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts) // TODO: 
---require("lvim.lsp.manager").setup("ccls", opts)
+-- require("lvim.lsp.manager").setup("pyright", opts)
 
--- some settings can only passed as commandline flags `clangd --help`
-local clangd_flags = {
-  "--all-scopes-completion",
-  "--suggest-missing-includes",
-  "--background-index",
-  "--pch-storage=disk",
-  "--cross-file-rename",
-  "--log=info",
-  "--completion-style=detailed",
-  "--enable-config", -- clangd 11+ supports reading from .clangd configuration file
-  "--clang-tidy",
-  -- "--std=c++1z",
-  -- "--clang-tidy-checks=-*,llvm-*,clang-analyzer-*,modernize-*,-modernize-use-trailing-return-type",
-  -- "--fallback-style=Google",
-  -- "--header-insertion=never",
-  -- "--query-driver=<list-of-white-listed-complers>"
-}
-
-local clangd_bin = "clangd"
-
-local custom_on_attach = function(client, bufnr)
-  require("lvim.lsp").common_on_attach(client, bufnr)
-  local opts = { noremap = true, silent = true }
-  vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>lh", "<Cmd>ClangdSwitchSourceHeader<CR>", opts)
-end
-
-local opts = {
-  cmd = { clangd_bin, unpack(clangd_flags) },
-  on_attach = custom_on_attach,
-}
-
-require("lvim.lsp.manager").setup("clangd", opts)
+-- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
+-- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
+-- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
+--   return server ~= "emmet_ls"
+-- end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
 -- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
@@ -257,29 +244,6 @@ lvim.plugins = {
     end,
     requires = "nvim-lua/plenary.nvim"
     },
-    {"ray-x/lsp_signature.nvim"},
-    {"jupyter-vim/jupyter-vim"},
-    {'GCBallesteros/jupytext.vim'},
-    {'marko-cerovac/material.nvim'},
-    {'catppuccin/nvim'},
-    {{ if eq .chezmoi.hostname "k11book"}}
-    {'rktjmp/lush.nvim'},
-    {'~/source/lush-template/'},
-    {{ end }}
-    {'nvim-orgmode/orgmode'},
-}
-
-require('orgmode').setup_ts_grammar()
-
--- Tree-sitter configuration
-require'nvim-treesitter.configs'.setup {
-  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
-  highlight = {
-    enable = true,
-    disable = {'org'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
-    additional_vim_regex_highlighting = {'org'}, -- Required since TS highlighter doesn't support all syntax features (conceal)
-  },
-  ensure_installed = {'org'}, -- Or run :TSUpdate org
 }
 
 require('orgmode').setup({
@@ -356,240 +320,15 @@ require'todo-comments'.setup() -- no need to specify bufnr if you don't use togg
 -- require'lsp_signature'.on_attach(cfg, bufnr) -- no need to specify bufnr if you don't use toggle_key
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
-lvim.autocommands.custom_groups = {
-  -- { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
-  { "BufNewFile", "*.pl", "0r ~/.config/lvim/templates/skeleton.pl" },
-  { "BufNewFile", "*.pm", "0r ~/.config/lvim/templates/skeleton.pm" },
-}
-
-require'lspconfig'.perlls.setup{}
-require'lspconfig'.hls.setup{}
-
-local dap = require('dap')
-dap.adapters.cppdbg = {
-  id = 'cppdbg',
-  type = 'executable',
-  command = '/home/k11m1/Downloads/cpptools/extension/debugAdapters/bin/OpenDebugAD7',
-}
-dap.configurations.cpp = {
-  {
-    name = "Launch file",
-    type = "cppdbg",
-    request = "launch",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    cwd = '${workspaceFolder}',
-    stopOnEntry = true,
-  },
-  {
-    name = 'Attach to gdbserver :1234',
-    type = 'cppdbg',
-    request = 'launch',
-    MIMode = 'gdb',
-    miDebuggerServerAddress = 'localhost:1234',
-    miDebuggerPath = '/usr/bin/gdb',
-    cwd = '${workspaceFolder}',
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-  },
-}
-
--- -- Debugger
--- lvim.builtin.dap.on_config_done = function(dap)
---     dap.adapters.lldb = {
---       type = 'executable',
---       command = '/usr/bin/lldb-vscode',
---       name = "lldb"
---     }
-
---     dap.configurations.cpp = {
---         {
---             name = "Launch",
---             type = "lldb",
---             request = "launch",
---             program = "${workspaceFolder}/build/binary_name",
---             cwd = "${workspaceFolder}/build",
---             stopOnEntry = false,
---             args = {},
---             runInTerminal = false,
---         },
---     }
---     dap.configurations.c = dap.configurations.cpp
--- end
-
-
--- require('snips')
-
-
--- Example config in Lua
--- require("github-theme").setup({
---   theme_style = "light",
---   function_style = "italic",
---   sidebars = {"qf", "vista_kind", "terminal", "packer"},
-
---   -- Change the "hint" color to the "orange" color, and make the "error" color bright red
---   colors = {hint = "orange", error = "#ff0000"},
-
---   -- Overwrite the highlight groups
---   overrides = function(c)
---     return {
---       htmlTag = {fg = c.red, bg = "#282c34", sp = c.hint, style = "underline"},
---       DiagnosticHint = {link = "LspDiagnosticsDefaultHint"},
---       -- this will remove the highlight groups
---       TSField = {},
---     }
---   end
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--   pattern = { "*.json", "*.jsonc" },
+--   -- enable wrap mode for json files only
+--   command = "setlocal wrap",
 -- })
-
-
-vim.api.nvim_set_keymap('n', '<leader>mm', [[<Cmd>lua require('material.functions').toggle_style()<CR>]], { noremap = true, silent = true })
-function toggle_background()
-  if vim.opt.background:get() == 'dark' then
-    vim.opt.background = 'light'
-  else
-    vim.opt.background = 'dark'
-  end
-end
-
-vim.api.nvim_set_keymap('n', 'tb', ':lua toggle_background()<CR>', {
-  silent = true,
-  noremap = true,
-})
-
-vim.g.material_style = "deep ocean"
-require('material').setup({
-
-	contrast = {
-		sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
-		floating_windows = false, -- Enable contrast for floating windows
-		line_numbers = false, -- Enable contrast background for line numbers
-		sign_column = false, -- Enable contrast background for the sign column
-		cursor_line = false, -- Enable darker background for the cursor line
-		non_current_windows = false, -- Enable darker background for non-current windows
-		popup_menu = false, -- Enable lighter background for the popup menu
-	},
-
-	italics = {
-		comments = false, -- Enable italic comments
-		keywords = false, -- Enable italic keywords
-		functions = false, -- Enable italic functions
-		strings = false, -- Enable italic strings
-		variables = false -- Enable italic variables
-	},
-
-	contrast_filetypes = { -- Specify which filetypes get the contrasted (darker) background
-		"terminal", -- Darker terminal background
-		"packer", -- Darker packer background
-		"qf" -- Darker qf list background
-	},
-
-	high_visibility = {
-		lighter = false, -- Enable higher contrast text for lighter style
-		darker = false -- Enable higher contrast text for darker style
-	},
-
-	disable = {
-		borders = false, -- Disable borders between verticaly split windows
-		background = false, -- Prevent the theme from setting the background (NeoVim then uses your teminal background)
-		term_colors = false, -- Prevent the theme from setting terminal colors
-		eob_lines = false -- Hide the end-of-buffer lines
-	},
-
-	lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
-
-	async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
-
-	custom_highlights = {} -- Overwrite highlights with your own
-})
-vim.api.nvim_set_keymap('n', '<leader>m', [[<Cmd>lua require('material.functions').toggle_style()<CR>]], { noremap = true, silent = true })
-
-
-
-
-
--- local catppuccin = require("catppuccin")
-
--- -- configure it
--- catppuccin.setup(
---     {
--- 		transparent_background = false,
--- 		term_colors = false,
--- 		styles = {
--- 			comments = "italic",
--- 			functions = "italic",
--- 			keywords = "italic",
--- 			strings = "NONE",
--- 			variables = "NONE",
--- 		},
--- 		integrations = {
--- 			treesitter = true,
--- 			native_lsp = {
--- 				enabled = true,
--- 				virtual_text = {
--- 					errors = "italic",
--- 					hints = "italic",
--- 					warnings = "italic",
--- 					information = "italic",
--- 				},
--- 				underlines = {
--- 					errors = "underline",
--- 					hints = "underline",
--- 					warnings = "underline",
--- 					information = "underline",
--- 				},
--- 			},
--- 			lsp_trouble = false,
--- 			lsp_saga = false,
--- 			gitgutter = false,
--- 			gitsigns = false,
--- 			telescope = false,
--- 			nvimtree = {
--- 				enabled = false,
--- 				show_root = false,
--- 			},
--- 			which_key = false,
--- 			indent_blankline = {
--- 				enabled = false,
--- 				colored_indent_levels = false,
--- 			},
--- 			dashboard = false,
--- 			neogit = false,
--- 			vim_sneak = false,
--- 			fern = false,
--- 			barbar = false,
--- 			bufferline = false,
--- 			markdown = false,
--- 			lightspeed = false,
--- 			ts_rainbow = false,
--- 			hop = false,
--- 		},
--- 	}
--- )
-
--- Example config in Lua
-vim.g.tokyonight_style = "night"
--- vim.g.tokyonight_italic_functions = true
--- vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
-
--- Change the "hint" color to the "orange" color, and make the "error" color bright red
--- vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
-
--- vim.g.tokyonight_style = "day"
--- Load the colorscheme
--- vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
--- #ccff00 
--- vim.g.tokyonight_colors = {comment = "#ff1493"}
--- vim.g.tokyonight_colors = {comment = "#3399ff"}
--- #66ff33
--- vim.g.tokyonight_style = "night"
--- vim.cmd[[colorscheme tokyonight]]
--- vim.g.tokyonight_style = "night"
--- lvim.colorscheme = "tokyonight"
--- vim.g.jupytext_fmt='py'
-
--- my theme
-vim.cmd[[colorscheme lush_template]]
-lvim.colorscheme = "lush_template"
-
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = "zsh",
+--   callback = function()
+--     -- let treesitter use bash highlight for zsh files as well
+--     require("nvim-treesitter.highlight").attach(0, "bash")
+--   end,
+-- })

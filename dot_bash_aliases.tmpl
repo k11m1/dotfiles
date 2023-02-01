@@ -1,3 +1,5 @@
+export EDITOR='/usr/bin/emacsclient -nw -c'
+
 # Dotfiles 
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias dts='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME status'
@@ -11,14 +13,21 @@ alias pb006="cd $HOME/fi/pb006"
 alias mb152="cd $HOME/fi/mb152"
 
 #todo
-alias wtn='todo new -l klimi@unix'
-alias t='todo new -l klimi@unix'
-alias ti='todo new -l inbox'
-alias tm='todo new -l muni'
-alias tp='todo new -l personal'
-#alias ti='todo new -l ideas'
-alias tommorow='todo new -l klimi@unix --due "+1d 10:00" '
-alias work='todo --humanize list klimi@unix --startable '
+#alias wtn='todo new -l klimi@unix'
+#alias t='todo new -l klimi@unix'
+#alias ti='todo new -l inbox'
+#alias tm='todo new -l muni'
+#alias tp='todo new -l personal'
+##alias ti='todo new -l ideas'
+#alias tommorow='todo new -l klimi@unix --due "+1d 10:00" '
+#alias work='todo --humanize list klimi@unix --startable '
+alias t='task'
+alias to='task-attach-open'
+alias ta='task-attach-add'
+alias tn='task-attach-new'
+alias toc='task-attach-open -x cat'
+
+
 
 #yay
 alias yay='nice -n 16 yay'
@@ -77,6 +86,7 @@ alias .5='cd ../../../../..'
 
 # vim and emacs
 alias em="/usr/bin/emacsclient -nw -c"
+alias e="$EDITOR "
 # alias emacs="emacsclient -c -a -t 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
 alias doomdoctor="~/.emacs.d/bin/doom doctor"
@@ -99,3 +109,13 @@ alias n='nvim'
 alias l='lvim'
 
 alias ssh-vanilla='ssh -F /dev/null -o PreferredAuthentications=password'
+
+vnc ()
+{
+    ssh -CJ xklimes5@{aisa,$1}.fi.muni.cz -L 9999:localhost:9999
+}
+
+# ideapad
+alias bat-enable='sudo /usr/bin/ideapad-cm enable'
+alias bat-disable='sudo /usr/bin/ideapad-cm disable'
+

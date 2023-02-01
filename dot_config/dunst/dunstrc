@@ -103,14 +103,31 @@
     frame_color = "#232323"
     max_icon_size = 32
     geometry = "300x5-30+20"
+# [profanity_important]
+#     appname = Profanity
+#     body = "xklimes5@fi.muni.cz*"
+#     timeout = 3
+#     script = "/home/k11m1/.local/libexec/play_notification.sh"
+#     frame_color = "#ffffff"
 [profanity]
     appname = Profanity
     timeout = 10
     script = "/home/k11m1/.local/libexec/play_notification.sh"
     frame_color = "#cf0ddd"
+# [profanity_importanta]
+#     appname = Profanity
+#     body = "xklimes5@fi.muni.cz*"
+#     timeout = 3
+#     script = "/home/k11m1/.local/libexec/play_notification.sh"
+#     frame_color = "#ff0000"
 [Cmus]
     appname = Cmus
     set_stack_tag = cmus_notification
 [jabber]
     appname = Gajim
     script = "/home/k11m1/testscript.sh"
+
+[profanitytag]
+    stack_tag = "KLIMITAG"
+    frame_color = "#ff0000"
+    urgency = critical

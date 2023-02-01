@@ -97,3 +97,5 @@ PERL_MM_OPT="INSTALL_BASE=/home/k11m1/perl5"; export PERL_MM_OPT;
 {{ if eq .chezmoi.hostname "dares" }}
 alias ch='~/bin/chezmoi'
 {{ end }}
+
+export VCPKG_DISABLE_METRICS=1

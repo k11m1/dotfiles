@@ -6,3 +6,7 @@ setxkbmap -option compose:caps
 #xinput set-prop 10 296 1
 xset r rate 250 30
 
+# touchpad
+xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Natural Scrolling Enabled" 1
+xinput set-prop "MSFT0002:00 04F3:3141 Touchpad" "libinput Tapping Enabled" 1
+

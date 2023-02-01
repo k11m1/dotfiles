@@ -101,6 +101,9 @@ bindsym $mod+Shift+Return exec emacsclient -c -a 'emacs'
 bindsym $mod+o exec emacsclient -c -e '(org-agenda-list)'
 bindsym $mod+Shift+o exec emacsclient -e '(org-agenda-list)'
 
+bindsym $mod+x exec /home/k11m1/.emacs.d/bin/org-capture
+for_window [title="doom-capture"] floating enable
+
 #Thunar
 bindsym $mod+t exec thunar
 
@@ -136,6 +139,7 @@ bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 #bindsym $mod+s exec "rofi -show ssh"
 bindsym $mod+s exec "rofi -show run"
+bindsym $mod+c exec /home/k11m1/.local/bin/tracking.sh 
 bindsym $mod+i exec rofimoji
 
 # change focus

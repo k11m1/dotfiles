@@ -22,7 +22,12 @@ set sidebar_folder_indent
 set sidebar_indent_string="  "
 # Indent with two spaces
 bind index ii limit-current-thread
+bind index i5 vfolder-from-query
+set nm_default_url = "notmuch:///home/k11m1/.local/share/mail"
+set nm_db_limit = 1000
 virtual-mailboxes "inbox" "notmuch://?query=tag:inbox"
+virtual-mailboxes "inboxklimi" "notmuch://?query=tag:inbox"
+virtual-mailboxes "meheheall" "notmuch://?query=thread:{tag:unread}"
 virtual-mailboxes "unread" "notmuch://?query=tag:unread"
 # virtual-mailboxes "archive" "notmuch://?query=tag:archive"
 # virtual-mailboxes "sent" "notmuch://?query=tag:sent"
@@ -39,3 +44,4 @@ set sort = 'threads'
 set new_mail_command="notify-send --icon='{{ .chezmoi.homeDir }}/newmail.jpg' \
 'New Email' '%n new messages, %u unread.' &"
 bind index,pager \` modify-labels
+macro index,pager ii "<pipe-message>mutt2task<enter>"
