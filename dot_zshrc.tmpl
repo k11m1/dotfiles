@@ -72,6 +72,8 @@ source ~/.bash_aliases
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  notify
+#  zsh-autosuggestions
 )
 
 #source $ZSH/oh-my-zsh.sh
@@ -124,3 +126,18 @@ alias nozsh='DISABLE_MAGIC_FUNCTIONS=true zsh'
 alias ch='chezmoi'
 alias stacktrace='gdb -ex "set confirm off" -ex r -ex bt -ex q -ex "set confirm off" -ex q'
 
+export PATH="$PATH:/home/k11m1/.cargo/bin"
+
+eval "$(zoxide init zsh)"
+
+## ZSH
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+#zstyle ':notify:*' error-icon "https://media3.giphy.com/media/10ECejNtM1GyRy/200_s.gif"
+#zstyle ':notify:*' error-title "wow such #fail"
+#zstyle ':notify:*' success-icon "https://s-media-cache-ak0.pinimg.com/564x/b5/5a/18/b55a1805f5650495a74202279036ecd2.jpg"
+#zstyle ':notify:*' success-title "very #success. wow"
+
+# TODO: move this
+export LSP_USE_PLISTS=true
