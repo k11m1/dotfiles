@@ -1,6 +1,7 @@
 ;; default
 (setq user-full-name "Martin Klimeš"
       user-mail-address "{{ .email }}"
+
       user-login-name "{{ .chezmoi.username }}")
 
 (setq org-directory "~/org/")
@@ -74,10 +75,12 @@
 
 {{ if eq .chezmoi.hostname "dares" }}
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.13")
-  (setq +mu4e-backend nil)
-(after! mu4e
-  (setq mu4e-get-mail-command "/home/xklimes5/.local/bin/get_mail.sh"))
 {{ end }}
+
+; faster mail download
+(setq +mu4e-backend nil)
+(after! mu4e
+  (setq mu4e-get-mail-command "{{ .chezmoi.homeDir }}/.local/bin/get_mail.sh"))
 
 (after! mu4e
   ;; mu4e - accounts
@@ -113,14 +116,6 @@
 {{ end }}
  (setq mu4e-view-auto-mark-as-read nil)
 
- {{ if eq .chezmoi.hostname "k11book" }}
- ; faster mail download
-  (setq +mu4e-backend nil)
-(after! mu4e
-;(setq mu4e-context-policy 'ask-if-none
-;      mu4e-compose-context-policy 'always-ask)
-  (setq mu4e-get-mail-command "/home/k11m1/.local/bin/get_mail.sh"))
-{{ end }}
 
  ;;(setq mu4e-headers-thread-first-child-prefix '("o " . "o ")) ; zmena!
 
@@ -164,7 +159,8 @@
 
   ;(:name "Unread messages" :query "flag:unread AND NOT flag:trashed AND NOT /{{ .fiemail }}/mailbox.spam" :key ?u)
   (:name "Yesterday's messages" :query "date:2d..1d" :key ?y)
-  (:name "Inbox fi" :query "maildir:/{{ .fiemail }}/INBOX" :key ?i)
+  (:name "Inbox fi Unread" :query "flag:personal and flag:unread" :key ?i)
+  (:name "Inbox fi" :query "flag:personal" :key ?I)
   (:name "CVT important" :query "(maildir:/{{ .fiemail }}/CVT/Unix OR maildir:/{{ .fiemail }}/CVT/cvt) and flag:unread" :key ?c)
   (:name "Unread Monitoring" :query "maildir:/{{ .fiemail }}/Monitoring/ and flag:unread" :key ?m)
 
