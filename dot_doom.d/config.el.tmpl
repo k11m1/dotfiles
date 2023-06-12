@@ -164,14 +164,20 @@
 
        +mu4e-min-header-frame-width 143
        mu4e-headers-date-format "%d/%m/%y"
+{{ if eq .chezmoi.hostname "klimovo" }}
        mu4e-headers-time-format "⧖ %H:%M"
+       mu4e-headers-unread-mark    '("u" . "☐")
+{{ end }}
+{{ if eq .chezmoi.hostname "dares"}}
+       mu4e-headers-time-format " %H:%M"
+      mu4e-headers-unread-mark    '("u" . "▰")
+{{ end }}
        ;mu4e-headers-time-format "  %H:%M"
        mu4e-search-results-limit 1000
        mu4e-index-cleanup t)
 ;; (setq mu4e-headers-unread-mark    '("u" . "▰"))
 ;; (setq mu4e-headers-unread-mark    '("u" . "◊"))
 ;; (setq mu4e-headers-read-mark    '("u" . "◆"))
-(setq mu4e-headers-unread-mark    '("u" . "☐"))
 ;;(setq mu4e-headers-    '("u" . "☑"))
 
 
@@ -431,7 +437,23 @@ by the date of first mail of group."
 ;;          ((agenda "")
 ;;           (tags-todo "unix"))
 
-;;          ((org-agenda-tag-filter '("+unix"))))))
+(setq org-agenda-exporter-settings
+      '(
+      ;  (ps-number-of-columns 2)
+      ;  (ps-landscape-mode t)
+      ;  (org-agenda-add-entry-text-maxlines 5)
+        (htmlize-output-type 'inline-css)))
+
+(setq org-agenda-custom-commands
+      '(("h" "Agenda and "
+         ((tags-todo "phone")(agenda "")
+
+          ) nil ("~/tmp/agenda.export.html")  )
+        ("o" "Agenda and Office-related tasks"
+         ((agenda "")
+          (tags-todo "unix"))
+
+         ((org-agenda-tag-filter '("+unix"))))))
 
 ;; org - source block templates
 
@@ -812,7 +834,7 @@ by the date of first mail of group."
 
 (after! mu4e
 (setq mu4e-spam-folder "Spam")
-
+(setq mu4e-change-filenames-when-moving t)
 ;; Mark as read and move to spam
 (add-to-list 'mu4e-marks
              '(spam
@@ -821,8 +843,47 @@ by the date of first mail of group."
                :show-target (lambda (target) mu4e-spam-folder)
                :action      (lambda (docid msg target)
                               (mu4e~proc-move docid mu4e-spam-folder "+S-u-N"))))
+(add-to-list 'mu4e-marks
+  '(tag
+     :char       "g"
+     :prompt     "gtag"
+     :ask-target (lambda () (read-string "What tag do you want to add?"))
+     :action      (lambda (docid msg target)
+                    (mu4e-action-retag-message msg (concat "+" target)))))
+(add-to-list 'mu4e-marks
+             '(captured
+               :char       "C"
+               :prompt     "Captured"
+               :action      (lambda (docid msg target)
+                              (mu4e--server-move docid nil "+S-u-N+F")
+                              (org-capture-select-template "e")
+                              (org-capture)
+                              )))
+(add-to-list 'mu4e-marks
+  '(later
+     :char       "L"
+     :prompt     "later"
+     :show-target (lambda (target) "later")
+     :action      (lambda (docid msg target)
+                    ;; must come before proc-move since retag runs
+                    ;; 'sed' on the file
+                    (mu4e-action-retag-message msg "+later")
 
+                    (mu4e--server-move docid nil "+S-u-N"))))
+
+(mu4e~headers-defun-mark-for tag)
 (mu4e~headers-defun-mark-for spam)
+(mu4e~headers-defun-mark-for later)
+(mu4e~headers-defun-mark-for captured)
+(map!
+ :map mu4e-headers-mode-map
+
+      :m "t g" #'mu4e-headers-mark-for-tag
+      :m "t l" #'mu4e-headers-mark-for-later
+      :m "t s" #'mu4e-headers-mark-for-spam
+      :m "t c" #'mu4e-headers-mark-for-captured
+      )
+(define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
 (define-key mu4e-headers-mode-map (kbd "F") 'mu4e-headers-mark-for-spam)
 )
 (defun end-of-buffer-before-reply ()
@@ -838,6 +899,10 @@ by the date of first mail of group."
 ;; (setq smerge-command-prefix "SPC")
 (setq smerge-command-prefix "\C-cv")
 
+{{ if eq .chezmoi.hostname "dares"}}
+(setq plantuml-jar-path "/home/k11m1/Downloads/plantuml-1.2022.5.jar")
+(setq plantuml-default-exec-mode 'jar)
+{{ end }}
 (setq cdlatex-math-modify-alist '((100 "\\mathbb" "\\textbb" t nil nil)))
 ;(defun org-agenda-color-category (category backcolor forecolor)
 ;  (let ((re (rx-to-string `(seq bol (0+ space) ,category (1+ space)))))
@@ -1255,9 +1320,8 @@ is tomorrow.  With two prefixes, select the deadline."
       ))
 
 (after! org
-
-
-  )
+  (setq org-timed-alerts-warning-times '(20 10 5))
+  (add-hook 'org-mode-hook #'org-timed-alerts-mode))
 
 
 ;; (setq org-super-agenda-groups
@@ -1288,6 +1352,9 @@ is tomorrow.  With two prefixes, select the deadline."
 
 
 
+
+;;; evil snipe
+(setq evil-snipe-scope 'buffer) ; evil sneak
 
 ;;; Org export agenda ics
 
@@ -1330,42 +1397,44 @@ is tomorrow.  With two prefixes, select the deadline."
 ;  )
 ;
 
+;;; dired peep
+;; Add the j and k keys to move to next and previous files in peed-dired mode
+(evil-define-key 'normal peep-dired-mode-map
+  (kbd "j") 'peep-dired-next-file
+  (kbd "k") 'peep-dired-prev-file)
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 
-;(defun org-timed-alerts-set-all-timers ()
-;  "Run `org-ql' query to get all headings with today's timestamp."
-;  (interactive)
-;  (org-timed-alerts-cancel-all-timers)
-;  (cl-loop for entry in (org-ql-select (or org-timed-alerts-files
-;					   (org-agenda-files))
-;			  `(and
-;			    (or (ts-repeat)
-;				(ts-active
-;				 :from ,(ts-format "%Y-%m-%d" (ts-now))
-;				 :to ,(ts-format "%Y-%m-%d"
-;						 (ts-adjust 'day 1 (ts-now)))))
-;			    (not (@org-timed-alerts-todo-exclusions)))
-;			  :action #'org-timed-alerts--org-ql-action)
-;	   do (org-timed-alerts--parser entry))
-;  (message "Org-timed-alerts: timers updated. Klimi version"))
+;; Add the key binding SPC d p to toggle peep-dired-mode while in dired (you can add the key binding you like)
+(map! :leader
+       (:after dired
+        (:map dired-mode-map
+         :desc "peep mode" "d p" #'peep-dired)))
 
-;(use-package! org-timed-alerts
-;  :after (org)
-;  :custom
-;  (org-timed-alerts-alert-function #'alert)
-;  (org-timed-alerts-tag-exclusions nil)
-;  (org-timed-alerts-default-alert-props nil)
-;  (org-timed-alerts-warning-times '(-10 -5))
-;  (org-timed-alerts-agenda-hook-p t)
-;  (org-timed-alert-final-alert-string "IT IS %alert-time\n\n%todo %headline")
-;  (org-timed-alert-warning-string (concat "%todo %headline\n at %alert-time\n "
-;                                          "it is now %current-time\n "
-;                                          "*THIS IS YOUR %warning-time MINUTE WARNING*"))
-;  :config
-;  (add-hook 'org-mode-hook #'org-timed-alerts-mode))
-
-;(after! org
-;  (org-timed-alerts-mode)
-;  )
+;;; Orgmode todo keywords
+;; (setq org-todo-keywords
+;;       '((sequence
+;;          "TODO(t)"  ; A task that needs doing & is ready to do
+;;          "PROJ(p)"  ; A project, which usually contains other tasks
+;;          "NEXT(n)"  ; A task that is in progress
+;;          "WAIT(t)"  ; Something external is holding up this task
+;;          "HOLD(h)"  ; This task is paused/on hold because of me
+;;          "OPEN(o)"  ; An open or ongoing loop
+;;          "|"
+;;          "DONE(d)"  ; Task successfully completed
+;;          "KILL(K)") ; Task was cancelled, aborted or is no longer applicable
+;;         (sequence
+;;          "[ ](T)"   ; A task that needs doing
+;;          "[-](S)"   ; Task is in progress
+;;          "[?](W)"   ; Task is being held up or paused
+;;          "|"
+;;          "[X](D)")  ; Task was completed
+;;         (sequence   ; adapted from Tony Ballantyne's writing methodology
+;;          "IDEA(i!)"
+;;          "WRITE(w!)"
+;;          "EDIT(e!)"
+;;          "WORKING(k!)"
+;;          "|"
+;;          "USED(u!/@)")))
 
 (after! org
    (add-hook! 'org-mode-hook #'org-timed-alerts-mode)
