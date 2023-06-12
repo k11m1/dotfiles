@@ -444,16 +444,16 @@ by the date of first mail of group."
       ;  (org-agenda-add-entry-text-maxlines 5)
         (htmlize-output-type 'inline-css)))
 
-(setq org-agenda-custom-commands
-      '(("h" "Agenda and "
-         ((tags-todo "phone")(agenda "")
+;; (setq org-agenda-custom-commands
+;;       '(("h" "Agenda and "
+;;          ((tags-todo "phone")(agenda "")
 
-          ) nil ("~/tmp/agenda.export.html")  )
-        ("o" "Agenda and Office-related tasks"
-         ((agenda "")
-          (tags-todo "unix"))
+;;           ) nil ("~/tmp/agenda.export.html")  )
+;;         ("o" "Agenda and Office-related tasks"
+;;          ((agenda "")
+;;           (tags-todo "unix"))
 
-         ((org-agenda-tag-filter '("+unix"))))))
+;;          ((org-agenda-tag-filter '("+unix"))))))
 
 ;; org - source block templates
 
@@ -1300,7 +1300,7 @@ is tomorrow.  With two prefixes, select the deadline."
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
                           (:name "Waiting..." :todo "unix" :order 1)
                           (:name "Scheduled earlier" :scheduled past))
-                       )) nil ("~/tmp/agenda.export.html"))
+                       )))
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
@@ -1316,7 +1316,7 @@ is tomorrow.  With two prefixes, select the deadline."
                           (:name "Waiting" :todo "WAITING" :order 20)
                           (:name "University" :tag "uni" :order 32)
                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          )))))         )
+                          ))))) nil ("~/tmp/agenda.export.html")          )
       ))
 
 (after! org
