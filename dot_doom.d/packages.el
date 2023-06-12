@@ -48,6 +48,9 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! wakatime-mode)
+{{ if eq .chezmoi.hostname "klimovo" }}
+(package! activity-watch-mode)
+{{ end }}
 ;(package! org-wild-notifier)
 ;(package! org-alert)
 (package! org-notifications)
@@ -61,8 +64,48 @@
 (package! laas)
 (package! aas)
 (package! moe-theme)
+;(package! outline-minor-faces)
+(package! outshine)
+(package! org-super-agenda)
 
 ; testing column colors in mu4e
 ;(package! mu4e-column-faces)
 (unpin! doom-themes)
 (unpin! lsp-treemacs)
+(unpin! mu4e-alert)
+;; (unpin! forge)
+
+;; ;; hotfix workaround forge
+;; (package! closql :pin "0a7226331ff1f96142199915c0ac7940bac4afdd")
+
+;; testing
+
+(package! org-timed-alerts
+  :recipe (:host github :repo "k11m1/org-timed-alerts"))
+
+;; PB138 - typescript prisma
+(package! prisma-mode :recipe (:host github :repo "pimeys/emacs-prisma-mode" :branch "main"))
+
+
+(package! jupyter)
+(package! ein)
+(package! org-clock-budget
+  :recipe (:host github :repo "Fuco1/org-clock-budget" :files ("*.el"))
+  )
+;; :files ("*.el" "src/lisp/*.el")
+
+(package! beacon)
+
+;; PB138 - tailwind
+(package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
+(package! company-tabnine)
+
+;; screencast keys
+(package! keycast)
+
+;; mu4e - evil mu 10 hotfix
+(unpin! evil-collection)
+
+;; pdf better links in org mode
+(package! org-pdftools)
+(package! org-noter-pdftools)
