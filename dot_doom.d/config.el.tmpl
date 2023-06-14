@@ -111,7 +111,12 @@
 ; faster mail download
 (setq +mu4e-backend nil)
 (after! mu4e
+    (add-hook 'mu4e-compose-mode-hook (lambda ()
+                                        ;; other customizations
+                                        (message-remove-header "Date")))
+
   (setq mu4e-get-mail-command "{{ .chezmoi.homeDir }}/.local/bin/get_mail.sh"))
+
 
 (after! mu4e
   ;; mu4e - accounts
