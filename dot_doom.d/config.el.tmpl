@@ -838,7 +838,7 @@ by the date of first mail of group."
 ;;;
 
 (after! mu4e
-(setq mu4e-spam-folder "Spam")
+(setq mu4e-spam-folder "/xklimes5@fi.muni.cz/mailbox.spam")
 (setq mu4e-change-filenames-when-moving t)
 ;; Mark as read and move to spam
 (add-to-list 'mu4e-marks
@@ -847,7 +847,7 @@ by the date of first mail of group."
                :prompt     "Spam"
                :show-target (lambda (target) mu4e-spam-folder)
                :action      (lambda (docid msg target)
-                              (mu4e~proc-move docid mu4e-spam-folder "+S-u-N"))))
+                              (mu4e--server-move docid mu4e-spam-folder "+S-u-N"))))
 (add-to-list 'mu4e-marks
   '(tag
      :char       "g"
@@ -887,7 +887,13 @@ by the date of first mail of group."
       :m "t l" #'mu4e-headers-mark-for-later
       :m "t s" #'mu4e-headers-mark-for-spam
       :m "t c" #'mu4e-headers-mark-for-captured
+      :m "f" #'mu4e-headers-mark-for-read ; remaps evil things, but you don't use snipe in headers view, do you
       )
+(map!
+ :map mu4e-view-mode-map
+      :m "f" #'mu4e-view-mark-for-read ; TODO: remaps evil things, you maybe be using this
+ )
+
 (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
 (define-key mu4e-headers-mode-map (kbd "F") 'mu4e-headers-mark-for-spam)
 )
@@ -1326,6 +1332,9 @@ is tomorrow.  With two prefixes, select the deadline."
 
 (after! org
   (setq org-timed-alerts-warning-times '(20 10 5))
+  (setq org-timed-alerts-final-alert-string "IT IS <span foreground=\"green\">%alert-time</span>\n\nTIME FOR: %todo\n<span foreground=\"blue\">%headline</span>")
+  ;; (setq org-timed-alerts-default-alert-props
+  ;;     '(:persistent  t))
   (add-hook 'org-mode-hook #'org-timed-alerts-mode))
 
 
@@ -1738,3 +1747,64 @@ is tomorrow.  With two prefixes, select the deadline."
 ;;   (add-to-list 'global-mode-string '("" keycast-mode-line))
 ;;   :hook
 ;;   (doom-modeline-mode . keycast-mode-line-mode))
+
+
+;;; MU4E vol2
+(after! mu4e
+  (setq mu4e-notification-support t)
+
+  ;;; Temporary fix, doom upstream doesn't support mu 1.10
+    (defun klimi/mu4e-view-select-attachment ()
+      "Use completing-read to select a single attachment.
+Acts like a singular `mu4e-view-save-attachments', without the saving."
+      (if-let ((parts (delq nil (mapcar
+                                 (lambda (part)
+                                   (when (assoc "attachment" (cdr part))
+                                     part))
+                                 (mu4e--view-gather-mime-parts))))
+               (files (+mu4e-part-selectors parts)))
+          (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
+        (user-error (mu4e-format "No attached files found"))))
+
+ (defun klimi/mu4e-view-open-attachment ()
+      "Select an attachment, and open it."
+      (interactive)
+      (mu4e--view-open-file
+       (mu4e--view-mime-part-to-temp-file (cdr (klimi/mu4e-view-select-attachment)))))
+        (map! :map mu4e-view-mode-map
+                :ne "o" #'klimi/mu4e-view-open-attachment)
+
+
+
+(defun search-for-sender (msg)
+  "Search for messages sent by the sender of the message at point."
+  (mu4e-search
+    (concat "from:"
+      (mu4e-contact-email (car (mu4e-message-field msg :from))))))
+
+;; define 'x' as the shortcut
+(add-to-list 'mu4e-view-actions
+  '("asearch for sender" . search-for-sender) t)
+
+
+
+
+
+
+  )
+
+
+;; (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-major-mode-org-or-markdown) ; or #'org-mode if that's what's present
+;; (add-hook 'emacs-everywhere-init-hooks #'gfm-mode)
+
+;;; Ansi derivated mode for terminal logs
+(define-derived-mode fundamental-ansi-mode fundamental-mode "fundamental ansi"
+  "Fundamental mode that understands ansi colors."
+  (require 'ansi-color)
+  (ansi-color-apply-on-region (point-min) (point-max)))
+
+(defun no-junk-please-were-unixish ()
+  (interactive)
+  (let ((coding-str (symbol-name buffer-file-coding-system)))
+    (when (string-match "-\\(?:dos\\|mac\\)$" coding-str)
+      (set-buffer-file-coding-system 'unix))))
