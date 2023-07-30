@@ -6,10 +6,6 @@
 
       user-login-name "{{ .chezmoi.username }}")
 
-(setq org-directory "~/org/")
-(setq org-deadline-warning-days 7)
-
-
 (setq auto-save-interval 200) ; default is 300
 
 (setq-default indent-tabs-mode nil)
@@ -79,19 +75,36 @@
 
 
 ;; org
-;;; org agenda
-;(setq org-columns-default-format "%60ITEM(Task) %6Effort(Estim){:}")
+;;; Klimi/ORG-MODE
+
+(setq org-image-actual-width (truncate (* (window-pixel-width) 0.25)))
+
+(setq org-directory "~/org/")
+(setq org-deadline-warning-days 7)
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
-;; (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%-6e% s")
-;;                                 (todo . " %i %-12:c %-6e")
-;;                                 (tags . " %i %-12:c")
-;;                                 (search . " %i %-12:c")))
+
+(setq org-highest-priority ?A
+      org-default-priority ?C
+      org-lowest-priority  ?E)
+
+(setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
+
+
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-tags-column 166 ;; from testing this seems to be a good value
+      org-agenda-compact-blocks t
+      org-agenda-sticky t) ;; don't bury my buffers, i like to return to them
+
+;; org-roam
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry "* %<%I:%M %p>: %?"
          :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
 
+;;;; Agenda look
 (setq
- ;;;; Agenda styling
  org-agenda-tags-column 0
  org-agenda-block-separator ?─
  org-agenda-time-grid
@@ -100,6 +113,203 @@
    " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
  org-agenda-current-time-string
  "⭠ now ─────────────────────────────────────────────────")
+
+;;;; org-timed-alerts - org timed alerts
+; This is the only package that works without much CPU usage because it
+; schedules things in advance and rescans only on request!
+
+(after! org
+  (setq org-timed-alerts-warning-times '(20 10 5))
+  (setq org-timed-alerts-final-alert-string "IT IS <span foreground=\"green\">%alert-time</span>\n\nTIME FOR: %todo\n<span foreground=\"blue\">%headline</span>")
+  (add-hook 'org-mode-hook #'org-timed-alerts-mode))
+
+;;;; org-super-agenda
+
+; disable header map so i can use the evil from org agenda
+(setq org-super-agenda-header-map nil)
+
+(use-package! org-super-agenda
+  :commands org-super-agenda-mode)
+
+(setq org-agenda-custom-commands
+      '(
+        ("u" "Unix"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t
+                           :order -1)
+                          (:log t)  ; Automatically named "Log"
+                          (:name "Today"
+                           :deadline today
+                           :scheduled today :order -2)
+                          (:habit t)
+                          (:name "Due soon" :deadline future)
+                          (:name "Overdue" :deadline past)
+                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+                          (:name "Waiting..." :todo "unix" :order 1)
+                          (:name "Scheduled earlier" :scheduled past))
+                       )))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next to do" :todo "NEXT" :order 1)
+                          (:name "Important" :tag "Important" :priority "A" :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7)
+                          (:name "Emails" :tag "email" :order 10)
+                          (:name "UnixTodo" :tag "unix" :order 12)
+                          (:name "Emacs" :tag "Emacs" :order 13)
+                          (:name "Projects" :tag "Project" :order 14)
+                          (:name "Research" :tag "Research" :order 15)
+                          (:name "To read" :tag "Read" :order 30)
+                          (:name "Waiting" :todo "WAITING" :order 20)
+                          (:name "University" :tag "uni" :order 32)
+                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+                          (:discard (:tag ("muni"))))))))         )
+        ("p" "Personal"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t
+                           :order -1)
+                          (:log t)  ; Automatically named "Log"
+                          (:name "Today"
+                           :deadline today
+                           :scheduled today :order -2)
+                          (:habit t)
+                          (:name "Due soon" :deadline future)
+                          (:name "Overdue" :deadline past)
+                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+                          (:name "Waiting..." :todo "unix" :order 1)
+                          (:name "Scheduled earlier" :scheduled past))
+                       )))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next to do" :todo "NEXT" :order 1)
+                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7)
+                           (:discard (:tag ("unix") :category ("UNIX")))
+                          (:name "Emails" :tag "email" :order 10)
+                          (:name "Muni" :tag "muni" :order 12)
+                          (:name "Emacs" :tag "Emacs" :order 13)
+                          (:name "Projects" :tag "Project" :order 14)
+                          (:name "Research" :tag "Research" :order 15)
+                          (:name "To read" :tag "Read" :order 30)
+                          (:name "Waiting" :todo "WAITING" :order 20)
+                          (:name "University" :tag "uni" :order 32)
+                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+                          )))))         )
+        ("a" "ALL"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t
+                           :order -1)
+                          (:log t)  ; Automatically named "Log"
+                          (:name "Today"
+                           :deadline today
+                           :scheduled today :order -2)
+                          (:habit t)
+                          (:name "Due soon" :deadline future)
+                          (:name "Overdue" :deadline past)
+                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+                          (:name "Waiting..." :todo "unix" :order 1)
+                          (:name "Scheduled earlier" :scheduled past))
+                       )))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next to do" :todo "NEXT" :order 1)
+                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7)
+                           ;; (:discard (:tag ("unix") :category ("UNIX")))
+                          (:name "Emails" :tag "email" :order 10)
+                          (:name "Muni" :tag "muni" :order 12)
+                          (:name "Emacs" :tag "Emacs" :order 13)
+                          (:name "Projects" :tag "Project" :order 14)
+                          (:name "Research" :tag "Research" :order 15)
+                          (:name "To read" :tag "Read" :order 30)
+                          (:name "Waiting" :todo "WAITING" :order 20)
+                          (:name "University" :tag "uni" :order 32)
+                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+                          ))))) nil ("~/tmp/agenda.export.html")          )
+      ))
+
+
+;;;;; After org-agenda
+
+(after! org-agenda
+  (let ((inhibit-message t))
+    (org-super-agenda-mode)))
+
+
+
+
+;;;; Org Export Agenda ICS
+
+(setq org-icalendar-combined-agenda-file "~/org/org.ics")
+(setq org-icalendar-use-scheduled '(event-if-todo-not-done todo-start))
+(setq org-icalendar-use-deadline '(event-if-todo-not-done todo-due))
+(setq org-icalendar-scheduled-summary-prefix "📃: ")
+;; (setq org-icalendar-deadline-summary-prefix "❗❕: ")
+;; (setq org-icalendar-deadline-summary-prefix "🚨🚨: ")
+(setq org-icalendar-deadline-summary-prefix "🟥: ")
+(setq org-icalendar-exclude-tags '("ics"))
+
+
+;;;; HACK QUESTION ORG it might not be needed anymore with the categories
+
+; uncomment if ??? in org agenda 
+;(find-file "~/org/index.org")
+;(find-file "~/org/unix.org")
+
+;;;; Klimi/jump to org mode file
+
+; TODO add a binding? or something?
+
+(defun klimi/find-file-in-org ()
+  (interactive)
+
+        ;; (defun doom-project-browse (org-directory))
+  (doom-project-find-file org-directory)
+  )
+
+;;;; org-download
+
+(defun my-org-download-method (link)
+  (let ((filename
+         (file-name-nondirectory
+          (car (url-path-and-query
+                (url-generic-parse-url link)))))
+        (dirname (concat "img/" (file-name-sans-extension (buffer-name)))))
+    ;; if directory does not exist, create it
+    (unless (file-exists-p dirname)
+      (make-directory dirname))
+    ;; return the path to save the download files
+    (concat dirname "/" filename)
+                                        ;(expand-file-name filename dirname)
+    ))
+;; only modify `org-download-method' in this project
+(after! org-download
+  (setq org-download-method 'my-org-download-method)
+  (setq org-download-link-format "[[file:%s]]\n")
+  )
+
+(defun zz/org-download-paste-clipboard (&optional use-default-filename)
+  (interactive "P")
+  ;; (require 'org-download)
+  (let ((file
+         (if (not use-default-filename)
+             (read-string (format "Filename [%s]: "
+                                  org-download-screenshot-basename)
+                          nil nil org-download-screenshot-basename)
+           nil)))
+    (org-download-clipboard file)))
+
+
+
+;;; Klimi final newline yasnippet
+(defun klimi/disable-final-newline ()
+    (interactive)
+    (set (make-local-variable 'require-final-newline) nil))
 
 ;;; mu4e
 
@@ -144,7 +354,7 @@
 ;;;; mu4e - main
 
   (setq mu4e-compose-in-new-frame t)
-{{ if eq .chezmoi.hostname "k11book" }}
+{{ if eq .chezmoi.hostname "klimovo" }}
  (setq mu4e-update-interval 300)             ;; update every 5 minutes
  {{ end }}
 {{ if eq .chezmoi.hostname "dares"}}
@@ -189,9 +399,14 @@
 ;;; mu4e - bookmarks
 
  (setq mu4e-bookmarks
- '(( :name  "Unread messages"
+ `(( :name  "Unread important messages"
+     :query ,(concat "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam OR maildir:/{{ .fiemail }}/mailbox.spam.1 OR " klimi/mu4e-monitoring-mail-query ")" )
      :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
      :key ?u)
+( :name  "Unread all messages"
+     :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
+     :key ?U)
+  (:name "Unread Monitoring" :query ,(concat klimi/mu4e-monitoring-mail-query " and flag:unread") :key ?m)
    ( :name "Today's messages"
      :query "date:today..now"
      :key ?t)
@@ -207,8 +422,8 @@
   (:name "Yesterday's messages" :query "date:2d..1d" :key ?y)
   (:name "Inbox fi Unread" :query "flag:personal and flag:unread" :key ?i)
   (:name "Inbox fi" :query "flag:personal" :key ?I)
-  (:name "CVT important" :query "(maildir:/{{ .fiemail }}/CVT/Unix OR maildir:/{{ .fiemail }}/CVT/cvt) and flag:unread" :key ?c)
-  (:name "Unread Monitoring" :query "maildir:/{{ .fiemail }}/Monitoring/ and flag:unread" :key ?m)
+  (:name "CVT important" :query ,(concat klimi/mu4e-important-mail-query " and flag:unread") :key ?c)
+  (:name "mailbox.spam1" :query "maildir:/xklimes5@fi.muni.cz/mailbox.spam.1" :key ?S)
 
                 ))
 
@@ -393,6 +608,7 @@ by the date of first mail of group."
         ("blog-img"
          :base-directory "~/org/web/img"
          :base-extension "png\\|jpg"
+         :recursive t
          :publishing-directory "~/public_html/img"
 ;     :publishing-directory "/ssh:merlin:/var/www/blog/img"
          :publishing-function org-publish-attachment)
@@ -498,7 +714,7 @@ by the date of first mail of group."
      "* %U %? :NOTE:\n\n %i\n %a"
      :empty-lines-after 1)
         ("e" "email" entry (file+headline "~/org/index.org" "Emails")
-         "* TODO EMAIL: %? %a %^g:email:\n:CREATED: %U\n  %i")
+         "* TODO EMAIL: %? %a %^g:email:\n:CREATED: %U\n  %i" :prepend t)
         ("u" "Unix Todo" entry (file+headline "~/org/unix.org" "Tasks")
          "* TODO %?\n:CREATED: %U\n  %i\n  %a"))
       )
@@ -897,7 +1113,7 @@ by the date of first mail of group."
 (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
 (define-key mu4e-headers-mode-map (kbd "F") 'mu4e-headers-mark-for-spam)
 )
-(defun end-of-buffer-before-reply ()
+(defun klimi/end-of-buffer-before-reply ()
   (interactive)
   (re-search-forward "^[^>: \t\n]" nil t)
   (move-beginning-of-line nil))
@@ -945,7 +1161,7 @@ by the date of first mail of group."
 ;  :override #'doom/backward-delete-whitespace-to-column
 ;  (delete-char -1))
 
-;;; Org-caldav
+;;; DEPRICATED Org-caldav
 (setq org-caldav-url
 "https://cloud.k11m1.eu/remote.php/dav/calendars/k11m1/" )
 ;; (setq org-caldav-calendar-id "org-index")
@@ -1122,20 +1338,9 @@ is tomorrow.  With two prefixes, select the deadline."
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max (* (* 4 1024) 1024)) ;; 4mb
 
-;;; -- ORG MODE
-; ORG MODE
-(setq org-highest-priority ?A
-      org-default-priority ?C
-      org-lowest-priority  ?E)
-;; (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-(after! org
-(setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
-
-  )
-; ORG MODE _ END
-
 ;;; chezmoi
 (require 'chezmoi)
+(require 'chezmoi-ediff) ; TODO, I don't think I need it... but...
 
 ;;; Outshine - outline minor mode
 (add-hook 'emacs-lisp-mode-hook 'outshine-mode)
@@ -1163,253 +1368,12 @@ is tomorrow.  With two prefixes, select the deadline."
 ;;       (erase-buffer))
 ;;     (plantuml-exec-mode-preview-string prefix (plantuml-get-exec-mode) string buf)))
 
-;;; Org super agenda <not working>
-; disable header map so i can use the evil from org agenda
-(setq org-super-agenda-header-map nil)
-
-(use-package! org-super-agenda
-  :commands org-super-agenda-mode)
-
-(after! org-agenda
-  (let ((inhibit-message t))
-    (org-super-agenda-mode)))
-
-(setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil
-      org-agenda-tags-column 166 ;; from testing this seems to be a good value
-      org-agenda-compact-blocks t
-      org-agenda-sticky t) ;; don't bury my buffers, i like to return to them
-
- ;; (setq org-agenda-custom-commands
- ;;       '(("o" "Work"
- ;;          ((agenda "" ((org-agenda-span 'day)
-
- ;;                       (org-super-agenda-groups
-
- ;;                        '((:name "Timeline"
- ;;                           :time-grid t
- ;;                           :order -1)
- ;;                          (:log t)  ; Automatically named "Log"
- ;;                          (:name "Today"
- ;;                           :deadline today
- ;;                           :scheduled today :order -2)
- ;;                          ;; (:name "Due today"
- ;;                          ;;        :deadline today)
- ;;                          (:habit t)
- ;;                          (:name "Due soon"
- ;;                           :deadline future)
- ;;                          (:name "Overdue"
- ;;                           :deadline past)
- ;;                          (:name "Unimportant"
- ;;                           :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH")
- ;;                           :order 100)
- ;;                          (:name "Waiting..."
- ;;                           :todo "unix"
- ;;                           :order 98)
- ;;                          (:name "Scheduled earlier"
- ;;                           :scheduled past)))))
-
- ;;           (alltodo "" (
- ;;                      (org-super-agenda-groups
- ;;                       '((:name "WorkTodo"
- ;;                          :todo t
- ;;                          :tag "unix")
- ;;                         (:name "test2"
- ;;                          :todo "TODO"
- ;;                          :tag "unix"))
- ;;                       )
- ;;                      )
-
- ;;             )
-
- ;;           ))))
-
-
-
-(setq org-agenda-custom-commands
-      '(
-        ("u" "Unix"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          (:log t)  ; Automatically named "Log"
-                          (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "UnixTodo" :tag "unix" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          (:discard (:tag ("muni"))))))))         )
-        ("p" "Personal"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          (:log t)  ; Automatically named "Log"
-                          (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
-                           (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "Muni" :tag "muni" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          )))))         )
-        ("a" "ALL"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          (:log t)  ; Automatically named "Log"
-                          (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
-                           ;; (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "Muni" :tag "muni" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          ))))) nil ("~/tmp/agenda.export.html")          )
-      ))
-
-(after! org
-  (setq org-timed-alerts-warning-times '(20 10 5))
-  (setq org-timed-alerts-final-alert-string "IT IS <span foreground=\"green\">%alert-time</span>\n\nTIME FOR: %todo\n<span foreground=\"blue\">%headline</span>")
-  ;; (setq org-timed-alerts-default-alert-props
-  ;;     '(:persistent  t))
-  (add-hook 'org-mode-hook #'org-timed-alerts-mode))
-
-
-;; (setq org-super-agenda-groups
-;;       '((:name "Timeline"
-;;                :time-grid t
-;;                :order -1)
-;;         (:log t)  ; Automatically named "Log"
-;;         (:name "Today"
-;;          :deadline today
-;;                :scheduled today :order -2)
-;;         ;; (:name "Due today"
-;;         ;;        :deadline today)
-;;         (:habit t)
-;;         (:name "Due soon"
-;;                :deadline future)
-;;         (:name "Overdue"
-;;                :deadline past)
-;;         (:name "Unimportant"
-;;                :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH")
-;;                :order 100)
-;;         (:name "Waiting..."
-;;                :todo "WAITING"
-;;                :order 98)
-;;         (:name "Scheduled earlier"
-;;                :scheduled past))
-;;       )
-
 
 
 
 
 ;;; evil snipe
 (setq evil-snipe-scope 'buffer) ; evil sneak
-
-;;; Org export agenda ics
-
-(setq org-icalendar-combined-agenda-file "~/org/org.ics")
-(setq org-icalendar-use-scheduled '(event-if-todo-not-done todo-start))
-(setq org-icalendar-use-deadline '(event-if-todo-not-done todo-due))
-(setq org-icalendar-scheduled-summary-prefix "📃: ")
-;; (setq org-icalendar-deadline-summary-prefix "❗❕: ")
-;; (setq org-icalendar-deadline-summary-prefix "🚨🚨: ")
-(setq org-icalendar-deadline-summary-prefix "🟥: ")
-(setq org-icalendar-exclude-tags '("ics"))
-
-;(defun klimi/org-icalendar-schedule ()
-;  (interactive)
-;  (make-local-variable 'org-icalendar-use-deadline)
-;  (make-local-variable 'org-icalendar-use-scheduled)
-;  (make-local-variable 'org-icalendar-combined-agenda-file)
-;  (make-local-variable 'org-icalendar-with-timestamps)
-;  (setq org-icalendar-use-deadline '(todo-due))
-;  (setq org-icalendar-use-scheduled '(event-if-todo-not-done todo-start))
-;  (setq org-icalendar-combined-agenda-file "~/org/org-scheduled.ics")
-;  (setq org-icalendar-with-timestamps nil)
-;  (org-icalendar-combine-agenda-files)
-;  )
-;
-;  (defun klimi/org-icalendar-deadline ()
-;    (interactive)
-;    (make-local-variable 'org-icalendar-use-deadline)
-;    (make-local-variable 'org-icalendar-use-scheduled)
-;    (make-local-variable 'org-icalendar-combined-agenda-file)
-;    (setq org-icalendar-use-deadline '(event-if-todo-not-done todo-due))
-;    (setq org-icalendar-use-scheduled '(todo-start))
-;    (setq org-icalendar-combined-agenda-file "~/org/org-deadline.ics")
-;    (org-icalendar-combine-agenda-files)    )
-
-;;; Org wild notifier
-;(setq org-wild-notifier-alert-time '(10 0))
-; (setq org-timed-alerts-warning-times '(-10 -5))
-;(after! org-timed-alerts
-;  )
-;
 
 ;;; dired peep
 ;; Add the j and k keys to move to next and previous files in peed-dired mode
@@ -1423,36 +1387,6 @@ is tomorrow.  With two prefixes, select the deadline."
        (:after dired
         (:map dired-mode-map
          :desc "peep mode" "d p" #'peep-dired)))
-
-;;; Orgmode todo keywords
-;; (setq org-todo-keywords
-;;       '((sequence
-;;          "TODO(t)"  ; A task that needs doing & is ready to do
-;;          "PROJ(p)"  ; A project, which usually contains other tasks
-;;          "NEXT(n)"  ; A task that is in progress
-;;          "WAIT(t)"  ; Something external is holding up this task
-;;          "HOLD(h)"  ; This task is paused/on hold because of me
-;;          "OPEN(o)"  ; An open or ongoing loop
-;;          "|"
-;;          "DONE(d)"  ; Task successfully completed
-;;          "KILL(K)") ; Task was cancelled, aborted or is no longer applicable
-;;         (sequence
-;;          "[ ](T)"   ; A task that needs doing
-;;          "[-](S)"   ; Task is in progress
-;;          "[?](W)"   ; Task is being held up or paused
-;;          "|"
-;;          "[X](D)")  ; Task was completed
-;;         (sequence   ; adapted from Tony Ballantyne's writing methodology
-;;          "IDEA(i!)"
-;;          "WRITE(w!)"
-;;          "EDIT(e!)"
-;;          "WORKING(k!)"
-;;          "|"
-;;          "USED(u!/@)")))
-
-(after! org
-   (add-hook! 'org-mode-hook #'org-timed-alerts-mode)
-   )
 
 ;;; Tex
 (setq TeX-view-program-selection '((output-pdf "Evince")))
@@ -1635,27 +1569,6 @@ is tomorrow.  With two prefixes, select the deadline."
 
 ;; (emacsql-sqlite-compile 2)
 
-;;; does not work: Org mode - children inherit deadline
-
-;; (defun org-entry-properties-inherit-deadline (orig-fun &optional pom which)
-;;   "Call ORIG-FUN with POM, but if WHICH is `DEADLINE' do it recursively."
-
-;;   (if (string= which "DEADLINE")
-;;       (org-with-point-at pom
-;;         (let (value)
-;;           (while (not (or (setq value (funcall orig-fun (point) which))
-;;                           (not (org-up-heading-safe)))))
-;;           value)
-;;     (funcall orig-fun pom which))))
-;; (advice-add 'org-entry-properties :around #'org-entry-properties-inherit-deadline)
-
-;;; does not worK: startup - org agenda
-;; (after! org
-;; (org-agenda nil "a")
-;;   )
-
-(find-file "~/org/index.org")
-(find-file "~/org/unix.org")
 
 ;;; mu4e - automatic update
 (after! mu4e
@@ -1708,18 +1621,6 @@ is tomorrow.  With two prefixes, select the deadline."
 ;;         (typescript-tsx-mode . "typescript")
 ;;         (typescript-mode . "typescript")
 ;;         (tailwindcss-mode . "tailwindcss")))
-
-;;; Klimi/ jump to org mode file
-
-(defun klimi/find-file-in-org ()
-  (interactive)
-
-        ;; (defun doom-project-browse (org-directory))
-  (doom-project-find-file org-directory)
-  )
-(defun klimi/disable-final-newline ()
-    (interactive)
-    (set (make-local-variable 'require-final-newline) nil))
 
 ;;; scratch buffer popup rule
 
@@ -1794,6 +1695,11 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
   )
 
 
+;;; Emacs Everywhere
+(setq emacs-everywhere-markdown-apps '("Discord" "Element" "Fractal" "NeoChat" "Slack" "Firefox"))
+(setq emacs-everywhere-major-mode-function 'emacs-everywhere-major-mode-org-or-markdown)
+
+
 ;; (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-major-mode-org-or-markdown) ; or #'org-mode if that's what's present
 ;; (add-hook 'emacs-everywhere-init-hooks #'gfm-mode)
 
@@ -1808,3 +1714,59 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
   (let ((coding-str (symbol-name buffer-file-coding-system)))
     (when (string-match "-\\(?:dos\\|mac\\)$" coding-str)
       (set-buffer-file-coding-system 'unix))))
+
+;;; MU4e GOIMAPNOTIFY
+; Thanks to https://tecosaur.github.io/emacs-config/config.html#fetching
+(defvar mu4e-reindex-request-file "/tmp/mu_reindex_now"
+  "Location of the reindex request, signaled by existance")
+(defvar mu4e-reindex-request-min-seperation 5.0
+  "Don't refresh again until this many second have elapsed.
+Prevents a series of redisplays from being called (when set to an appropriate value)")
+
+(defvar mu4e-reindex-request--file-watcher nil)
+(defvar mu4e-reindex-request--file-just-deleted nil)
+(defvar mu4e-reindex-request--last-time 0)
+
+(defun mu4e-reindex-request--add-watcher ()
+  (setq mu4e-reindex-request--file-just-deleted nil)
+  (setq mu4e-reindex-request--file-watcher
+        (file-notify-add-watch mu4e-reindex-request-file
+                               '(change)
+                               #'mu4e-file-reindex-request)))
+
+(defadvice! mu4e-stop-watching-for-reindex-request ()
+  :after #'mu4e--server-kill
+  (if mu4e-reindex-request--file-watcher
+      (file-notify-rm-watch mu4e-reindex-request--file-watcher)))
+
+(defadvice! mu4e-watch-for-reindex-request ()
+  :after #'mu4e--server-start
+  (mu4e-stop-watching-for-reindex-request)
+  (when (file-exists-p mu4e-reindex-request-file)
+    (delete-file mu4e-reindex-request-file))
+  (mu4e-reindex-request--add-watcher))
+
+(defun mu4e-file-reindex-request (event)
+  "Act based on the existance of `mu4e-reindex-request-file'"
+  (if mu4e-reindex-request--file-just-deleted
+      (mu4e-reindex-request--add-watcher)
+    (when (equal (nth 1 event) 'created)
+      (delete-file mu4e-reindex-request-file)
+      (setq mu4e-reindex-request--file-just-deleted t)
+      (mu4e-reindex-maybe t))))
+
+(defun mu4e-reindex-maybe (&optional new-request)
+  "Run `mu4e--server-index' if it's been more than
+`mu4e-reindex-request-min-seperation'seconds since the last request,"
+  (let ((time-since-last-request (- (float-time)
+                                    mu4e-reindex-request--last-time)))
+    (when new-request
+      (setq mu4e-reindex-request--last-time (float-time)))
+    (if (> time-since-last-request mu4e-reindex-request-min-seperation)
+        (mu4e--server-index nil t)
+      (when new-request
+        (run-at-time (* 1.1 mu4e-reindex-request-min-seperation) nil
+                     #'mu4e-reindex-maybe)))))
+
+
+
