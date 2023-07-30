@@ -423,7 +423,7 @@
   (:name "Inbox fi Unread" :query "flag:personal and flag:unread" :key ?i)
   (:name "Inbox fi" :query "flag:personal" :key ?I)
   (:name "CVT important" :query ,(concat klimi/mu4e-important-mail-query " and flag:unread") :key ?c)
-  (:name "mailbox.spam1" :query "maildir:/xklimes5@fi.muni.cz/mailbox.spam.1" :key ?S)
+  (:name "mailbox.spam1" :query "maildir:/{{ .fiemail }}/mailbox.spam.1" :key ?S)
 
                 ))
 

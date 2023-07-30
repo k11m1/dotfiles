@@ -50,7 +50,8 @@
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;tabs                ; a tab bar for Emacs
-       (treemacs +lsp)          ; a project drawer, like neotree but cooler
+       (treemacs)          ; a project drawer, like neotree but cooler
+       ;(treemacs +lsp)          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
        (vc-gutter +pretty)         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -73,7 +74,7 @@
        word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
-       (dired +icons)             ; making dired pretty [functional]
+       (dired +icons +dirvish)             ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
        (ibuffer +icons)         ; interactive buffer management
        (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
@@ -93,6 +94,7 @@
        :tools
        ansible
        ;;biblio            ; Writes a PhD for you (citation needed)
+       (collab +tunnel)    ; buffers with friends
        (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
        direnv
        (docker +lsp)
@@ -102,7 +104,7 @@
        gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        (lsp +peek) ; eglot               ; M-x vscode
-       (magit +forge)             ; a git porcelain for Emacs
+       (magit) ;forge             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        pdf               ; pdf enhancements
@@ -185,7 +187,7 @@
        ;;zig               ; C, but simpler
 
        :email
-       (mu4e +org) ; +gmail
+       (mu4e +org +gmail) ; +gmail
        ;;notmuch
        ;;(wanderlust +gmail)
 
