@@ -56,7 +56,8 @@
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16))
 {{ end }}
 {{ if eq .chezmoi.hostname "klimovo" }}
-(setq doom-font (font-spec :family "JetBrains Mono" :size 15))
+;(setq doom-font (font-spec :family "JetBrains Mono" :size 15))
+(setq doom-font (font-spec :family "Source Code Pro" :size 15))
 ;(setq doom-font (font-spec :size 22))
 
 (defun add-back-emoji-fallback-font-families ()
@@ -119,6 +120,7 @@
 ; schedules things in advance and rescans only on request!
 
 (after! org
+  (require 'org-timed-alerts) ; required in 29.1
   (setq org-timed-alerts-warning-times '(20 10 5))
   (setq org-timed-alerts-final-alert-string "IT IS <span foreground=\"green\">%alert-time</span>\n\nTIME FOR: %todo\n<span foreground=\"blue\">%headline</span>")
   (add-hook 'org-mode-hook #'org-timed-alerts-mode))
@@ -204,11 +206,12 @@
                         '((:name "Timeline"
                            :time-grid t
                            :order -1)
+                          (:habit t
+                                  :order 4)
                           (:log t)  ; Automatically named "Log"
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -2)
-                          (:habit t)
                           (:name "Due soon" :deadline future)
                           (:name "Overdue" :deadline past)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
@@ -320,6 +323,8 @@
 
 ; faster mail download
 (setq +mu4e-backend nil)
+; disable smart parens because they lag a lot
+(add-hook 'mu4e-compose-mode-hook  #'turn-off-smartparens-mode)
 (after! mu4e
     (add-hook 'mu4e-compose-mode-hook (lambda ()
                                         ;; other customizations
@@ -620,6 +625,7 @@ by the date of first mail of group."
          :publishing-function org-html-publish-to-html
          :auto-preamble t
          :recursive t
+         :exclude "backup"
          :sitemap-title "K11m1's blog"
          :sitemap-filename "index.org"
          :sitemap-sort-files anti-chronologically
@@ -627,6 +633,7 @@ by the date of first mail of group."
          :with-author nil           ;; Don't include author name
          :with-creator nil          ;; Include Emacs and Org versions in footer
          :with-toc nil              ;; Don't include a table of contents
+         :with-date t
          :section-numbers nil       ;; Don't include section numbers
          :time-stamp-file nil)
 
@@ -730,21 +737,21 @@ by the date of first mail of group."
   `(lambda (&rest _rest)
      (funcall ,fnc)))
 
-;; (advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
-;; (advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
-;; (advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
-;; (advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
-;; (advice-add 'org-clock-in       :after (η #'org-save-all-org-buffers))
-;; (advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
+(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
+(advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
+(advice-add 'org-clock-in       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
 
-;; (advice-remove 'org-deadline       (η #'org-save-all-org-buffers))
-;; (advice-remove 'org-schedule       (η #'org-save-all-org-buffers))
-;; (advice-remove 'org-store-log-note (η #'org-save-all-org-buffers))
-;; (advice-remove 'org-todo           (η #'org-save-all-org-buffers))
-;; (advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
-;; (advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
+(advice-remove 'org-deadline       (η #'org-save-all-org-buffers))
+(advice-remove 'org-schedule       (η #'org-save-all-org-buffers))
+(advice-remove 'org-store-log-note (η #'org-save-all-org-buffers))
+(advice-remove 'org-todo           (η #'org-save-all-org-buffers))
+(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
+(advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
 
-(add-hook 'auto-save-hook 'org-save-all-org-buffers)
+;(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling
 
 (setq org-clock-persist t)
 
@@ -1562,10 +1569,10 @@ is tomorrow.  With two prefixes, select the deadline."
 ;;               :username "xklimes5"
 ;;               :auth 'forge)
 
-(add-to-list 'forge-alist '("gitlab.fi.muni.cz" "gitlab.fi.muni.cz/api/v4" "gitlab.fi.muni.cz" forge-gitlab-repository))
+;;(add-to-list 'forge-alist '("gitlab.fi.muni.cz" "gitlab.fi.muni.cz/api/v4" "gitlab.fi.muni.cz" forge-gitlab-repository))
 
 (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
-(magit-add-section-hook 'magit-status-sections-hook 'forge-insert-assigned-issues nil t)
+; (magit-add-section-hook 'magit-status-sections-hook 'forge-insert-assigned-issues nil t)
 
 ;; (emacsql-sqlite-compile 2)
 
@@ -1770,3 +1777,21 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 
 
+;;; UNORDERED:
+
+;;;; Bigger GC
+(setq gcmh-high-cons-threshold 104857600)
+
+(setq gc-cons-threshold 104857600)
+
+
+;;;; mu4e - force more txt
+
+
+  (add-to-list 'mm-discouraged-alternatives "text/html")
+  (add-to-list 'mm-discouraged-alternatives "text/richtext")
+
+;;;; emacs 29.1 pixel
+
+; laggy in LSP :(
+; (pixel-scroll-precision-mode t)
