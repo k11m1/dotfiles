@@ -1516,14 +1516,14 @@ is tomorrow.  With two prefixes, select the deadline."
 
 ;;; Company enter key to C-SPC - beware magic
 ;; Bind Tab key to complete company selection and unbind enter from it
-(let ((tab-key (if (display-graphic-p) "<tab>" "TAB")))
-        (map! :after company-box
-              :map company-active-map
-              tab-key #'company-complete-selection
-              "<return>" nil
-              "RET" nil
-              )
-)
+;;(let ((tab-key (if (display-graphic-p) "<tab>" "TAB")))
+;;        (map! :after company-box
+;;              :map company-active-map
+;;              tab-key #'company-complete-selection
+;;              "<return>" nil
+;;              "RET" nil
+;;              )
+;;)
 
 (after! company
   (setq company-minimum-prefix-length 2) ;; set a prefix length to activate completion
