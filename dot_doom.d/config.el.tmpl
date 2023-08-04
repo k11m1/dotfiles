@@ -316,6 +316,11 @@
 
 ;;; mu4e
 
+;;;; mu4e - gnus article hiding / reply
+
+(setq gnus-article-hide-citation t)
+(setq gnus-cited-lines-visible '(1 . 2))
+
 
 {{ if eq .chezmoi.hostname "dares" }}
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.13")
