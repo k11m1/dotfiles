@@ -11,6 +11,9 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
+(setq doom-theme 'doom-one) ; dark theme
+;(setq doom-theme 'zaiste) ; light/day theme, credit: https://github.com/zaiste/zaiste-emacs-theme
+
 ;; (setq typescript-indent-level 2
 ;;      js-indent-level 2)
 ;; (setq typescript-indent-level 2)
@@ -221,7 +224,8 @@
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "Important" :tag "Important" :priority "A" :face (:underline t :append t) :order 6)
                           (:name "Overdue" :deadline past :face error :order 7)
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
@@ -259,10 +263,10 @@
 
 
 ;;;; HACK QUESTION ORG it might not be needed anymore with the categories
+;;;; HACK but it is still needed
 
-; uncomment if ??? in org agenda 
-;(find-file "~/org/index.org")
-;(find-file "~/org/unix.org")
+(find-file "~/org/index.org")
+(find-file "~/org/unix.org")
 
 ;;;; Klimi/jump to org mode file
 
@@ -318,8 +322,8 @@
 
 ;;;; mu4e - gnus article hiding / reply
 
-(setq gnus-article-hide-citation t)
-(setq gnus-cited-lines-visible '(1 . 2))
+(setq gnus-treat-hide-citation t)
+(setq gnus-cited-lines-visible '(2 . 3))
 
 
 {{ if eq .chezmoi.hostname "dares" }}
@@ -811,7 +815,8 @@ by the date of first mail of group."
 
 
 ; TODO: Opravdu tohle chci?
-(setq font-lock-comment-face  '(:foreground "#b4f7a5"))
+; FIXME: doesn't work in other themes (especially light themes)
+; (setq font-lock-comment-face  '(:foreground "#b4f7a5"))
 
 ;; Langes - C/C++ - oprava enteru na autocomplete
 (after! cc
@@ -1800,3 +1805,38 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 ; laggy in LSP :(
 ; (pixel-scroll-precision-mode t)
+
+;;;; MU4e
+
+;(defun highlight-urgent ()
+;  (highlight-phrase "MIG" 'hi-aquamarine))
+;;; take face from M-x list-faces-display
+;(highlight-urgent) ;; manually turns on, but read about hooks, could be added as a hook
+;(unhighlight-regexp "urgent") ;; maually turns off
+
+;;;; org-roam ui
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+
+;;;; org-transclusion
+(use-package! org-transclusion
+  :after org
+  :init
+  (map!
+   :map global-map "<f12>" #'org-transclusion-add ; TODO maybe remove
+   :leader
+   :prefix "n"
+   :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
