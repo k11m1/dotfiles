@@ -1113,6 +1113,12 @@ by the date of first mail of group."
 (mu4e~headers-defun-mark-for spam)
 (mu4e~headers-defun-mark-for later)
 (mu4e~headers-defun-mark-for captured)
+
+(defun klimi/toggle-gnus-hide-citation ()
+  "Toggle the value of gnus-treat-hide-citation between nil and t."
+  (interactive)
+  (setq gnus-treat-hide-citation (not gnus-treat-hide-citation))
+  (message "gnus-treat-hide-citation set to %s" gnus-treat-hide-citation))
 (map!
  :map mu4e-headers-mode-map
 
@@ -1121,10 +1127,14 @@ by the date of first mail of group."
       :m "t s" #'mu4e-headers-mark-for-spam
       :m "t c" #'mu4e-headers-mark-for-captured
       :m "f" #'mu4e-headers-mark-for-read ; remaps evil things, but you don't use snipe in headers view, do you
+      :m "<f5>" #'klimi/toggle-gnus-hide-citation
       )
+
+
 (map!
  :map mu4e-view-mode-map
       :m "f" #'mu4e-view-mark-for-read ; TODO: remaps evil things, you maybe be using this
+      :m "<f5>" #'klimi/toggle-gnus-hide-citation
  )
 
 (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
