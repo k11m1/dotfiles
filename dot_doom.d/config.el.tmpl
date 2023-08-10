@@ -1853,3 +1853,27 @@ Prevents a series of redisplays from being called (when set to an appropriate va
    :leader
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
+
+
+
+;;;; TODO: testing of custom fonts,
+; (add-hook 'mu4e-view-mode-hook #'writeroom-mode)
+;(remove-hook 'mu4e-view-mode-hook #'writeroom-mode)
+
+
+
+;buffer-face-set and buffer-face-mode in Emacs 23 or later is designed for exactly this. From the Emacs wiki:
+
+;; Use variable width font faces in current buffer
+ (defun my-buffer-face-mode-variable ()
+   "Set font to a variable width (proportional) fonts in current buffer"
+   (interactive)
+   (setq buffer-face-mode-face '(:family "Symbola" :height 100 :width semi-condensed))
+   (buffer-face-mode))
+
+ ;; Use monospaced font faces in current buffer
+ (defun my-buffer-face-mode-fixed ()
+   "Sets a fixed width (monospace) font in current buffer"
+   (interactive)
+   (setq buffer-face-mode-face '(:family "Inconsolata" :height 100))
+   (buffer-face-mode))
