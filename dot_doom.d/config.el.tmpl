@@ -325,6 +325,19 @@
 (setq gnus-treat-hide-citation t)
 (setq gnus-cited-lines-visible '(2 . 3))
 
+; HACK replying to message seems to leave [+] in the text, althought the text is whole.
+(defun mu4e--disable-hide-citation ()
+  (setq gnus-treat-hide-citation nil))
+
+(defun mu4e--enable-hide-citation ()
+  (setq gnus-treat-hide-citation t))
+
+(add-hook 'mu4e-compose-pre-hook 'mu4e--disable-hide-citation)
+(add-hook 'mu4e-compose-mode-hook 'mu4e--enable-hide-citation)
+
+
+
+
 
 {{ if eq .chezmoi.hostname "dares" }}
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.13")
