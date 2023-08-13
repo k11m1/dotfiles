@@ -1,5 +1,7 @@
 ;;; zaiste-theme.el
 ; CREDIT: https://github.com/zaiste/zaiste-emacs-theme
+; But it seems like I will edit it a little by myself hehe :-)
+
 (require 'doom-themes)
 
 (defgroup zaiste-theme nil
@@ -37,6 +39,7 @@
    (violet     '("#823ff1" "#823ff1" "brightmagenta"))
    (cyan       '("#0184bc" "#0184bc" "brightcyan"   ))
    (dark-cyan  '("#005478" "#005478" "cyan"         ))
+   (klimi-green  '("#27cc24" "#27cc24" "green"         ))
 
    (highlight      blue)
    (vertical-bar   base2)
@@ -50,7 +53,8 @@
    (methods        cyan)
    (operators      blue)
    (type           red)
-   (strings        yellow)
+   ; (strings        yellow)
+   (strings        (doom-darken klimi-green 0.2))
    (variables      magenta)
    (numbers        magenta)
    (region         baby-blue)
