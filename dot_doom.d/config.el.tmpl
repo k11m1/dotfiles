@@ -759,19 +759,23 @@ by the date of first mail of group."
   `(lambda (&rest _rest)
      (funcall ,fnc)))
 
-(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
-(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
+; this causes the save on weird timings
+;(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
+;(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
 (advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
 (advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-in       :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
 
+(advice-add 'org-agenda-kill    :after (η #'org-save-all-org-buffers))
+(advice-add 'org-agenda-schedule    :after (η #'org-save-all-org-buffers))
+
 (advice-remove 'org-deadline       (η #'org-save-all-org-buffers))
 (advice-remove 'org-schedule       (η #'org-save-all-org-buffers))
-(advice-remove 'org-store-log-note (η #'org-save-all-org-buffers))
-(advice-remove 'org-todo           (η #'org-save-all-org-buffers))
-(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
-(advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
+;(advice-remove 'org-store-log-note (η #'org-save-all-org-buffers))
+;(advice-remove 'org-todo           (η #'org-save-all-org-buffers))
+;(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
+;(advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
 
 ;(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling
 
@@ -1100,15 +1104,17 @@ by the date of first mail of group."
      :prompt     "gtag"
      :ask-target (lambda () (read-string "What tag do you want to add?"))
      :action      (lambda (docid msg target)
-                    (mu4e-action-retag-message msg (concat "+" target)))))
+                    (mu4e-action-retag-message msg (concat "+" target))
+                        (mu4e--server-move docid nil "+S-u-N")
+                    )))
 (add-to-list 'mu4e-marks
              '(captured
                :char       "C"
                :prompt     "Captured"
                :action      (lambda (docid msg target)
                               (mu4e--server-move docid nil "+S-u-N+F")
-                              (org-capture-select-template "e")
-                              (org-capture)
+                              ;; (org-capture-select-template "e")
+                              ;; (org-capture)
                               )))
 (add-to-list 'mu4e-marks
   '(later
@@ -1122,6 +1128,22 @@ by the date of first mail of group."
 
                     (mu4e--server-move docid nil "+S-u-N"))))
 
+
+
+
+(defun klimi/org-capture-and-mark-captured ()
+  "Capture using defined org-capture templates and mark the captured emails."
+  (interactive)
+  ;; Save the current cursor position
+  (let ((current-position (point)))
+    (mu4e-headers-mark-for-captured)
+    ;; Restore the cursor position
+    (goto-char current-position))
+    (org-capture nil "e")
+  )
+
+
+
 (mu4e~headers-defun-mark-for tag)
 (mu4e~headers-defun-mark-for spam)
 (mu4e~headers-defun-mark-for later)
@@ -1132,12 +1154,14 @@ by the date of first mail of group."
       :m "t g" #'mu4e-headers-mark-for-tag
       :m "t l" #'mu4e-headers-mark-for-later
       :m "t s" #'mu4e-headers-mark-for-spam
-      :m "t c" #'mu4e-headers-mark-for-captured
+      ; :m "t c" #'mu4e-headers-mark-for-captured
+      :m "t c" #'klimi/org-capture-and-mark-captured
       :m "f" #'mu4e-headers-mark-for-read ; remaps evil things, but you don't use snipe in headers view, do you
       )
 (map!
  :map mu4e-view-mode-map
       :m "f" #'mu4e-view-mark-for-read ; TODO: remaps evil things, you maybe be using this
+      :m "t c" #'klimi/org-capture-and-mark-captured
  )
 
 (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
