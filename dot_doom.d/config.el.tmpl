@@ -261,6 +261,19 @@
 (setq org-icalendar-deadline-summary-prefix "🟥: ")
 (setq org-icalendar-exclude-tags '("ics"))
 
+; FIXME: HACK: This is ultra super awful workaround that... works...
+(defun klimi/org-icalendar-fix-double-entry (file)
+  "Function to run after saving an iCalendar file."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (while (re-search-forward "VEVENTBEGIN" nil t)
+      (replace-match "VEVENT\r\nBEGIN"))
+    (write-region (point-min) (point-max) file)
+    (message "Modified iCalendar file: %s" file)))
+
+(add-hook 'org-icalendar-after-save-hook 'klimi/org-icalendar-fix-double-entry)
+
 
 ;;;; HACK QUESTION ORG it might not be needed anymore with the categories
 ;;;; HACK but it is still needed
