@@ -1916,3 +1916,7 @@ Prevents a series of redisplays from being called (when set to an appropriate va
    (interactive)
    (setq buffer-face-mode-face '(:family "Inconsolata" :height 100))
    (buffer-face-mode))
+
+
+;;;; HACK: TRAMP editing
+(setq tramp-auto-save-directory nil)
