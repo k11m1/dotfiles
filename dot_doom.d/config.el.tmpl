@@ -745,7 +745,6 @@ by the date of first mail of group."
 (setq org-capture-templates
       '(
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
-:PROPERTIES:
          "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a")
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
  "* TODO %^{Prompt}%?\n:CREATED: %U\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
