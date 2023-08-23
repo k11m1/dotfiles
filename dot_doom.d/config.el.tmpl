@@ -443,9 +443,9 @@
      :query ,(concat "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam OR maildir:/{{ .fiemail }}/mailbox.spam.1 OR " klimi/mu4e-monitoring-mail-query ")" )
      :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
      :key ?u)
-( :name  "Unread all messages"
+( :name  "unread [a]ll messages"
      :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
-     :key ?U)
+     :key ?a)
   (:name "Unread Monitoring" :query ,(concat klimi/mu4e-monitoring-mail-query " and flag:unread") :key ?m)
    ( :name "Today's messages"
      :query "date:today..now"
@@ -742,7 +742,8 @@ by the date of first mail of group."
 (setq org-capture-templates
       '(
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
-         "* TODO %?\n:CREATED: %U\n  %i\n  %a")
+:PROPERTIES:
+         "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a")
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
  "* TODO %^{Prompt}%?\n:CREATED: %U\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
 ("r" "respond" entry
