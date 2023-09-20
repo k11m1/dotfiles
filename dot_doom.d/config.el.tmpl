@@ -1928,14 +1928,21 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ;; Define a custom mu4e action to open GitHub links
 (after! mu4e
   (add-to-list 'mu4e-view-actions
-  '("git{hub,lab} link" . klimi/mu4e-open-git-link))
-  (defun klimi/mu4e-open-git-link (msg)
-  "open github or gitlab links in the email."
+  '("open signature link" . my-mu4e-open-signature-link))
+(defun my-mu4e-open-signature-link (msg)
+  "Open any URL in the email after the signature line (-- )."
   (interactive)
-  (let ((link-regexp "\\(https://github\\.com/[^ ]+$\\)\\|\\(https://gitlab\\.fi\\.muni\\.cz/[^ ]+$\\)"))
-  (save-excursion
-  (goto-char (point-min))
-  (when (re-search-forward link-regexp nil t)
-          (let ((url (or (match-string 1) (match-string 2))))
-          (setq url (replace-regexp-in-string "you\\'" "" url)) ; remove the trailing "you"
-          (browse-url url)))))))
+  (let ((url-regexp "\\(https?://[^[:space:]]+\\)")) ; Match any URL
+    (save-excursion
+      (goto-char (point-min))
+      ;; Look for the signature line
+      (when (re-search-forward "^-- $" nil t)
+        ;; If signature line found, look for URLs
+        (while (re-search-forward url-regexp nil t)
+          (let ((url (match-string 1)))
+            (browse-url url)))))))
+
+
+
+
+  )
