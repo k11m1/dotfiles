@@ -261,9 +261,10 @@
                           (:habit t
                                   :order 4)
                           (:log t)  ; Automatically named "Log"
+                          (:name "Phone Refil" :tag "PHONE" :order -2)
                           (:name "Today"
                            :deadline today
-                           :scheduled today :order -2)
+                           :scheduled today :order -3)
                           (:name "Due soon" :deadline future)
                           (:name "Overdue" :deadline past)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
