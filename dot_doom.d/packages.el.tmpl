@@ -75,7 +75,7 @@
 (unpin! mu4e-alert)
 ;(unpin! org-mode)
 ;(package! org :pin "5890ac")
-(unpin! org)
+;(unpin! org)
 (package! emacs-everywhere :pin "44775589ad050134adf433885be0a94398055630") ; pinned to recent version, update if needed
 ;; (unpin! emacs-everywhere)
 ;; (unpin! forge)
@@ -112,7 +112,7 @@
 (package! keycast)
 
 ;; mu4e - evil mu 10 hotfix
-(unpin! evil-collection)
+;(unpin! evil-collection) ; probably fixed on 2023-08-20
 
 ;; pdf better links in org mode
 (package! org-pdftools)
@@ -121,8 +121,13 @@
 
 
 ;; org roam
-(unpin! org-roam)
-(package! org-roam-ui)
+;(unpin! org-roam)
+;(package! org-roam-ui)
 
 ;; org transclusion
 (package! org-transclusion)
+
+(package! org-timeblock
+  :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
+
+(package! org-modern)
