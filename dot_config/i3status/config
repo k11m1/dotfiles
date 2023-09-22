@@ -1,0 +1,100 @@
+# i3status configuration file.
+# see "man i3status" for documentation.
+
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+
+general {
+        colors = true
+        interval = 5
+	output_format = i3bar
+}
+
+order += "ipv6"
+order += "wireless _first_"
+order += "ethernet _first_"
+order += "battery all"
+order += "disk /home"
+order += "load"
+order += "volume master"
+order += "cpu_temperature 0"
+order += "cpu_usage"
+order += "memory"
+order += "tztime local"
+
+
+wireless _first_ {
+        format_up = "W: (%quality at %essid) %ip"
+        format_down = "W: down"
+}
+
+ethernet _first_ {
+        format_up = "E: %ip (%speed)"
+        format_down = "E: down"
+}
+
+battery all {
+        format = "%status %percentage %remaining"
+    status_bat                    = "🔋"
+    status_chr                    = "🔌"
+    status_full                   = "☻"
+    status_unk                    = "♻"
+    low_threshold                 = 180
+    threshold_type                = time
+    hide_seconds                  = true
+    # Show percentage as interger
+    integer_battery_capacity      = true
+}
+
+disk "/home" {
+        format = "D=%avail"
+        low_threshold = 5
+}
+
+load {
+        format = "%1min"
+    max_threshold = 3
+}
+
+cpu_temperature 0 {
+    format                 = "🌡 %degrees °C"
+    path                   = "/sys/class/thermal/thermal_zone0/temp"
+    max_threshold          = 75
+    format_above_threshold = "🥵 %degrees ⁰C"
+#   separator              = false
+}
+
+cpu_usage {
+    format                 = "📈 %usage"
+    max_threshold          = 30
+    format_above_threshold = "🥵 %usage"
+#   separator              = false
+}
+
+
+#volume master {
+#	format       = "🔊 %volume"
+#	format_muted = "🔇 Muted (%volume)"
+#	device       = "pulse:1"
+#
+#}
+
+volume master {
+        format = "♪: %volume"
+        format_muted = "♪: muted (%volume)"
+device = "default"
+mixer = "Master"
+#        device = "pulse:alsa_output.pci-0000_05_00.6.HiFi__hw_Generic_1__sink"
+}
+
+memory {
+        format = "%used | %available"
+        threshold_degraded = "1G"
+        format_degraded = "MEMORY < %available"
+}
+
+tztime local {
+        format = "%Y-%m-%d %H:%M:%S"
+}
