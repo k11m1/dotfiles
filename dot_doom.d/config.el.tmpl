@@ -186,6 +186,17 @@
                         '(
                           (:name "Email" :tag "email" :order 32)
                           (:discard (:anything)))))))         )
+        ("t" "test"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t)
+                          (:habit t)
+                          )
+                       )))
+          )         )
+
+
         ("u" "Unix"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
@@ -197,7 +208,7 @@
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
-                          (:habit t)
+                          ;; (:habit t)
                           (:name "Due soon" :deadline future)
                           (:name "Overdue" :deadline past)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
@@ -229,7 +240,7 @@
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -2)
-                          (:habit t)
+                          ;; (:habit t)
                           (:name "Due soon" :deadline future)
                           (:name "Overdue" :deadline past)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
@@ -258,8 +269,8 @@
                         '((:name "Timeline"
                            :time-grid t
                            :order -1)
-                          (:habit t
-                                  :order 4)
+                          ;; (:habit t
+                          ;;         :order 4)
                           (:log t)  ; Automatically named "Log"
                           (:name "Phone Refil" :tag "PHONE" :order -2)
                           (:name "Today"
