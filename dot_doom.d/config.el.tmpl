@@ -2003,3 +2003,9 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 ;; holidays
 (czech-holidays-add)
+
+
+;;; mu4e don't close frames after compose
+
+(after! mu4e
+  (setq message-kill-buffer-on-exit nil))
