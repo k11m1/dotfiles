@@ -263,7 +263,7 @@
                           (:name "University" :tag "uni" :order 32)
                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
                           )))))         )
-        ("a" "ALL"
+        ("o" "ALL"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
                         '((:name "Timeline"
@@ -501,8 +501,7 @@
 
  (setq mu4e-bookmarks
  `(( :name  "Unread important messages"
-     :query ,(concat "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam OR maildir:/{{ .fiemail }}/mailbox.spam.1 OR " klimi/mu4e-monitoring-mail-query ")" )
-     :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
+     :query ,(concat "(flag:unread OR flag:flagged) AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam OR maildir:/{{ .fiemail }}/mailbox.spam.1 OR maildir:/{{ .fiemail }}/Sent OR " klimi/mu4e-monitoring-mail-query ")" )
      :key ?u)
 ( :name  "unread [a]ll messages"
      :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
@@ -1233,6 +1232,7 @@ by the date of first mail of group."
       :m "t s" #'mu4e-headers-mark-for-spam
       ; :m "t c" #'mu4e-headers-mark-for-captured
       :m "t c" #'klimi/org-capture-and-mark-captured
+      :m "t t" #'mu4e-headers-mark-for-captured
       :m "f" #'mu4e-headers-mark-for-read ; remaps evil things, but you don't use snipe in headers view, do you
       )
 (map!
