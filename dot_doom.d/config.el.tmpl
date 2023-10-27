@@ -143,8 +143,9 @@
                                ("I" . +org-todo-cancel)
                                ("NEXT" . +org-todo-onhold)
                                ("N" . +org-todo-onhold)
+                               ("HW" . highlight-numbers-number)
                                ("KILL" . +org-todo-cancel)))
-(setq org-todo-keywords '((sequence "PROJ(P)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k)")
+(setq org-todo-keywords '((sequence "HW(h) PROJ(P)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k)")
                           (sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)" "|" "DONE(d)")
                           (sequence "L(l)" "T" "N" "P" "I" "|" "D")
                           (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
@@ -212,12 +213,12 @@
                         '(
                           (:name "Email" :tag "email" :order 32)
                           (:discard (:anything)))))))         )
-        ("t" "test"
+        ("T" "test"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
                         '((:name "Timeline"
                            :time-grid t)
-                          (:habit t)
+                          ;; (:habit t)
                           )
                        )))
           )         )
@@ -311,13 +312,14 @@
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
+                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
                           (:name "INTR" :todo ("I" "INTR"))
                           (:name "PROG" :todo ("P" "PROG"))
                           (:name "NEXT" :todo ("N" "NEXT"))
-
-                          (:name "Important" :tag "Important" :priority "A"  :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
+                          (:name "Important" :tag "Important" :priority "A" :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7 )
+                          (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
                           (:name "Muni" :tag "muni" :order 12)
@@ -1829,13 +1831,24 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
           (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
         (user-error (mu4e-format "No attached files found"))))
 
- (defun klimi/mu4e-view-open-attachment ()
-      "Select an attachment, and open it."
-      (interactive)
-      (mu4e--view-open-file
-       (mu4e--view-mime-part-to-temp-file (cdr (klimi/mu4e-view-select-attachment)))))
-        (map! :map mu4e-view-mode-map
-                :ne "o" #'klimi/mu4e-view-open-attachment)
+ ;; (defun klimi/mu4e-view-open-attachment ()
+ ;;      "Select an attachment, and open it."
+ ;;      (interactive)
+ ;;      (mu4e--view-open-file
+ ;;       (mu4e--view-mime-part-to-temp-file (cdr (klimi/mu4e-view-select-attachment)))))
+ ;;        (map! :map mu4e-view-mode-map
+ ;;                :ne "o" #'klimi/mu4e-view-open-attachment)
+(defun klimi/mu4e-view-open-attachment ()
+  "Select an attachment, and open it."
+  (interactive)
+  (mu4e--view-open-file
+   (mu4e--view-mime-part-to-temp-file (cdr (klimi/mu4e-view-select-attachment)))))
+
+(when (and (boundp 'mu4e-mu-version)
+           (version<= "1.10" mu4e-mu-version))
+  (map! :map mu4e-view-mode-map
+        :ne "o" #'klimi/mu4e-view-open-attachment))
+
 
 
 
