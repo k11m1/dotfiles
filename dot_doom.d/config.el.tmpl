@@ -1492,7 +1492,10 @@ is tomorrow.  With two prefixes, select the deadline."
 ;; don't continue commens
 
 ;;; -- COMMENTS FIX
-
+;; Customize org faces
+(custom-set-faces
+ '(org-agenda-diary ((t (:inherit default :foreground "spring green"))))
+ '(org-scheduled-today ((t (:foreground "DarkSlateGray2")))))
 
 
 (setq +default-want-RET-continue-comments nil)
