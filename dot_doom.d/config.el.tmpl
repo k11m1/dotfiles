@@ -96,8 +96,8 @@
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
 (setq org-highest-priority ?A
-      org-default-priority ?C
-      org-lowest-priority  ?E)
+      org-default-priority ?D
+      org-lowest-priority  ?F)
 
 (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
 
@@ -125,6 +125,32 @@
    " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
  org-agenda-current-time-string
  "⭠ now ─────────────────────────────────────────────────")
+
+(after! org
+  (defface +klimi-light-blue-bold-face
+  '((t :foreground "deep sky blue" :weight bold :underline "deep sky blue"))
+  "Face with light blue foreground and bold weight.")
+(setq org-todo-keyword-faces '(("[-]" . +org-todo-active)
+                               ("STRT" . +org-todo-active)
+                               ("[?]" . +org-todo-onhold)
+                               ("WAIT" . +org-todo-onhold)
+                               ("HOLD" . +org-todo-onhold)
+                               ("PROJ" . +org-todo-project)
+                               ("NO" . +org-todo-cancel)
+                               ("PROG" . +klimi-light-blue-bold-face)
+                               ("P" . +klimi-light-blue-bold-face)
+                               ("INTR" . +org-todo-cancel)
+                               ("I" . +org-todo-cancel)
+                               ("NEXT" . +org-todo-onhold)
+                               ("N" . +org-todo-onhold)
+                               ("KILL" . +org-todo-cancel)))
+(setq org-todo-keywords '((sequence "PROJ(P)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k)")
+                          (sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)" "|" "DONE(d)")
+                          (sequence "L(l)" "T" "N" "P" "I" "|" "D")
+                          (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
+                          (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
+  )
+
 
 ;;;; org-timed-alerts - org timed alerts
 ; This is the only package that works without much CPU usage because it
@@ -250,7 +276,7 @@
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "Important" :tag "Important" :priority "A" :face :order 6)
                           (:name "Overdue" :deadline past :face error :order 7)
                            (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
@@ -286,7 +312,11 @@
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "Important" :tag "Important" :priority "A" :face (:underline t :append t) :order 6)
+                          (:name "INTR" :todo ("I" "INTR"))
+                          (:name "PROG" :todo ("P" "PROG"))
+                          (:name "NEXT" :todo ("N" "NEXT"))
+
+                          (:name "Important" :tag "Important" :priority "A"  :order 6)
                           (:name "Overdue" :deadline past :face error :order 7)
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
