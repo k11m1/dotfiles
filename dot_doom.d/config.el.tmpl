@@ -835,7 +835,7 @@ by the date of first mail of group."
 (setq org-capture-templates
       '(
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
-         "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a")
+         "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
  "* TODO %^{Prompt}%?\n:CREATED: %U\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
 ("r" "respond" entry
@@ -851,7 +851,7 @@ by the date of first mail of group."
         ("e" "email" entry (file+headline "~/org/todo.org" "Email")
          "* TODO EMAIL: %? %a %^g:email:\n:CREATED: %U\n  %i" :prepend t)
         ("u" "Unix Todo" entry (file+headline "~/org/unix.org" "Tasks")
-         "* TODO %?\n:CREATED: %U\n  %i\n  %a"))
+         "* TODO %?\n:CREATED: %U\n  %i\n  %a" :prepend t))
       )
 
 ;; INFO: Org - habit
