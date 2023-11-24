@@ -8,6 +8,27 @@
   (setq  lsp-auto-guess-root nil)
   )
 
+;; (defface my-overlay-face
+;;   '((t (:foreground "white" :background "black")))
+;;   "Face for my overlay"
+;;   :group 'my-faces)
+
+;; (set-face-attribute 'org-overlay-type nil :inherit 'my-overlay-face)
+
+;; (setq agenda-entry-content '(face-modified t))
+
+;; ;; Define a colorful face
+;; (defface my-colorful-face
+;;   '((t :foreground "blue" :background "yellow" :weight bold))
+;;   "Face for a colorful appearance.")
+
+;; ;; Create a plist with the key "face" and the value being the face
+;; (setq my-plist `(:face my-colorful-face))
+
+
+; no inline images in html emails by default
+(setq gnus-inhibit-images 't)
+
 ;;; Default
 (setq user-full-name "Martin Klimeš"
       user-mail-address "{{ .email }}"
@@ -48,7 +69,7 @@
 (after! unicode-fonts
   (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
   (push "Asanb Math monospacified for DejaVu Sans Mono" (cadr (assoc "Miscellaneous Mathematical Symbols-B" unicode-fonts-block-font-mapping)))
-  (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
+  ;; (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
 {{ end }}
 {{ if eq .chezmoi.hostname "k11book" }}
 (after! unicode-fonts
@@ -151,7 +172,6 @@
                           (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
                           (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
   )
-
 
 ;;;; org-timed-alerts - org timed alerts
 ; This is the only package that works without much CPU usage because it
@@ -303,8 +323,8 @@
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
-                          (:name "Due soon" :deadline future)
                           (:name "Overdue" :deadline past)
+                          (:name "Due soon" :deadline future)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
                           (:name "Waiting..." :todo "unix" :order 1)
                           (:name "Scheduled earlier" :scheduled past))
@@ -317,8 +337,8 @@
                           (:name "INTR" :todo ("I" "INTR"))
                           (:name "PROG" :todo ("P" "PROG"))
                           (:name "NEXT" :todo ("N" "NEXT"))
-                          (:name "Important" :tag "Important" :priority "A" :order 6)
                           (:name "Overdue" :deadline past :face error :order 7 )
+                          (:name "Important" :tag "Important" :priority "A" :order 6)
                           (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
@@ -446,7 +466,7 @@
 
 
 {{ if eq .chezmoi.hostname "dares" }}
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.13")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.10.7")
 {{ end }}
 
 ; faster mail download
@@ -839,21 +859,21 @@ by the date of first mail of group."
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
          "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
- "* TODO %^{Prompt}%?\n:CREATED: %U\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
+ "* TODO %^{Prompt}%?\n:PROPERTIES:\n:CREATED: %U\n:END:\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
 ("r" "respond" entry
      (file+headline "~/org/index.org" "Tasks")
      "* NEXT Respond to %:from\n SCHEDULED: %t\n\n %:subject\n %i\n %? \n %a"
      :empty-lines-after 1)
         ("i" "Idea" entry (file+headline "~/org/index.org" "Ideas")
-         "* TODO %?\n:CREATED: %U\n  %i\n  %a")
+         "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a")
         ("n" "note" entry
      (file "~/org/notes.org")
      "* %U %? :NOTE:\n\n %i\n %a"
      :empty-lines-after 1)
         ("e" "email" entry (file+headline "~/org/todo.org" "Email")
-         "* TODO EMAIL: %? %a %^g:email:\n:CREATED: %U\n  %i" :prepend t)
+         "* TODO EMAIL: %? %a %^g:email:\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i" :prepend t)
         ("u" "Unix Todo" entry (file+headline "~/org/unix.org" "Tasks")
-         "* TODO %?\n:CREATED: %U\n  %i\n  %a" :prepend t))
+         "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t))
       )
 
 ;; INFO: Org - habit
