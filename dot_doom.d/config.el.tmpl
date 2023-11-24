@@ -1,4 +1,66 @@
-;; default
+;;; default
+
+(setq org-latex-packages-alist '(("margin=1in" "geometry" nil)))
+(setq org-pomodoro-short-break-length 0)
+(setq org-pomodoro-start-sound-args "--volume=30000")
+(setq org-pomodoro-keep-killed-pomodoro-time 't) ; a lot of not clocked time due to this...
+
+(after! org
+  (setq org-agenda-tags-column 90)
+(defun ll/org/agenda/color-headers-with (tag col)
+  "Color agenda lines matching TAG with color COL."
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward tag nil t)
+    (unless (find-in-line "\\[#[A-Z]\\]")
+      (let ((todo-end (or (ll/org/agenda/find-todo-word-end)
+                          (point-at-bol)))
+            (tags-beginning (or (find-in-line " :" t)
+                                (point-at-eol))))
+        (add-text-properties todo-end
+                             tags-beginning
+                             `(face (:foreground ,col)))))))
+
+;; Helper definitions
+(setq ll/org/agenda-todo-words
+      '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT"
+        "KILL"
+        "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N"))
+(defun find-in-line (needle &optional beginning count)
+  "Find the position of the start of NEEDLE in the current line.
+  If BEGINNING is non-nil, find the beginning of NEEDLE in the current
+  line. If COUNT is non-nil, find the COUNT'th occurrence from the left."
+  (save-excursion
+    (beginning-of-line)
+    (let ((found (re-search-forward needle (point-at-eol) t count)))
+      (if beginning
+          (match-beginning 0)
+        found))))
+(defun ll/org/agenda/find-todo-word-end ()
+  (reduce (lambda (a b) (or a b))
+          (mapcar #'find-in-line ll/org/agenda-todo-words)))
+
+(defun ll/org/colorize-headings ()
+  ;; Color all headings with :pers: tan
+  (ll/org/agenda/color-headers-with ":unix:" "DodgerBlue3")
+  (ll/org/agenda/color-headers-with ":hw:" "DarkOrchid1")
+  ;; and :work: blue
+  (ll/org/agenda/color-headers-with ":PA174:" "green"))
+(add-hook 'org-agenda-finalize-hook #'ll/org/colorize-headings)
+)
+
+;;; fix vertico C-h which key
+;; add to ~/.doom.d/config.el
+  (setq which-key-use-C-h-commands t
+        prefix-help-command #'which-key-C-h-dispatch)
+
+  (defadvice! fix-which-key-dispatcher-a (fn &rest args)
+    :around #'which-key-C-h-dispatch
+    (let ((keys (this-command-keys-vector)))
+      (if (equal (elt keys (1- (length keys))) ?\?)
+          (let ((keys (which-key--this-command-keys)))
+            (embark-bindings (seq-take keys (1- (length keys)))))
+        (apply fn args))))
 
 ;(setq font-lock-comment-face  '(:family "Terminess Nerd Font Mono"))
 
@@ -89,7 +151,9 @@
 {{ end }}
 {{ if eq .chezmoi.hostname "klimovo" }}
 ;(setq doom-font (font-spec :family "JetBrains Mono" :size 15))
-(setq doom-font (font-spec :family "Source Code Pro" :size 15))
+;; (setq doom-font (font-spec :family "Source Code Pro" :size 15))
+;;(setq doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 15))
+(setq doom-font (font-spec :family "IosevkaTerm NFM" :size 15))
 ;(setq doom-font (font-spec :size 22))
 
 (defun add-back-emoji-fallback-font-families ()
@@ -172,6 +236,7 @@
                           (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
                           (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
   )
+
 
 ;;;; org-timed-alerts - org timed alerts
 ; This is the only package that works without much CPU usage because it
@@ -284,6 +349,7 @@
                            :time-grid t
                            :order -1)
                           (:log t)  ; Automatically named "Log"
+                          (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -2)
@@ -296,10 +362,20 @@
                        )))
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :face :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
-                           (:discard (:tag ("unix") :category ("UNIX")))
+                        '(
+                          (:discard (:tag ("unix") :category ("UNIX")))
+                          (:name "Next to do" :todo "NEXT" :order 1)
+                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "INTR" :todo ("I" "INTR"))
+                          (:name "PROG" :todo ("P" "PROG"))
+                          (:name "NEXT" :todo ("N" "NEXT"))
+                          (:name "Important" :tag "Important" :priority "A" :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7 )
+                          (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
+                           ;; (:discard (:tag ("unix") :category ("UNIX")))
+                          ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
+                          ;(:name "Overdue" :deadline past :face error :order 7)
                           (:name "Emails" :tag "email" :order 10)
                           (:name "Muni" :tag "muni" :order 12)
                           (:name "Emacs" :tag "Emacs" :order 13)
@@ -310,6 +386,52 @@
                           (:name "University" :tag "uni" :order 32)
                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
                           )))))         )
+        ("P" "Personal Agenda"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-deadline-warning-days 7)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t
+                           :order -1)
+                          (:log t)  ; Automatically named "Log"
+                          (:discard (:tag ("unix") :category ("UNIX")))
+                          (:name "Today"
+                           :deadline today
+                           :scheduled today :order -2)
+                          ;; (:habit t)
+                          (:name "Due soon" :deadline future)
+                          (:name "Overdue" :deadline past)
+                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+                          (:name "Waiting..." :todo "unix" :order 1)
+                          (:name "Scheduled earlier" :scheduled past))
+                       )))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '(
+                          (:discard (:tag ("unix") :category ("UNIX")))
+                          ;; (:name "Next to do" :todo "NEXT" :order 1)
+                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+                          (:name "INTR" :todo ("I" "INTR"))
+                          (:name "PROG" :todo ("P" "PROG"))
+                          (:name "NEXT" :todo ("N" "NEXT"))
+                          ;; (:name "Important" :tag "Important" :priority "A" :order 6)
+                          ;; (:name "Overdue" :deadline past :face error :order 7 )
+                          ;; (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
+                           ;; (:discard (:tag ("unix") :category ("UNIX")))
+                          ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
+                          ;(:name "Overdue" :deadline past :face error :order 7)
+                          ;; (:name "Emails" :tag "email" :order 10)
+                          ;; (:name "Muni" :tag "muni" :order 12)
+                          ;; (:name "Emacs" :tag "Emacs" :order 13)
+                          ;; (:name "Projects" :tag "Project" :order 14)
+                          ;; (:name "Research" :tag "Research" :order 15)
+                          ;; (:name "To read" :tag "Read" :order 30)
+                          ;; (:name "Waiting" :todo "WAITING" :order 20)
+                          ;; (:name "University" :tag "uni" :order 32)
+                          ;; (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+                          (:discard (:anything t))
+                          )))))         )
         ("o" "ALL"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
@@ -319,15 +441,16 @@
                           ;; (:habit t
                           ;;         :order 4)
                           (:log t)  ; Automatically named "Log"
-                          (:name "Phone Refil" :tag "PHONE" :order -2)
+                          ;; (:name "Phone Refil" :tag "PHONE" :order -2)
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
                           (:name "Overdue" :deadline past)
+                          (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
                           (:name "Due soon" :deadline future)
                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
                           (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
+                          )
                        )))
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
@@ -337,8 +460,8 @@
                           (:name "INTR" :todo ("I" "INTR"))
                           (:name "PROG" :todo ("P" "PROG"))
                           (:name "NEXT" :todo ("N" "NEXT"))
-                          (:name "Overdue" :deadline past :face error :order 7 )
                           (:name "Important" :tag "Important" :priority "A" :order 6)
+                          (:name "Overdue" :deadline past :face error :order 7 )
                           (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
@@ -2078,3 +2201,8 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 (after! mu4e
   (setq message-kill-buffer-on-exit nil))
+
+
+;;;; TODO remove
+(setq-default flycheck-disabled-checkers '(python-pylint python-flake8))
+;; (setq-default flycheck-disabled-checkers '())
