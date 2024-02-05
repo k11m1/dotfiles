@@ -1,9 +1,12 @@
 ;;; default
 
 (setq org-latex-packages-alist '(("margin=1in" "geometry" nil)))
+(setq org-pomodoro-length 30)
 (setq org-pomodoro-short-break-length 0)
 (setq org-pomodoro-start-sound-args "--volume=30000")
 (setq org-pomodoro-keep-killed-pomodoro-time 't) ; a lot of not clocked time due to this...
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t) ; TODO: MAYBE REMOVE!!!!
+(setq! lsp-headerline-breadcrumb-enable '(project file symbols))
 
 (after! org
   (setq org-agenda-tags-column 90)
@@ -230,9 +233,9 @@
                                ("N" . +org-todo-onhold)
                                ("HW" . highlight-numbers-number)
                                ("KILL" . +org-todo-cancel)))
-(setq org-todo-keywords '((sequence "HW(h) PROJ(P)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k)")
+(setq org-todo-keywords '((sequence "HW(h) PROJ(P)" "LOOP(r)" "STRT" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k@)")
                           (sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)" "|" "DONE(d)")
-                          (sequence "L(l)" "T" "N" "P" "I" "|" "D")
+                          (sequence "L(l)" "T" "N" "P" "I" "|" "D" "SCRAP(s)")
                           (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
                           (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
   )
@@ -514,8 +517,8 @@
 ;;;; HACK QUESTION ORG it might not be needed anymore with the categories
 ;;;; HACK but it is still needed
 
-(find-file "~/org/index.org")
-(find-file "~/org/unix.org")
+;; (find-file "~/org/index.org")
+;; (find-file "~/org/unix.org")
 
 ;;;; Klimi/jump to org mode file
 
@@ -981,6 +984,8 @@ by the date of first mail of group."
       '(
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
          "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
+        ("s" "Small" entry (file+headline "~/org/index.org" "Small")
+         "* L %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
  "* TODO %^{Prompt}%?\n:PROPERTIES:\n:CREATED: %U\n:END:\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
 ("r" "respond" entry
@@ -2200,9 +2205,11 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ;;; mu4e don't close frames after compose
 
 (after! mu4e
-  (setq message-kill-buffer-on-exit nil))
+  (setq message-kill-buffer-on-exit t))
 
 
 ;;;; TODO remove
 (setq-default flycheck-disabled-checkers '(python-pylint python-flake8))
 ;; (setq-default flycheck-disabled-checkers '())
+
+;;;; Mu4e - signature PGP setup with highlightings
