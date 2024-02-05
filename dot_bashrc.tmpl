@@ -55,6 +55,30 @@ vnc ()
 	ssh -CJ xklimes5@{aisa,$1}.fi.muni.cz -L 9999:localhost:9999
 }
 
+# from Igor Mikushkin: https://askubuntu.com/questions/915041/how-to-rename-extract-files-with-long-names-in-zip-archive
+unziplong() {
+    max_base_len=100
+    max_ext_len=15
+    zipinfo -1 "$1" | grep -v "/$" | while read orig_path
+    do
+        new_path=""
+        current_path="$orig_path"
+        while [[ "$current_path" != "." ]]
+        do
+            segment="$(basename -- "$current_path")"
+            ext="$([[ "$segment" =~ .*\..{1,$max_ext_len}$ ]] && echo ".${segment##*.}" || echo)"
+            base="${segment%$ext}"
+            segment="/$(xargs <<< "${base:0:$max_base_len}")$(xargs <<< "$ext")"
+            new_path="$segment$new_path"
+            current_path="$(dirname -- "$current_path")"
+        done
+        new_path="${new_path:1}"
+        new_dir="$(dirname -- "$new_path")"
+        mkdir -p "$new_dir"
+        unzip -p "$1" "$orig_path" > "$new_path"
+    done
+}
+
 
 
 # make less more friendly for non-text input files, see lesspipe(1)
