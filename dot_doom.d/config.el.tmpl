@@ -2208,6 +2208,19 @@ Prevents a series of redisplays from being called (when set to an appropriate va
   (setq message-kill-buffer-on-exit t))
 
 
+;;;; Not working diary calendar integation (needs force sync everytime)
+;; (use-package! cdsync :load-path "/home/k11m1/.doom.d/cdsync.el/"
+;;   :demand t
+;;   :custom
+;;   (cdsync-auth-source-host "caldav-credentials") ;; see auth setup
+;;   ;; :bind ;; TODO this doesn't work, oops
+;;   ;; '("C-c C-o" cdsync-open-diary)
+;;   :config
+;;   (cdsync-setup-calendar-integration))
+
+;; (add-hook 'diary-list-entries-hook 'diary-include-other-diary-files)
+;; (add-hook 'diary-mark-entries-hook 'diary-mark-included-diary-files)
+
 ;;;; TODO remove
 (setq-default flycheck-disabled-checkers '(python-pylint python-flake8))
 ;; (setq-default flycheck-disabled-checkers '())
