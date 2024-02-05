@@ -2213,3 +2213,16 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ;; (setq-default flycheck-disabled-checkers '())
 
 ;;;; Mu4e - signature PGP setup with highlightings
+;; NOTE Maybe it would be nice to use font-lock for this, but it seems that it is using overlays instead of font lock
+(setq mm-verify-option 'known)
+
+(after! mu4e
+
+
+(add-hook 'mu4e-view-rendered-hook
+          (lambda ()
+           (highlight-regexp "^.*Good signature" 'match)
+           (highlight-phrase "Undecided" 'warning)
+
+           ))
+  )
