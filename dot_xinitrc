@@ -2,11 +2,20 @@
 #export SSH_AUTH_SOCK
 export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
+#export GTK_THEME='Adwaita:dark'
+
+# https://wiki.archlinux.org/title/HiDPI#Qt_5
+# export QT_AUTO_SCREEN_SCALE_FACTOR=1
+# force DPI
+export QT_FONT_DPI=96
+
 
 source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
 #exec dbus-launch cinnamon-session
 #exec awesome
 #exec xmonad
- exec dbus-launch i3
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus
+exec dbus-launch i3
+#exec openbox
 
