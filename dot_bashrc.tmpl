@@ -2,6 +2,7 @@
 # ~/.bashrc
 #
 
+export QT_QPA_PLATFORMTHEME=qt6ct
 export EDITOR='lvim'
 #export EDITOR="emacsclient -t -a 'emacs'"      # $EDITOR use Emacs in terminal
 
@@ -99,3 +100,7 @@ alias ch='~/bin/chezmoi'
 {{ end }}
 
 export VCPKG_DISABLE_METRICS=1
+export HISTFILESIZE=
+export HISTSIZE=
+
+eval "$(zoxide init bash)"
