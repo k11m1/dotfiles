@@ -53,7 +53,7 @@
 {{ end }}
 ;(package! org-wild-notifier)
 ;(package! org-alert)
-(package! org-notifications)
+;(package! org-notifications)
 (package! czech-holidays)
 (package! chezmoi :pin "781783c483bc8fcdba3a230bb774c3a8a5ebe396")
 (package! glsl-mode)
@@ -71,8 +71,8 @@
 ; testing column colors in mu4e
 ;(package! mu4e-column-faces)
 (unpin! doom-themes)
-(unpin! lsp-treemacs)
-(unpin! mu4e-alert)
+;(unpin! lsp-treemacs)
+;(unpin! mu4e-alert)
 ;(unpin! org-mode)
 ;(package! org :pin "5890ac")
 ;(unpin! org)
@@ -82,6 +82,10 @@
 
 ;; ;; hotfix workaround forge
 ;; (package! closql :pin "0a7226331ff1f96142199915c0ac7940bac4afdd")
+;(package! org-ql :pin "d09608aa35090df8a02cc372e9c862566b0169f4")
+;(unpin! org-ql)
+;(unpin! org-mode)
+
 
 ;; testing
 
@@ -118,6 +122,7 @@
 (package! org-pdftools)
 (package! org-noter-pdftools)
 (package! mu4e-alert :disable t) ; I built my own thing for notifications + in mu 1.10 there are some native notifications
+(unpin! org-super-agenda)
 
 
 ;; org roam
@@ -130,4 +135,4 @@
 (package! org-timeblock
   :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
 
-(package! org-modern)
+;(package! org-modern)
