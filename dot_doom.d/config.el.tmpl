@@ -184,10 +184,34 @@
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
 (setq org-highest-priority ?A
-      org-default-priority ?D
+      org-default-priority ?E
       org-lowest-priority  ?F)
+(setq my/black "black"
+          my/gray  "DunGray"
+          my/lgray "gray60"
+          my/white "white"
+          my/red "Firebrick"
+          my/orange "orange red"
+          my/yellow "lightyellow"
+          my/green "ForestGreen"
+          my/lblue "deep sky blue"
+          my/blue "blue"
+          my/purple "Purple"
+          my/brown "brown")
+(setq org-priority-faces
+      `((?A . (:foreground ,my/purple))
+        (?B . (:foreground ,my/red))
+        (?C . (:foreground ,my/orange))
+        (?D . (:foreground ,my/green))
+        (?E . (:foreground ,my/lblue))
+        (?F . (:foreground "tan"))))
 
-(setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
+
+;; (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
+(setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴"))
+
+(setq org-fancy-priorities-list '("[#A]" "[#B]" "[#C]" "[#D]" "[#E]"))
+(setq! org-fancy-priorities-mode nil)
 
 
 (setq org-agenda-skip-scheduled-if-done t
@@ -1231,6 +1255,7 @@ by the date of first mail of group."
   (setq ispell-dictionary "cs_CZ,en_US")
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic "cs_CZ,en_US")
+  (setq ispell-dictionary "cs_CZ,en_US")
 
 
   )
@@ -1411,7 +1436,8 @@ by the date of first mail of group."
       :m "t l" #'mu4e-headers-mark-for-later
       :m "t s" #'mu4e-headers-mark-for-spam
       ; :m "t c" #'mu4e-headers-mark-for-captured
-      :m "t c" #'klimi/org-capture-and-mark-captured
+      :mn "t c" #'klimi/org-capture-and-mark-captured
+      :m "t" #'klimi/org-capture-and-mark-captured
       :m "t t" #'mu4e-headers-mark-for-captured
       :m "f" #'mu4e-headers-mark-for-read ; remaps evil things, but you don't use snipe in headers view, do you
       )
@@ -2202,7 +2228,7 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 (czech-holidays-add)
 
 
-;;; mu4e don't close frames after compose
+;;; mu4e don't close frames after compose - NO! do that cuz it leaves too much mess behind
 
 (after! mu4e
   (setq message-kill-buffer-on-exit t))
