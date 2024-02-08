@@ -2264,4 +2264,19 @@ Prevents a series of redisplays from being called (when set to an appropriate va
            (highlight-phrase "Undecided" 'warning)
 
            ))
+
+(defvar klimi-bad-addresses
+  '(
+    "reply"
+    "fi.fi.muni.cz"
+    "gitlab.fi.muni.cz"
+    ))
+
+(defun klimi-mu4e-contact-cleaner (addr)
+  "Clean out junk emails from contacts."
+  (if (--any (string-match-p it addr) klimi-bad-addresses)
+      nil
+    addr))
+(setq mu4e-contact-process-function 'klimi-mu4e-contact-cleaner)
+
   )
