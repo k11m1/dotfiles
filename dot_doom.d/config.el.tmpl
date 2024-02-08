@@ -28,7 +28,7 @@
 (setq ll/org/agenda-todo-words
       '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT"
         "KILL"
-        "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N"))
+        "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L"))
 (defun find-in-line (needle &optional beginning count)
   "Find the position of the start of NEEDLE in the current line.
   If BEGINNING is non-nil, find the beginning of NEEDLE in the current
@@ -184,7 +184,7 @@
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
 (setq org-highest-priority ?A
-      org-default-priority ?E
+      org-default-priority ?D
       org-lowest-priority  ?F)
 (setq my/black "black"
           my/gray  "DunGray"
