@@ -15,14 +15,14 @@
   (interactive)
   (goto-char (point-min))
   (while (re-search-forward tag nil t)
-    (unless (find-in-line "\\[#[A-Z]\\]")
+    ;(unless (find-in-line "\\[#[A-Z]\\]")
       (let ((todo-end (or (ll/org/agenda/find-todo-word-end)
                           (point-at-bol)))
             (tags-beginning (or (find-in-line " :" t)
                                 (point-at-eol))))
         (add-text-properties todo-end
                              tags-beginning
-                             `(face (:foreground ,col)))))))
+                             `(face (:foreground ,col))))))
 
 ;; Helper definitions
 (setq ll/org/agenda-todo-words
@@ -210,8 +210,11 @@
 ;; (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
 (setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴"))
 
-(setq org-fancy-priorities-list '("[#A]" "[#B]" "[#C]" "[#D]" "[#E]"))
-(setq! org-fancy-priorities-mode nil)
+;(setq org-fancy-priorities-list '("[#A]" "[#B]" "[#C]" "[#D]" "[#E]"))
+(setq org-fancy-priorities-mode nil)
+(after! org
+(setq org-fancy-priorities-mode nil)
+  )
 
 
 (setq org-agenda-skip-scheduled-if-done t
@@ -472,6 +475,7 @@
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
+                          (:name "Homeworks" :tag "hw")
                           (:name "Overdue" :deadline past)
                           (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
                           (:name "Due soon" :deadline future)
@@ -482,7 +486,7 @@
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
-                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+                          ; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
                           (:name "INTR" :todo ("I" "INTR"))
                           (:name "PROG" :todo ("P" "PROG"))
@@ -523,6 +527,12 @@
 ;; (setq org-icalendar-deadline-summary-prefix "🚨🚨: ")
 (setq org-icalendar-deadline-summary-prefix "🟥: ")
 (setq org-icalendar-exclude-tags '("ics"))
+
+(defun klimi-org-agenda-icalendar-combine-files ()
+  "Set `org-agenda-default-appointment-duration' to 30 and call `org-icalendar-combine-agenda-files'."
+  (interactive)
+  (let ((org-agenda-default-appointment-duration 30))
+    (org-icalendar-combine-agenda-files)))
 
 ; FIXME: HACK: This is ultra super awful workaround that... works...
 (defun klimi/org-icalendar-fix-double-entry (file)
@@ -1040,18 +1050,20 @@ by the date of first mail of group."
      (funcall ,fnc)))
 
 ; this causes the save on weird timings
-;(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
-;(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-deadline       :after (η #'org-save-all-org-buffers))
+(advice-add 'org-schedule       :after (η #'org-save-all-org-buffers))
 (advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
 (advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-in       :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
+(advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
 
+(advice-add 'org-agenda-do-date-later      :after (η #'org-save-all-org-buffers))
 (advice-add 'org-agenda-kill    :after (η #'org-save-all-org-buffers))
 (advice-add 'org-agenda-schedule    :after (η #'org-save-all-org-buffers))
 
-(advice-remove 'org-deadline       (η #'org-save-all-org-buffers))
-(advice-remove 'org-schedule       (η #'org-save-all-org-buffers))
+;(advice-remove 'org-deadline       (η #'org-save-all-org-buffers))
+;(advice-remove 'org-schedule       (η #'org-save-all-org-buffers))
 ;(advice-remove 'org-store-log-note (η #'org-save-all-org-buffers))
 ;(advice-remove 'org-todo           (η #'org-save-all-org-buffers))
 ;(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
@@ -1447,8 +1459,8 @@ by the date of first mail of group."
       :m "t c" #'klimi/org-capture-and-mark-captured
  )
 
-(define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
-(define-key mu4e-headers-mode-map (kbd "F") 'mu4e-headers-mark-for-spam)
+;; (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-headers-mark-for-tag)
+;; (define-key mu4e-headers-mode-map (kbd "F") 'mu4e-headers-mark-for-spam)
 )
 (defun klimi/end-of-buffer-before-reply ()
   (interactive)
