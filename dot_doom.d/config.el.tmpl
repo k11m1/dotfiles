@@ -137,7 +137,7 @@
   (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
   (push "Asanb Math monospacified for DejaVu Sans Mono" (cadr (assoc "Miscellaneous Mathematical Symbols-B" unicode-fonts-block-font-mapping)))
   ;; (delete "Noto Color Emoji" doom-emoji-fallback-font-families)
-  )
+)
 {{ end }}
 {{ if eq .chezmoi.hostname "k11book" }}
 (after! unicode-fonts
@@ -187,7 +187,7 @@
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
 (setq org-highest-priority ?A
-      org-default-priority ?D
+      org-default-priority ?E
       org-lowest-priority  ?F)
 (setq my/black "black"
           my/gray  "DunGray"
@@ -629,7 +629,7 @@
 
 
 {{ if eq .chezmoi.hostname "dares" }}
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.10.7")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.10.8")
 {{ end }}
 
 ; faster mail download
@@ -715,9 +715,7 @@
 ;;; mu4e - bookmarks
 
  (setq mu4e-bookmarks
- `(( :name  "Unread important messages"
-     :query ,(concat "(flag:unread OR flag:flagged) AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam OR maildir:/{{ .fiemail }}/mailbox.spam.1 OR maildir:/{{ .fiemail }}/Sent OR " klimi/mu4e-monitoring-mail-query ")" )
-     :key ?u)
+ `(
 ( :name  "unread [a]ll messages"
      :query "flag:unread AND NOT (flag:trashed OR maildir:/{{ .fiemail }}/mailbox.spam)"
      :key ?a)
