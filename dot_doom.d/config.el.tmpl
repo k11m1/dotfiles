@@ -446,6 +446,7 @@
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '(
+                          (:name "Homework TODO" :tag ("hw"))
                           (:discard (:tag ("unix") :category ("UNIX")))
                           ;; (:name "Next to do" :todo "NEXT" :order 1)
                           ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
@@ -493,7 +494,9 @@
                        )))
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
+                        '(
+                          (:name "Homework TODO" :tag ("hw"))
+                          (:name "Next to do" :todo "NEXT" :order 1)
                           ; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
                           (:name "INTR" :todo ("I" "INTR"))
