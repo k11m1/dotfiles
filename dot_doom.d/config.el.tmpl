@@ -2327,7 +2327,34 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 ;;; TOOO karel
 
-(load "/home/k11m1/.doom.d/karel.el/karel-mode.el")
+;(load "/home/k11m1/.doom.d/karel.el/karel-mode.el")
+
+
+(defconst karel-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    ;; # is a comment starter
+    (modify-syntax-entry ?# "<" table)
+    ;; \n is a comment ender
+    (modify-syntax-entry ?\n ">" table)
+    table))
+
+(eval-when-compile
+  (require 'rx))
+
+(defconst karel--font-lock-defaults
+  (let ((keywords '("DEFINE" "END" "RUN"))
+        (builtins '("PUT" "LEFT" "RIGHT" "SKIP" "TAKE" "IFWALL" "IFMARK" "STEP"))
+        (types '()))
+    `(((,(rx-to-string `(: (or ,@keywords))) 0 font-lock-keyword-face)
+       (,(rx-to-string `(: (or ,@builtins))) 0 font-lock-builtin-face)
+       ("\\([a-z][[:word:]]+\\)" 1 font-lock-function-name-face)))))
+
+(define-derived-mode karel-mode prog-mode "Karel"
+  :syntax-table karel-mode-syntax-table
+  (setq font-lock-defaults karel--font-lock-defaults)
+  (font-lock-fontify-buffer))
+
+(add-to-list 'auto-mode-alist '("\\.karel" . karel-mode))
 
 ;;; verilog
 
