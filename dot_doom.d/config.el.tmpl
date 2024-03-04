@@ -45,8 +45,10 @@
 
 (defun ll/org/colorize-headings ()
   ;; Color all headings with :pers: tan
+
   (ll/org/agenda/color-headers-with ":unix:" "DodgerBlue3")
   (ll/org/agenda/color-headers-with ":hw:" "DarkOrchid1")
+  (ll/org/agenda/color-headers-with ":@emlab:" "yellow")
   ;; and :work: blue
   (ll/org/agenda/color-headers-with ":PA174:" "green"))
 (add-hook 'org-agenda-finalize-hook #'ll/org/colorize-headings)
@@ -134,7 +136,8 @@
 (after! unicode-fonts
   (push "IBM Plex Sans KR" (cadr (assoc "Enclosed Alphanumerics" unicode-fonts-block-font-mapping)))
   (push "Asanb Math monospacified for DejaVu Sans Mono" (cadr (assoc "Miscellaneous Mathematical Symbols-B" unicode-fonts-block-font-mapping)))
-  ;; (delete "Noto Color Emoji" doom-emoji-fallback-font-families))
+  ;; (delete "Noto Color Emoji" doom-emoji-fallback-font-families)
+  )
 {{ end }}
 {{ if eq .chezmoi.hostname "k11book" }}
 (after! unicode-fonts
