@@ -1,4 +1,6 @@
 ;;; default
+;; TODO fix org-download?
+;; TODO fix org-drag and drop
 
 (setq org-latex-packages-alist '(("margin=1in" "geometry" nil)))
 (setq org-pomodoro-length 30)
@@ -27,8 +29,7 @@
 ;; Helper definitions
 (setq ll/org/agenda-todo-words
       '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT"
-        "KILL"
-        "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L"))
+        "KILL" "PROG" "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L"))
 (defun find-in-line (needle &optional beginning count)
   "Find the position of the start of NEEDLE in the current line.
   If BEGINNING is non-nil, find the beginning of NEEDLE in the current
@@ -54,8 +55,7 @@
 (add-hook 'org-agenda-finalize-hook #'ll/org/colorize-headings)
 )
 
-;;; fix vertico C-h which key
-;; add to ~/.doom.d/config.el
+;;; fix vertico C-h which key (still doesn't seem to work lol)
   (setq which-key-use-C-h-commands t
         prefix-help-command #'which-key-C-h-dispatch)
 
@@ -93,7 +93,7 @@
 ;; (setq my-plist `(:face my-colorful-face))
 
 
-; no inline images in html emails by default
+;;; mu4e - no inline images in html emails by default
 (setq gnus-inhibit-images 't)
 
 ;;; Default
@@ -109,6 +109,7 @@
 
 (setq doom-theme 'doom-one) ; dark theme
 ;(setq doom-theme 'zaiste) ; light/day theme, credit: https://github.com/zaiste/zaiste-emacs-theme
+
 
 ;; (setq typescript-indent-level 2
 ;;      js-indent-level 2)
@@ -186,27 +187,30 @@
 (setq org-deadline-warning-days 7)
 (setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
+
+;;;; ORG - priorities
 (setq org-highest-priority ?A
       org-default-priority ?E
       org-lowest-priority  ?F)
-(setq my/black "black"
-          my/gray  "DunGray"
-          my/lgray "gray60"
-          my/white "white"
-          my/red "Firebrick"
-          my/orange "orange red"
-          my/yellow "lightyellow"
-          my/green "ForestGreen"
-          my/lblue "deep sky blue"
-          my/blue "blue"
-          my/purple "Purple"
-          my/brown "brown")
+
+(setq klimi/black "black"
+          klimi/gray  "DunGray"
+          klimi/lgray "gray60"
+          klimi/white "white"
+          klimi/red "Firebrick"
+          klimi/orange "orange red"
+          klimi/yellow "lightyellow"
+          klimi/green "ForestGreen"
+          klimi/lblue "deep sky blue"
+          klimi/blue "blue"
+          klimi/purple "Purple"
+          klimi/brown "brown")
 (setq org-priority-faces
-      `((?A . (:foreground ,my/purple))
-        (?B . (:foreground ,my/red))
-        (?C . (:foreground ,my/orange))
-        (?D . (:foreground ,my/green))
-        (?E . (:foreground ,my/lblue))
+      `((?A . (:foreground ,klimi/purple))
+        (?B . (:foreground ,klimi/red))
+        (?C . (:foreground ,klimi/orange))
+        (?D . (:foreground ,klimi/green))
+        (?E . (:foreground ,klimi/lblue))
         (?F . (:foreground "tan"))))
 
 
@@ -219,6 +223,7 @@
 (setq org-fancy-priorities-mode nil)
   )
 
+;;;; org - some config - related to agenda
 
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
@@ -228,7 +233,7 @@
       org-agenda-compact-blocks t
       org-agenda-sticky t) ;; don't bury my buffers, i like to return to them
 
-;; org-roam
+;;;; org-roam
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry "* %<%I:%M %p>: %?"
          :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
@@ -271,7 +276,7 @@
   )
 
 
-;;;; org-timed-alerts - org timed alerts
+;;;; org-timed-alerts - org timed alerts [after! org]
 ; This is the only package that works without much CPU usage because it
 ; schedules things in advance and rescans only on request!
 
@@ -552,7 +557,7 @@
 
 
 ;;;; HACK QUESTION ORG it might not be needed anymore with the categories
-;;;; HACK but it is still needed
+;;;; HACK but it is still needed - HACK or maybe not?
 
 ;; (find-file "~/org/index.org")
 ;; (find-file "~/org/unix.org")
@@ -621,6 +626,7 @@
 (defun mu4e--enable-hide-citation ()
   (setq gnus-treat-hide-citation t))
 
+;; TODO add hack for PGP sign button also?
 (add-hook 'mu4e-compose-pre-hook 'mu4e--disable-hide-citation)
 (add-hook 'mu4e-compose-mode-hook 'mu4e--enable-hide-citation)
 
@@ -634,14 +640,17 @@
 
 ; faster mail download
 (setq +mu4e-backend nil)
+(after! mu4e
+  (setq mu4e-get-mail-command "{{ .chezmoi.homeDir }}/.local/bin/get_mail.sh"))
+
 ; disable smart parens because they lag a lot
 (add-hook 'mu4e-compose-mode-hook  #'turn-off-smartparens-mode)
-(after! mu4e
+
+;; Klimi: use the date of the sending instead when started composing
     (add-hook 'mu4e-compose-mode-hook (lambda ()
                                         ;; other customizations
                                         (message-remove-header "Date")))
 
-  (setq mu4e-get-mail-command "{{ .chezmoi.homeDir }}/.local/bin/get_mail.sh"))
 
 
 (after! mu4e
@@ -655,7 +664,7 @@
        message-sendmail-extra-arguments '("--read-envelope-from")
        message-send-mail-function 'message-send-mail-with-sendmail)
 
-;;;  mu4e - contacts
+;;;  mu4e - contacts - NOT USED - I am using automatic
 ;  (setq mu4e-compose-complete-only-personal 't)
 ;  (setq mu4e-org-contacts-file  "~/org/contacts.org")
 ;  (add-to-list 'mu4e-headers-actions
@@ -666,6 +675,7 @@
   (setq gnus-icalendar-org-capture-file "~/org/notes.org")
   (setq gnus-icalendar-org-capture-headline '("Calendar"))
   (gnus-icalendar-org-setup)
+; DONT forget to include the contact cleaner
 
 ;;;; mu4e - main
 
@@ -887,7 +897,7 @@ by the date of first mail of group."
 ;;;
 ;;;b34d
 
-;; mu4e - scroll margin
+;;; mu4e - scroll margin - doesn't work much :/
 ;;
 
 (add-hook 'mu4e-headers-mode-hook
@@ -903,7 +913,7 @@ by the date of first mail of group."
             (make-local-variable 'scroll-margin)
             (setq scroll-margin 3)))
 
-;; org publish
+;;; org publish - WEB
 
 (setq org-export-with-sub-superscripts nil)
 (setq org-pandoc-options-for-html5 '((standalone . t) (self-contained . t)))
@@ -950,9 +960,10 @@ by the date of first mail of group."
 
         ("myprojectweb" :components("blog-org" "blog-img"))))
 
+;; Do the copying manually since this is waaaaaaaaaaay faster than to use the ssh host directly
 ;; rsync -ravz ~/public_html/ merlin:/var/www/blog/
 
-;; org configuration
+;;; org configuration
 ;;
 (after! org
 
@@ -967,15 +978,6 @@ by the date of first mail of group."
 (setq org-agenda-start-day "+0d")
 (setq org-agenda-span 1)
 
-;; (setq org-agenda-custom-commands
-;;       '(("h" "Agenda and "
-;;          ((tags-todo "phone")(agenda "")
-
-;;           ))
-;;         ("o" "Agenda and Office-related tasks"
-;;          ((agenda "")
-;;           (tags-todo "unix"))
-
 (setq org-agenda-exporter-settings
       '(
       ;  (ps-number-of-columns 2)
@@ -983,32 +985,13 @@ by the date of first mail of group."
       ;  (org-agenda-add-entry-text-maxlines 5)
         (htmlize-output-type 'inline-css)))
 
-;; (setq org-agenda-custom-commands
-;;       '(("h" "Agenda and "
-;;          ((tags-todo "phone")(agenda "")
-
-;;           ) nil ("~/tmp/agenda.export.html")  )
-;;         ("o" "Agenda and Office-related tasks"
-;;          ((agenda "")
-;;           (tags-todo "unix"))
-
-;;          ((org-agenda-tag-filter '("+unix"))))))
-
-;; org - source block templates
+;; org - source block templates (shortcuts)
 
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src elisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
-;; ;; org - wild notification
-;(after! org
-;
-;(org-wild-notifier-mode)
-;)
-;(setq org-wild-notifier-alert-time '(30 10))
-
-
-;; org - org-alert
+;;; org - org-alert
 (setq alert-default-style 'libnotify)
 (setq org-alert-interval 300
       org-alert-notify-cutoff 10
@@ -1021,6 +1004,20 @@ by the date of first mail of group."
          "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
         ("s" "Small" entry (file+headline "~/org/index.org" "Small")
          "* L %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
+("c" ; key
+         "Custom" ; description
+         entry ; type
+         (file+headline "~/org/index.org" "testing") ; target
+         "* NEXT %^{Todo} :trivial:
+SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
+:PROPERTIES:\n:Created: %U\n:END:\n\n%?" ; template
+         :prepend t ; properties
+         :empty-lines 1 ; properties
+         :created t)
+;; ("m" "Meeting"
+;;  entry (file+datetree "~/org/calendar.org")
+;;  (concat "* %? :meeting:\n<%<%Y-%m-%d %a %^ {Time}>>")
+;;  :time-prompt t)
 ("T" "Todo" entry (file+headline "~/org/index.org" "Tasks")
  "* TODO %^{Prompt}%?\n:PROPERTIES:\n:CREATED: %U\n:END:\nSCHEDULED: %^{Deadline:}t\n  %i\n  %a")
 ("r" "respond" entry
@@ -1045,6 +1042,9 @@ by the date of first mail of group."
 ;; org - auto save advices
 ;;
 
+;; TODO: fix this so it really does sove the file... like after 10 sec of the
+;; last action? That would be superb!
+
 (defmacro η (fnc)
   "Return function that ignores its arguments and invokes FNC."
   `(lambda (&rest _rest)
@@ -1056,7 +1056,6 @@ by the date of first mail of group."
 (advice-add 'org-store-log-note :after (η #'org-save-all-org-buffers))
 (advice-add 'org-todo           :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-in       :after (η #'org-save-all-org-buffers))
-(advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
 (advice-add 'org-clock-out      :after (η #'org-save-all-org-buffers))
 
 (advice-add 'org-agenda-do-date-later      :after (η #'org-save-all-org-buffers))
@@ -1070,7 +1069,7 @@ by the date of first mail of group."
 ;(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
 ;(advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
 
-;(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling
+;(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling (sad)
 
 (setq org-clock-persist t)
 
@@ -1079,7 +1078,7 @@ by the date of first mail of group."
 (setq org-journal-date-format "%a, %Y-%m-%d"
       org-journal-file-format "%Y-%m-%d.org")
 
-;; org end
+;;; org end [after! end]
   )
 
 ;;; Calendar
@@ -1117,14 +1116,14 @@ by the date of first mail of group."
 
  (setq cfw:render-line-breaker 'cfw:render-line-breaker-simple))
 
-;; Languages - C/C++
+;;; Languages - C/C++
 
 (setq c-default-style "k&r"
       c-basic-offset 4
       indent-tabs-mode nil)
 
 
-; TODO: Opravdu tohle chci?
+; TODO: Opravdu tohle chci? Pro výuku možná...
 ; FIXME: doesn't work in other themes (especially light themes)
 ; (setq font-lock-comment-face  '(:foreground "#b4f7a5"))
 
@@ -1141,7 +1140,8 @@ by the date of first mail of group."
                   :filter ,(lambda (cmd)
                              (when (company-explicit-action-p)
                                cmd)))))
- (setq company-auto-complete-chars nil))
+
+(setq company-auto-complete-chars nil) )
 
 (after! web-mode
   (dolist (key '("<tab>" "TAB"))
@@ -1208,7 +1208,7 @@ by the date of first mail of group."
  (add-hook 'compilation-start-hook 'compilation-started)
   (add-hook 'compilation-finish-functions 'hide-compile-buffer-if-successful)
 
-  (defcustom auto-hide-compile-buffer-delay 1
+  (defcustom auto-hide-compile-buffer-delay 3
     "Time in seconds before auto hiding compile buffer."
     :group 'compilation
     :type 'number
@@ -1248,11 +1248,11 @@ by the date of first mail of group."
     (setq compilation-start-time (current-time))
   )
 
-;;; cdlatex (yasnisppet overrides cdlatex in latex mode)
+;;; cdlatex (yasnisppet overrides cdlatex in latex mode) [depricated?]
 ;; (map! :map cdlatex-mode-map
 ;;       :i "TAB" #'cdlatex-tab)
 
-;;; fix org capture
+;;; fix org capture [is it still necessary? It seems to work now...(at least with it)]
 ;;;
 (after! org
   (defadvice! dan/+org--restart-mode-h-careful-restart (fn &rest args)
@@ -1264,11 +1264,12 @@ by the date of first mail of group."
         (setq-local org-capture-current-plist old-org-capture-current-plist)
         (org-capture-mode +1)))))
 
+;;; ispell setting
 (after! ispell
   (setq ispell-dictionary "cs_CZ,en_US")
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic "cs_CZ,en_US")
-  (setq ispell-dictionary "cs_CZ,en_US")
+  (setq ispell-dictionary "cs_CZ,en_US") ; no idea but having it here seems to fix it (just the one before is not enough?)
 
 
   )
@@ -2143,7 +2144,7 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 (setq gc-cons-threshold 104857600)
 
 
-;;;; mu4e - force more txt
+;;; mu4e - force more txt
 
 
   (add-to-list 'mm-discouraged-alternatives "text/html")
@@ -2154,7 +2155,7 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ; laggy in LSP :(
 ; (pixel-scroll-precision-mode t)
 
-;;;; MU4e
+;;; MU4e
 
 ;(defun highlight-urgent ()
 ;  (highlight-phrase "MIG" 'hi-aquamarine))
@@ -2277,19 +2278,81 @@ Prevents a series of redisplays from being called (when set to an appropriate va
            (highlight-phrase "Undecided" 'warning)
 
            ))
+  )
 
+;;; mu4e - contact cleaner
+(after! mu4e
 (defvar klimi-bad-addresses
   '(
     "reply"
     "fi.fi.muni.cz"
     "gitlab.fi.muni.cz"
     ))
-
 (defun klimi-mu4e-contact-cleaner (addr)
   "Clean out junk emails from contacts."
   (if (--any (string-match-p it addr) klimi-bad-addresses)
       nil
     addr))
 (setq mu4e-contact-process-function 'klimi-mu4e-contact-cleaner)
-
   )
+
+;;; JUNK
+
+;; (defface my-overlay-face
+;;   '((t (:foreground "white" :background "black")))
+;;   "Face for my overlay"
+;;   :group 'my-faces)
+
+;; (set-face-attribute 'org-overlay-type nil :inherit 'my-overlay-face)
+
+;; (setq agenda-entry-content '(face-modified t))
+
+;; ;; Define a colorful face
+;; (defface my-colorful-face
+;;   '((t :foreground "blue" :background "yellow" :weight bold))
+;;   "Face for a colorful appearance.")
+
+;; ;; Create a plist with the key "face" and the value being the face
+;; (setq my-plist `(:face my-colorful-face))
+
+;; ;; org - wild notification
+;(after! org
+;
+;(org-wild-notifier-mode)
+;)
+;(setq org-wild-notifier-alert-time '(30 10))
+
+;;; TOOO karel
+
+(load "/home/k11m1/.doom.d/karel.el/karel-mode.el")
+
+;;; verilog
+
+
+(use-package! verilog-ext
+  :hook ((verilog-mode . verilog-ext-mode))
+  :init
+  ;; Can also be set through `M-x RET customize-group RET verilog-ext':
+  ;; Comment out/remove the ones you do not need
+  (setq verilog-ext-feature-list
+        '(font-lock
+          xref
+          capf
+          hierarchy
+          eglot
+          lsp
+          flycheck
+          beautify
+          navigation
+          template
+          formatter
+          compilation
+          imenu
+          which-func
+          hideshow
+          typedefs
+          time-stamp
+          block-end-comments
+          ports))
+  :config
+  (verilog-ext-mode-setup))
