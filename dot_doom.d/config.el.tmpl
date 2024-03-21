@@ -2155,9 +2155,10 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 ;;; mu4e - force more txt
 
-
+(after! org
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext")
+  )
 
 ;;;; emacs 29.1 pixel
 
