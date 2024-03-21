@@ -215,7 +215,9 @@
 
 
 ;; (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕"))
+(after! org
 (setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴"))
+  )
 
 ;(setq org-fancy-priorities-list '("[#A]" "[#B]" "[#C]" "[#D]" "[#E]"))
 (setq org-fancy-priorities-mode nil)
@@ -444,6 +446,7 @@
                           (:name "Scheduled earlier" :scheduled past))
                        )))
           (alltodo "" ((org-agenda-overriding-header "")
+                       ; FIXME: base on deadline time (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up)
                        (org-super-agenda-groups
                         '(
                           (:name "Homework TODO" :tag ("hw"))
@@ -481,10 +484,10 @@
                           ;;         :order 4)
                           (:log t)  ; Automatically named "Log"
                           ;; (:name "Phone Refil" :tag "PHONE" :order -2)
+                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order -2)
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
-                          (:name "Homeworks" :tag "hw")
                           (:name "Overdue" :deadline past)
                           (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
                           (:name "Due soon" :deadline future)
