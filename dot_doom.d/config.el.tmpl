@@ -1081,6 +1081,12 @@ SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
 (setq org-journal-date-format "%a, %Y-%m-%d"
       org-journal-file-format "%Y-%m-%d.org")
 
+;;; org tags
+
+(setq! org-tag-faces '(("hw" . "Green") ("unix" . "deep sky blue") ("@emlab" . "yellow") ("teaching" . "red")))
+(setq org-tags-sort-function 'org-string-collate-lessp)
+
+
 ;;; org end [after! end]
   )
 
@@ -1383,7 +1389,7 @@ SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
 (after! org (plist-put org-format-latex-options :scale 3)  )
 
 ;;; Testing mu4e
-;;;
+;;;; sub heading mu4e
 
 (after! mu4e
 (setq mu4e-spam-folder "/xklimes5@fi.muni.cz/mailbox.spam")
@@ -2386,3 +2392,8 @@ Prevents a series of redisplays from being called (when set to an appropriate va
           ports))
   :config
   (verilog-ext-mode-setup))
+
+
+;;; org mode jump to heading org-goto
+(setq org-goto-interface 'outline-path-completion)
+(setq org-outline-path-complete-in-steps nil)
