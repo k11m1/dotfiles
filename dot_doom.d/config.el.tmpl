@@ -28,7 +28,7 @@
 
 ;; Helper definitions
 (setq ll/org/agenda-todo-words
-      '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT"
+      '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT" "WAIT"
         "KILL" "PROG" "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L"))
 (defun find-in-line (needle &optional beginning count)
   "Find the position of the start of NEEDLE in the current line.
@@ -927,6 +927,8 @@ by the date of first mail of group."
 
 ;; Load the publishing system
 (require 'ox-publish)
+;; Do the copying manually since this is waaaaaaaaaaay faster than to use the ssh host directly
+;; rsync -ravz ~/public_html/ merlin:/var/www/blog/
 
 ;; Customize the HTML output
 (setq org-html-validation-link nil            ;; Don't show validation link
@@ -997,6 +999,9 @@ by the date of first mail of group."
 (add-to-list 'org-structure-template-alist '("el" . "src elisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
+;;; org - agenda 2024 configuration
+(setq! org-agenda-time-grid '((daily today require-timed remove-match) (800 1000
+        1200 1400 1600 1800 2000 2200) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 ;;; org - org-alert
 (setq alert-default-style 'libnotify)
 (setq org-alert-interval 300
@@ -2158,10 +2163,9 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 ;;; mu4e - force more txt
 
-(after! mu4e
+
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext")
-  )
 
 ;;;; emacs 29.1 pixel
 
