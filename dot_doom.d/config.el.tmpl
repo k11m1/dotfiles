@@ -1002,6 +1002,8 @@ by the date of first mail of group."
 ;;; org - agenda 2024 configuration
 (setq! org-agenda-time-grid '((daily today require-timed remove-match) (800 1000
         1200 1400 1600 1800 2000 2200) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+
+(setq! org-agenda-todo-ignore-scheduled 'future)
 ;;; org - org-alert
 (setq alert-default-style 'libnotify)
 (setq org-alert-interval 300
