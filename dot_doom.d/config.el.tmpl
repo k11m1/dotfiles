@@ -255,8 +255,14 @@
   (defface +klimi-light-blue-bold-face
   '((t :foreground "deep sky blue" :weight bold :underline "deep sky blue"))
   "Face with light blue foreground and bold weight.")
+  (defface +klimi-org-done-inactive-face
+  '((t :foreground "#5B6268" :weight bold))
+  "Face with light blue foreground and bold weight.")
+
 (setq org-todo-keyword-faces '(("[-]" . +org-todo-active)
                                ("STRT" . +org-todo-active)
+                               ("TODO" . success)
+                               ("DONE" . +klimi-org-done-inactive-face)
                                ("[?]" . +org-todo-onhold)
                                ("WAIT" . +org-todo-onhold)
                                ("HOLD" . +org-todo-onhold)
@@ -371,7 +377,8 @@
                        (org-super-agenda-groups
                         '((:name "Next to do" :todo "NEXT" :order 1)
                           (:name "Important" :tag "Important" :priority "A" :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7)
+                          ;(:name "Overdue" :deadline past :face error :order 7) TODO: tohle nefunguje s column mode
+                          (:name "Overdue" :deadline past  :order 7)
                           (:name "Emails" :tag "email" :order 10)
                           (:name "UnixTodo" :tag "unix" :order 12)
                           (:name "Emacs" :tag "Emacs" :order 13)
@@ -1001,7 +1008,7 @@ by the date of first mail of group."
 
 ;;; org - agenda 2024 configuration
 (setq! org-agenda-time-grid '((daily today require-timed remove-match) (800 1000
-        1200 1400 1600 1800 2000 2200) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+        1200 1400 1600 1800 2000) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 
 (setq! org-agenda-todo-ignore-scheduled 'future)
 ;;; org - org-alert
@@ -2407,3 +2414,21 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ;;; org mode jump to heading org-goto
 (setq org-goto-interface 'outline-path-completion)
 (setq org-outline-path-complete-in-steps nil)
+
+;;; TODO TMP NOT YET USED FOR MU4e 12
+;; https://github.com/djcb/mu/issues/2665
+
+;; (defun supersede-or-compose-reply-ask-wide ()
+;;   "Supersede own messages or ask whether to reply-to-all."
+;;   (interactive)
+;;   (if (mu4e-message-contact-field-matches-me (mu4e-message-at-point) :from)
+;;       (mu4e-compose-supersede)
+;;     (let ((tos (length (mu4e-message-field-at-point :to)))
+;;           (ccs (length (mu4e-message-field-at-point :cc))))
+;;       (mu4e-compose-reply
+;;        (and (> (+ tos ccs) 1)
+;;             (yes-or-no-p "Reply to all?"))))))
+
+;; (custom-set-faces
+;;   `(mu4e-unread-face ((t (:foreground ,(doom-color 'green)))))
+;;   )
