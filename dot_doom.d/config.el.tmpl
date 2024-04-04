@@ -149,7 +149,7 @@
 {{ if eq .chezmoi.hostname "dares"}}
 ;(setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 22 :weight 'semi-light))
 ;(setq doom-font (font-spec :family "Ubuntu Nerd Font Mono" :size 22 :weight 'semi-light))
-(setq doom-font (font-spec :family "DejaVuSansMono Nerd Font" :size 16 :weight 'semi-light))
+(setq doom-font (font-spec :family "DejaVuSansM Nerd Font" :size 16 :weight 'semi-light))
 ;(setq doom-font (font-spec :family "JetBrains Mono" :size 22 :weight 'semi-light))
 {{ end }}
 {{ if eq .chezmoi.hostname "k11book" }}
@@ -648,7 +648,7 @@
 
 
 {{ if eq .chezmoi.hostname "dares" }}
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.10.8")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 {{ end }}
 
 ; faster mail download
