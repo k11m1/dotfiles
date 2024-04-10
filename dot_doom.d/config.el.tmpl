@@ -491,7 +491,7 @@
                           ;;         :order 4)
                           (:log t)  ; Automatically named "Log"
                           ;; (:name "Phone Refil" :tag "PHONE" :order -2)
-                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order -2)
+                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
                           (:name "Today"
                            :deadline today
                            :scheduled today :order -3)
@@ -513,7 +513,8 @@
                           (:name "PROG" :todo ("P" "PROG"))
                           (:name "NEXT" :todo ("N" "NEXT"))
                           (:name "Important" :tag "Important" :priority "A" :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7 )
+                          ;(:name "Overdue" :deadline past :face error :order 7 ) TODO: nefunguje s columns
+                          (:name "Overdue" :deadline past  :order 7 )
                           (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
                            ;; (:discard (:tag ("unix") :category ("UNIX")))
                           (:name "Emails" :tag "email" :order 10)
@@ -526,6 +527,27 @@
                           (:name "University" :tag "uni" :order 32)
                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
                           ))))) nil ("~/tmp/agenda.export.html")          )
+("O" "ALL - only agenda, no todo"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                        '((:name "Timeline"
+                           :time-grid t
+                           :order -1)
+                          ;; (:habit t
+                          ;;         :order 4)
+                          (:log t)  ; Automatically named "Log"
+                          ;; (:name "Phone Refil" :tag "PHONE" :order -2)
+                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
+                          (:name "Today"
+                           :deadline today
+                           :scheduled today :order -3)
+                          (:name "Overdue" :deadline past)
+                          (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
+                          (:name "Due soon" :deadline future)
+                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+                          (:name "Waiting..." :todo "unix" :order 1)
+                          )
+                       )))) nil ("~/tmp/agenda.export.whatisthis.idontknow.html")          )
       ))
 
 
@@ -1007,10 +1029,19 @@ by the date of first mail of group."
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 ;;; org - agenda 2024 configuration
+;(setq org-agenda-overriding-columns-format "%60ITEM %TODO %PRIORITY %7EFFORT 100%TAGS")
+(setq org-columns-default-format "%60ITEM(Task) %TODO $PRIORITY %9Effort(Estim){:} %8CLOCKSUM{:} %10Budget_day(Daily budget){:} %TAGS")
 (setq! org-agenda-time-grid '((daily today require-timed remove-match) (800 1000
         1200 1400 1600 1800 2000) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 
+;; (defun org-columns--summary-sum (values printf)
+;;   "Compute half of the sum of VALUES.
+;; When PRINTF is non-nil, use it to format the result."
+;;   (let ((half-sum (/ (apply #'+ (mapcar #'string-to-number values)) 2)))
+;;     (format (or printf "%s") half-sum)))
+
 (setq! org-agenda-todo-ignore-scheduled 'future)
+(setq! org-scheduled-past-days 8)
 ;;; org - org-alert
 (setq alert-default-style 'libnotify)
 (setq org-alert-interval 300
@@ -2432,3 +2463,32 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 ;; (custom-set-faces
 ;;   `(mu4e-unread-face ((t (:foreground ,(doom-color 'green)))))
 ;;   )
+
+;;; Not working - org color agenda category
+;; (defun org-agenda-color-category (category backcolor forecolor)
+;;   (let ((re (rx-to-string `(seq bol (0+ space) ,category (1+ space)))))
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (while (re-search-forward re nil t)
+;;         (add-text-properties (match-beginning 0) (match-end 0)
+;;                              (list 'face (list :background backcolor :foreground forecolor)))))))
+
+;; (add-hook 'org-finalize-agenda-hook
+;;   (lambda ()
+;;     (save-excursion
+;;         (org-agenda-color-category "[M]Trh:" "RosyBrown1" "green")
+;;       )))
+
+(add-hook 'org-agenda-finalize-hook
+  (lambda ()
+    (save-excursion
+      (color-org-header "[M]Trh:" "azure" "black")
+      (color-org-header "Work:" "RosyBrown1" "red"))))
+
+(defun color-org-header (tag backcolor forecolor)
+  ""
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward tag nil t)
+    (add-text-properties (match-beginning 0) (+ (match-beginning 0) 10)
+                     `(face (:background, backcolor, :foreground, forecolor)))))
