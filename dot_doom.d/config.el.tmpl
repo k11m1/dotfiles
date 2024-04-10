@@ -2331,7 +2331,7 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 (add-hook 'mu4e-view-rendered-hook
           (lambda ()
-           (highlight-regexp "^.*Good signature" 'match)
+           (highlight-regexp "^.*Good signature" 'hi-green)
            (highlight-phrase "Undecided" 'warning)
 
            ))
