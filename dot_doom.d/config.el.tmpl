@@ -649,6 +649,11 @@
 
 ;;; mu4e
 
+;;;; mu4e - citation style
+; Don't have the \n at the write format style because my boss doesn't like it
+; (and honestly I don't find it useful also)
+(setq! message-citation-line-format "On %a, %b %d %Y, %N wrote:"
+
 ;;;; mu4e - gnus article hiding / reply
 
 (setq gnus-treat-hide-citation t)
