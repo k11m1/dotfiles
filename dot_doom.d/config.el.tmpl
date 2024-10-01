@@ -2,6 +2,7 @@
 ;; TODO fix org-download?
 ;; TODO fix org-drag and drop
 
+
 (setq org-latex-packages-alist '(("margin=1in" "geometry" nil)))
 (setq org-pomodoro-length 30)
 (setq org-pomodoro-short-break-length 0)
@@ -11,7 +12,7 @@
 (setq! lsp-headerline-breadcrumb-enable '(project file symbols))
 
 (after! org
-  (setq org-agenda-tags-column 90)
+  (setq org-agenda-tags-column 120)
 (defun ll/org/agenda/color-headers-with (tag col)
   "Color agenda lines matching TAG with color COL."
   (interactive)
@@ -29,7 +30,7 @@
 ;; Helper definitions
 (setq ll/org/agenda-todo-words
       '("TODO" "GOAL" "NEXT" "STARTED" "WAITING" "REVIEW" "SUBMIT" "WAIT"
-        "KILL" "PROG" "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L"))
+        "KILL" "PROG" "DONE" "DEFERRED" "CANCELLED" "INTR" "I" "T" "N" "L" "HW"))
 (defun find-in-line (needle &optional beginning count)
   "Find the position of the start of NEEDLE in the current line.
   If BEGINNING is non-nil, find the beginning of NEEDLE in the current
@@ -107,7 +108,8 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
-(setq doom-theme 'doom-one) ; dark theme
+;(setq doom-theme 'doom-one) ; dark theme
+(setq doom-theme 'sanityinc-tomorrow-bright)
 ;(setq doom-theme 'zaiste) ; light/day theme, credit: https://github.com/zaiste/zaiste-emacs-theme
 
 
@@ -232,7 +234,7 @@
       org-agenda-include-deadlines t
       org-agenda-block-separator nil
       org-agenda-tags-column 166 ;; from testing this seems to be a good value
-      org-agenda-compact-blocks t
+      org-agenda-compact-blocks nil
       org-agenda-sticky t) ;; don't bury my buffers, i like to return to them
 
 ;;;; org-roam
@@ -242,7 +244,6 @@
 
 ;;;; Agenda look
 (setq
- org-agenda-tags-column 0
  org-agenda-block-separator ?─
  org-agenda-time-grid
  '((daily today require-timed)
@@ -274,10 +275,10 @@
                                ("I" . +org-todo-cancel)
                                ("NEXT" . +org-todo-onhold)
                                ("N" . +org-todo-onhold)
-                               ("HW" . highlight-numbers-number)
+                               ;; ("HW" . highlight-numbers-number)
                                ("KILL" . +org-todo-cancel)))
-(setq org-todo-keywords '((sequence "HW(h) PROJ(P)" "LOOP(r)" "STRT" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k@)")
-                          (sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)" "|" "DONE(d)")
+(setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)" "|" "DONE(d)")
+                          (sequence "PROJ(P)" "LOOP(r)" "STRT" "WAIT(w)" "HOLD(h)" "IDEA(I)" "|" "KILL(k@)")
                           (sequence "L(l)" "T" "N" "P" "I" "|" "D" "SCRAP(s)")
                           (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
                           (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
@@ -302,7 +303,7 @@
 (use-package! org-super-agenda
   :commands org-super-agenda-mode)
 
-; NOTE: TEsting of org agenda sort by CREATED
+;;; NOTE: TEsting of org agenda sort by CREATED
 
 (defun jarfar/org-agenda-cmp-user-defined-created-date (a b)
   "Org Agenda user function to sort tasks based on CREATED property."
@@ -322,233 +323,265 @@
 (setq org-agenda-cmp-user-defined 'jarfar/org-agenda-cmp-user-defined-created-date)
 
 
-
 (setq org-agenda-custom-commands
-      '(
-        ("e" "Email"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1 :tag "email")
-                          (:log t)  ; Automatically named "Log"
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2 :tag "email")
-                          (:discard (:anything))
-                          )
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                        (org-agenda-sorting-strategy '((todo user-defined-up)))
-                       (org-super-agenda-groups
-                        '(
-                          (:name "Email" :tag "email" :order 32)
-                          (:discard (:anything)))))))         )
-        ("T" "test"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t)
-                          ;; (:habit t)
-                          )
-                       )))
-          )         )
+      '(("h" "Agenda and Home-related tasks"
+         ((agenda ""
+                  (
+                   (org-super-agenda-groups
+                    '((:name "Today"
+                       :time-grid t
+                       :date today
+                       :todo "TODAY"
+                       :scheduled today
+                       :order 1)
+                      (:name "Lmao"
+                       :tag "unix")
+                      ))
+                   ))
+          (todo ""
+                (
+                 (org-super-agenda-groups '(
+                                            (:name "Homework"  ; Optionally specify section name
+                                             :tag ("hw")  ; Items that appear on the time grid
+                                             )  ; Items that have this TODO keyword
+                                            (:name "Progress"
+                                             :todo ("PROG" "P")
+                                             )
+                                            (:name "Next"
+                                             ;; Single arguments given alone
+                                             :todo ("NEXT" "N")
+                                             )
+                                            (:discard (:anything t))
+                                            ))))))))
 
 
-        ("u" "Unix"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -2)
-                          (:log t)  ; Automatically named "Log"
-                          (:name "Phone Refil" :tag "PHONE" :order -1)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -3)
-                          ;; (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do" :todo "NEXT" :order 1)
-                          (:name "Important" :tag "Important" :priority "A" :order 6)
-                          ;(:name "Overdue" :deadline past :face error :order 7) TODO: tohle nefunguje s column mode
-                          (:name "Overdue" :deadline past  :order 7)
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "UnixTodo" :tag "unix" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          (:discard (:tag ("muni"))))))))         )
-        ("p" "Personal"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          (:log t)  ; Automatically named "Log"
-                          (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2)
-                          ;; (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '(
-                          (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Next to do" :todo "NEXT" :order 1)
-                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
-                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "INTR" :todo ("I" "INTR"))
-                          (:name "PROG" :todo ("P" "PROG"))
-                          (:name "NEXT" :todo ("N" "NEXT"))
-                          (:name "Important" :tag "Important" :priority "A" :order 6)
-                          (:name "Overdue" :deadline past :face error :order 7 )
-                          (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
-                           ;; (:discard (:tag ("unix") :category ("UNIX")))
-                          ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
-                          ;(:name "Overdue" :deadline past :face error :order 7)
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "Muni" :tag "muni" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          )))))         )
-        ("P" "Personal Agenda"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-deadline-warning-days 7)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          (:log t)  ; Automatically named "Log"
-                          (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -2)
-                          ;; (:habit t)
-                          (:name "Due soon" :deadline future)
-                          (:name "Overdue" :deadline past)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          (:name "Scheduled earlier" :scheduled past))
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       ; FIXME: base on deadline time (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up)
-                       (org-super-agenda-groups
-                        '(
-                          (:name "Homework TODO" :tag ("hw"))
-                          (:discard (:tag ("unix") :category ("UNIX")))
-                          ;; (:name "Next to do" :todo "NEXT" :order 1)
-                          ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
-                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "INTR" :todo ("I" "INTR"))
-                          (:name "PROG" :todo ("P" "PROG"))
-                          (:name "NEXT" :todo ("N" "NEXT"))
-                          ;; (:name "Important" :tag "Important" :priority "A" :order 6)
-                          ;; (:name "Overdue" :deadline past :face error :order 7 )
-                          ;; (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
-                           ;; (:discard (:tag ("unix") :category ("UNIX")))
-                          ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
-                          ;(:name "Overdue" :deadline past :face error :order 7)
-                          ;; (:name "Emails" :tag "email" :order 10)
-                          ;; (:name "Muni" :tag "muni" :order 12)
-                          ;; (:name "Emacs" :tag "Emacs" :order 13)
-                          ;; (:name "Projects" :tag "Project" :order 14)
-                          ;; (:name "Research" :tag "Research" :order 15)
-                          ;; (:name "To read" :tag "Read" :order 30)
-                          ;; (:name "Waiting" :todo "WAITING" :order 20)
-                          ;; (:name "University" :tag "uni" :order 32)
-                          ;; (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          (:discard (:anything t))
-                          )))))         )
-        ("o" "ALL"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          ;; (:habit t
-                          ;;         :order 4)
-                          (:log t)  ; Automatically named "Log"
-                          ;; (:name "Phone Refil" :tag "PHONE" :order -2)
-                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -3)
-                          (:name "Overdue" :deadline past)
-                          (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
-                          (:name "Due soon" :deadline future)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          )
-                       )))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '(
-                          (:name "Homework TODO" :tag ("hw"))
-                          (:name "Next to do" :todo "NEXT" :order 1)
-                          ; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
-                          ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
-                          (:name "INTR" :todo ("I" "INTR"))
-                          (:name "PROG" :todo ("P" "PROG"))
-                          (:name "NEXT" :todo ("N" "NEXT"))
-                          (:name "Important" :tag "Important" :priority "A" :order 6)
-                          ;(:name "Overdue" :deadline past :face error :order 7 ) TODO: nefunguje s columns
-                          (:name "Overdue" :deadline past  :order 7 )
-                          (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
-                           ;; (:discard (:tag ("unix") :category ("UNIX")))
-                          (:name "Emails" :tag "email" :order 10)
-                          (:name "Muni" :tag "muni" :order 12)
-                          (:name "Emacs" :tag "Emacs" :order 13)
-                          (:name "Projects" :tag "Project" :order 14)
-                          (:name "Research" :tag "Research" :order 15)
-                          (:name "To read" :tag "Read" :order 30)
-                          (:name "Waiting" :todo "WAITING" :order 20)
-                          (:name "University" :tag "uni" :order 32)
-                          (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
-                          ))))) nil ("~/tmp/agenda.export.html")          )
-("O" "ALL - only agenda, no todo"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                        '((:name "Timeline"
-                           :time-grid t
-                           :order -1)
-                          ;; (:habit t
-                          ;;         :order 4)
-                          (:log t)  ; Automatically named "Log"
-                          ;; (:name "Phone Refil" :tag "PHONE" :order -2)
-                          (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
-                          (:name "Today"
-                           :deadline today
-                           :scheduled today :order -3)
-                          (:name "Overdue" :deadline past)
-                          (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
-                          (:name "Due soon" :deadline future)
-                          (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
-                          (:name "Waiting..." :todo "unix" :order 1)
-                          )
-                       )))) nil ("~/tmp/agenda.export.whatisthis.idontknow.html")          )
-      ))
+;; (setq org-agenda-custom-commands
+;;       '(
+;;         ("e" "Email"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -1 :tag "email")
+;;                           (:log t)  ; Automatically named "Log"
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -2 :tag "email")
+;;                           (:discard (:anything))
+;;                           )
+;;                        )))
+;;           (alltodo "" ((org-agenda-overriding-header "")
+;;                         (org-agenda-sorting-strategy '((todo user-defined-up)))
+;;                        (org-super-agenda-groups
+;;                         '(
+;;                           (:name "Email" :tag "email" :order 32)
+;;                           (:discard (:anything)))))))         )
+;;         ("T" "test"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t)
+;;                           ;; (:habit t)
+;;                           )
+;;                        )))
+;;           )         )
+
+
+;;         ("u" "Unix"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -2)
+;;                           (:log t)  ; Automatically named "Log"
+;;                           (:name "Phone Refil" :tag "PHONE" :order -1)
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -3)
+;;                           ;; (:habit t)
+;;                           (:name "Due soon" :deadline future)
+;;                           (:name "Overdue" :deadline past)
+;;                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+;;                           (:name "Waiting..." :todo "unix" :order 1)
+;;                           (:name "Scheduled earlier" :scheduled past))
+;;                        )))
+;;           (alltodo "" ((org-agenda-overriding-header "")
+;;                        (org-super-agenda-groups
+;;                         '((:name "Next to do" :todo "NEXT" :order 1)
+;;                           (:name "Important" :tag "Important" :priority "A" :order 6)
+;;                           ;(:name "Overdue" :deadline past :face error :order 7) TODO: tohle nefunguje s column mode
+;;                           (:name "Overdue" :deadline past  :order 7)
+;;                           (:name "Emails" :tag "email" :order 10)
+;;                           (:name "UnixTodo" :tag "unix" :order 12)
+;;                           (:name "Emacs" :tag "Emacs" :order 13)
+;;                           (:name "Projects" :tag "Project" :order 14)
+;;                           (:name "Research" :tag "Research" :order 15)
+;;                           (:name "To read" :tag "Read" :order 30)
+;;                           (:name "Waiting" :todo "WAITING" :order 20)
+;;                           (:name "University" :tag "uni" :order 32)
+;;                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+;;                           (:discard (:tag ("muni"))))))))         )
+;;         ("p" "Personal"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -1)
+;;                           (:log t)  ; Automatically named "Log"
+;;                           (:discard (:tag ("unix") :category ("UNIX")))
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -2)
+;;                           ;; (:habit t)
+;;                           (:name "Due soon" :deadline future)
+;;                           (:name "Overdue" :deadline past)
+;;                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+;;                           (:name "Waiting..." :todo "unix" :order 1)
+;;                           (:name "Scheduled earlier" :scheduled past))
+;;                        )))
+;;           (alltodo "" ((org-agenda-overriding-header "")
+;;                        (org-super-agenda-groups
+;;                         '(
+;;                           (:discard (:tag ("unix") :category ("UNIX")))
+;;                           (:name "Next to do" :todo "NEXT" :order 1)
+;;                           ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+;;                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+;;                           (:name "INTR" :todo ("I" "INTR"))
+;;                           (:name "PROG" :todo ("P" "PROG"))
+;;                           (:name "NEXT" :todo ("N" "NEXT"))
+;;                           (:name "Important" :tag "Important" :priority "A" :order 6)
+;;                           (:name "Overdue" :deadline past :face error :order 7 )
+;;                           (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
+;;                            ;; (:discard (:tag ("unix") :category ("UNIX")))
+;;                           ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
+;;                           ;(:name "Overdue" :deadline past :face error :order 7)
+;;                           (:name "Emails" :tag "email" :order 10)
+;;                           (:name "Muni" :tag "muni" :order 12)
+;;                           (:name "Emacs" :tag "Emacs" :order 13)
+;;                           (:name "Projects" :tag "Project" :order 14)
+;;                           (:name "Research" :tag "Research" :order 15)
+;;                           (:name "To read" :tag "Read" :order 30)
+;;                           (:name "Waiting" :todo "WAITING" :order 20)
+;;                           (:name "University" :tag "uni" :order 32)
+;;                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+;;                           )))))         )
+;;         ("P" "Personal Agenda"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-deadline-warning-days 7)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -1)
+;;                           (:log t)  ; Automatically named "Log"
+;;                           (:discard (:tag ("unix") :category ("UNIX")))
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -2)
+;;                           ;; (:habit t)
+;;                           (:name "Due soon" :deadline future)
+;;                           (:name "Overdue" :deadline past)
+;;                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+;;                           (:name "Waiting..." :todo "unix" :order 1)
+;;                           (:name "Scheduled earlier" :scheduled past))
+;;                        )))
+;;           (alltodo "" ((org-agenda-overriding-header "")
+;;                        ; FIXME: base on deadline time (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up)
+;;                        (org-super-agenda-groups
+;;                         '(
+;;                           (:name "Homework TODO" :tag ("hw"))
+;;                           (:discard (:tag ("unix") :category ("UNIX")))
+;;                           ;; (:name "Next to do" :todo "NEXT" :order 1)
+;;                           ;; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+;;                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+;;                           (:name "INTR" :todo ("I" "INTR"))
+;;                           (:name "PROG" :todo ("P" "PROG"))
+;;                           (:name "NEXT" :todo ("N" "NEXT"))
+;;                           ;; (:name "Important" :tag "Important" :priority "A" :order 6)
+;;                           ;; (:name "Overdue" :deadline past :face error :order 7 )
+;;                           ;; (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
+;;                            ;; (:discard (:tag ("unix") :category ("UNIX")))
+;;                           ;(:name "Important" :tag "Important" :priority "A" :face :order 6)
+;;                           ;(:name "Overdue" :deadline past :face error :order 7)
+;;                           ;; (:name "Emails" :tag "email" :order 10)
+;;                           ;; (:name "Muni" :tag "muni" :order 12)
+;;                           ;; (:name "Emacs" :tag "Emacs" :order 13)
+;;                           ;; (:name "Projects" :tag "Project" :order 14)
+;;                           ;; (:name "Research" :tag "Research" :order 15)
+;;                           ;; (:name "To read" :tag "Read" :order 30)
+;;                           ;; (:name "Waiting" :todo "WAITING" :order 20)
+;;                           ;; (:name "University" :tag "uni" :order 32)
+;;                           ;; (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+;;                           (:discard (:anything t))
+;;                           )))))         )
+;;         ("o" "ALL"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -1)
+;;                           ;; (:habit t
+;;                           ;;         :order 4)
+;;                           (:log t)  ; Automatically named "Log"
+;;                           ;; (:name "Phone Refil" :tag "PHONE" :order -2)
+;;                           (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -3)
+;;                           (:name "Overdue" :deadline past)
+;;                           (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
+;;                           (:name "Due soon" :deadline future)
+;;                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+;;                           (:name "Waiting..." :todo "unix" :order 1)
+;;                           (:name "All PROG?" :todo ("PROG"))
+;;                           )
+;;                        )))
+;;           (alltodo "" ((org-agenda-overriding-header "")
+;;                        (org-super-agenda-groups
+;;                         '(
+;;                           (:name "Homework TODO" :tag ("hw"))
+;;                           (:name "Next to do" :todo "NEXT" :order 1)
+;;                           ; (:name "Phone Refil" :tag "PHONE" :todo () :order -2)
+;;                           ;(:name "Important" :tag "Important" :priority "A" :face (:background "black" :underline t :append t) :order 6)
+;;                           (:name "INTR" :todo ("I" "INTR"))
+;;                           (:name "PROG" :todo ("P" "PROG"))
+;;                           (:name "NEXT" :todo ("N" "NEXT"))
+;;                           (:name "Important" :tag "Important" :priority "A" :order 6)
+;;                           ;(:name "Overdue" :deadline past :face error :order 7 ) TODO: nefunguje s columns
+;;                           (:name "Overdue" :deadline past  :order 7 )
+;;                           (:name "Phone non trivial" :and (:tag "PHONE" :not (:todo "L")))
+;;                            ;; (:discard (:tag ("unix") :category ("UNIX")))
+;;                           (:name "Emails" :tag "email" :order 10)
+;;                           (:name "Muni" :tag "muni" :order 12)
+;;                           (:name "Emacs" :tag "Emacs" :order 13)
+;;                           (:name "Projects" :tag "Project" :order 14)
+;;                           (:name "Research" :tag "Research" :order 15)
+;;                           (:name "To read" :tag "Read" :order 30)
+;;                           (:name "Waiting" :todo "WAITING" :order 20)
+;;                           (:name "University" :tag "uni" :order 32)
+;;                           (:name "Trivial" :priority<= "E" :tag ("Trivial" "Unimportant") :todo ("SOMEDAY" ) :order 90)
+;;                           ))))) nil ("~/tmp/agenda.export.html")          )
+;; ("O" "ALL - only agenda, no todo"
+;;          ((agenda "" ((org-agenda-span 'day)
+;;                       (org-super-agenda-groups
+;;                         '((:name "Timeline"
+;;                            :time-grid t
+;;                            :order -1)
+;;                           ;; (:habit t
+;;                           ;;         :order 4)
+;;                           (:log t)  ; Automatically named "Log"
+;;                           ;; (:name "Phone Refil" :tag "PHONE" :order -2)
+;;                           (:name "Homeworks & teaching" :tag ("hw" "teaching") :order 0)
+;;                           (:name "Today"
+;;                            :deadline today
+;;                            :scheduled today :order -3)
+;;                           (:name "Overdue" :deadline past)
+;;                           (:name "Scheduled earlier + due soon" :scheduled past :deadline future)
+;;                           (:name "Due soon" :deadline future)
+;;                           (:name "Unimportant" :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH") :order 100)
+;;                           (:name "Waiting..." :todo "unix" :order 1)
+;;                           )
+;;                        )))) nil ("~/tmp/agenda.export.whatisthis.idontknow.html")          )
+;;       ))
 
 
 ;;;;; After org-agenda
