@@ -1025,6 +1025,7 @@ by the date of first mail of group."
          :sitemap-title "K11m1's blog"
          :sitemap-filename "index.org"
          :sitemap-sort-files anti-chronologically
+
          :auto-sitemap t
          :with-author nil           ;; Don't include author name
          :with-creator nil          ;; Include Emacs and Org versions in footer
@@ -1091,8 +1092,8 @@ by the date of first mail of group."
       '(
         ("t" "Todo" entry (file+headline "~/org/index.org" "Tasks")
          "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
-        ("s" "Small" entry (file+headline "~/org/index.org" "Small")
-         "* L %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
+        ("s" "Today Scheduled" entry (file+headline "~/org/index.org" "Tasks")
+         "* TODO %?\nSCHEDULED: %t\n:PROPERTIES:\n:CREATED: %U\n:END:\n  %i\n  %a" :prepend t)
 ("c" ; key
          "Custom" ; description
          entry ; type
@@ -2530,3 +2531,337 @@ Prevents a series of redisplays from being called (when set to an appropriate va
   (while (re-search-forward tag nil t)
     (add-text-properties (match-beginning 0) (+ (match-beginning 0) 10)
                      `(face (:background, backcolor, :foreground, forecolor)))))
+
+
+;;; clangd
+(after! lsp-clangd
+  (setq lsp-clients-clangd-args
+        '("-j=4"
+          "--background-index"
+          "--clang-tidy"
+          "--completion-style=detailed"
+          "--header-insertion=never"
+          "--header-insertion-decorators=0"))
+  (set-lsp-priority! 'clangd 2))
+
+
+
+(setq scroll-conservatively 0)
+
+
+;;;;; testing
+(defun my/org-insert-timestamp-from-agenda ()
+  "Insert a timestamp under the heading of the task at point in the Org Agenda."
+  (interactive)
+  ;; Navigate to the Org document containing the task
+  (let* ((agenda-item (org-agenda-get-on-screen))
+         ;; Attempt to extract a unique identifier from the agenda item
+         ;; This could be the task title or another method of identification
+         (unique-identifier (substring agenda-item 0 (string-match "\\(.*\\)" agenda-item))))
+    ;; Search for the unique identifier in all Org documents
+    (find-file (concat (file-name-directory (buffer-file-name)) "/path/to/search/in/*.org"))
+    ;; Insert a timestamp under the heading matching the unique identifier
+    (save-excursion
+      (goto-char (point-max))
+      (while (re-search-backward "^* " nil t)
+        (if (looking-at unique-identifier)
+            (progn
+              (forward-line 1)
+              (org-insert-timestamp nil t)
+              (kill-ring-save (line-beginning-position) (line-end-position))
+              (yank)
+              (message "Timestamp inserted under %s" unique-identifier)
+              (kill-ring-save (line-beginning-position) (line-end-position))
+              (yank)
+              (set-mark-command nil)
+              (setq kill-ring (cons "" kill-ring))) ; Clear the kill ring after successful insertion
+          (forward-line 1))))))
+
+;;;;
+;; (defun my-custom-schedule ()
+;;   "A custom function to mimic org-schedule's date selection and print arguments."
+;;   (interactive "P")
+;;   (let* ((selected-date (read-date nil t nil "Select a date for scheduling: "))
+;;          (arg (current-prefix-arg))
+;;          (time (if (= arg 4) "Removing schedule" (if (= arg 16) "Setting delay cookie" "Providing time"))))
+;;     (message "Selected Date: %s, Arg: %s, Time: %s" selected-date arg time))
+;;   )
+;; (defun my-custom-schedule ()
+;;   "A custom function to mimic org-schedule's date selection and print arguments."
+;;   (interactive "P")
+;;   (let* ((selected-date (read-date nil t nil "Select a date for scheduling: "))
+;;          (arg (current-prefix-arg))
+;;          (time (if (= arg 4) "Removing schedule" (if (= arg 16) "Setting delay cookie" "Providing time"))))
+;;     (message "Selected Date: %s, Arg: %s, Time: %s" selected-date arg time))
+;;   )
+
+
+
+;; (defun my-klimi-date (arg &optional inactive)
+;;     (interactive "P")
+;;   ;; (org-agenda-check-type t 'agenda)
+;;   ;; (org-agenda-check-no-diary)
+
+;;   (let* (
+;;          ;; (marker (or (org-get-at-bol 'org-marker      (org-agenda-error)))
+;; 	 ;; (buffer (marker-buffer marker))
+;; 	 ;; (pos (marker-position marker))
+;; 	 ;; cdate today
+
+;;          ;; (default-time (and ts (org-time-string-to-time ts)))
+;;          ;; (default-input (and ts (org-get-compact-tod ts)))
+
+;; 	 org-time-was-given
+;; 	 org-end-time-was-given
+;;         (time
+;; 	  (if (equal arg '(16)) (current-time)
+;; 	    ;; Preserve `this-command' and `last-command'.
+;; 	    (let ((this-command this-command)
+;; 		  (last-command last-command))
+;; 	      (org-read-date
+;; 	       arg 'totime nil nil nil nil
+;; 	       inactive))))
+
+;;          )
+
+;;     (progn
+
+;;      (message "Klimi date selected: %s : %s -- %s" time org-time-was-given org-end-time-was-given)
+;;       ; (org-insert-time-stamp time nil nil))
+;;       ;; (org-insert-time-stamp time (or org-time-was-given arg) nil))
+
+;;       (setq org-last-changed-timestamp
+;; 	    (org-insert-time-stamp
+;; 	     time (or org-time-was-given arg)
+;; 	     inactive nil nil (list org-end-time-was-given)))
+;;      ;; (org-insert-time-stamp time (or org-time-was-given arg)
+;;      ;;                        nil nil nil (list org-end-time-was-given))
+;;       )
+
+;;    ))
+
+
+
+
+
+;; (defun org-time-stamp (arg &optional inactive)
+;;   "Prompt for a date/time and insert a time stamp.
+
+;; If the user specifies a time like HH:MM or if this command is
+;; called with at least one prefix argument, the time stamp contains
+;; the date and the time.  Otherwise, only the date is included.
+
+;; All parts of a date not specified by the user are filled in from
+;; the timestamp at point, if any, or the current date/time
+;; otherwise.
+
+;; If there is already a timestamp at the cursor, it is replaced.
+
+;; With two universal prefix arguments, insert an active timestamp
+;; with the current time without prompting the user.
+
+;; When called from Lisp, the timestamp is inactive if INACTIVE is
+;; non-nil."
+;;   (interactive "P")
+;;   (let* ((ts (cond
+;; 	      ((org-at-date-range-p t)
+;; 	       (match-string (if (< (point) (- (match-beginning 2) 2)) 1 2)))
+;; 	      ((org-at-timestamp-p 'lax) (match-string 0))))
+;; 	 ;; Default time is either the timestamp at point or today.
+;; 	 ;; When entering a range, only the range start is considered.
+;;          (default-time (and ts (org-time-string-to-time ts)))
+;;          (default-input (and ts (org-get-compact-tod ts)))
+;;          (repeater (and ts
+;; 			(string-match "\\([.+-]+[0-9]+[hdwmy] ?\\)+" ts)
+;; 			(match-string 0 ts)))
+;; 	 org-time-was-given
+;; 	 org-end-time-was-given
+;; 	 (time
+;; 	  (if (equal arg '(16)) (current-time)
+;; 	    ;; Preserve `this-command' and `last-command'.
+;; 	    (let ((this-command this-command)
+;; 		  (last-command last-command))
+;; 	      (org-read-date
+;; 	       arg 'totime nil nil default-time default-input
+;; 	       inactive)))))
+;;     (cond
+;;      ((and ts
+;;            (memq last-command '(org-time-stamp org-time-stamp-inactive))
+;;            (memq this-command '(org-time-stamp org-time-stamp-inactive)))
+;;       (insert "--")
+;;       (org-insert-time-stamp time (or org-time-was-given arg) inactive))
+;;      (ts
+;;       ;; Make sure we're on a timestamp.  When in the middle of a date
+;;       ;; range, move arbitrarily to range end.
+;;       (unless (org-at-timestamp-p 'lax)
+;; 	(skip-chars-forward "-")
+;; 	(org-at-timestamp-p 'lax))
+;;       (replace-match "")
+;;       (setq org-last-changed-timestamp
+;; 	    (org-insert-time-stamp
+;; 	     time (or org-time-was-given arg)
+;; 	     inactive nil nil (list org-end-time-was-given)))
+;;       (when repeater
+;; 	(backward-char)
+;; 	(insert " " repeater)
+;; 	(setq org-last-changed-timestamp
+;; 	      (concat (substring org-last-inserted-timestamp 0 -1)
+;; 		      " " repeater ">")))
+;;       (message "Timestamp updated"))
+;;      ((equal arg '(16)) (org-insert-time-stamp time t inactive))
+;;      (t (org-insert-time-stamp
+;; 	 time (or org-time-was-given arg) inactive nil nil
+;; 	 (list org-end-time-was-given))))))
+
+
+
+
+
+
+
+;; (defun get-org-heading-plan ()
+;;   "Get the :plan: property of the current Org mode heading."
+;;   (let ((plan (org-entry-get nil "plan")))
+;;     (if plan
+;;         plan
+;;       "No :plan: property found.")))
+
+(defun klimi-org-agenda-magic (arg &optional what)
+  "Change the date of this item to ARG day(s) later."
+  (interactive "p")
+  ; (org-agenda-check-type t 'agenda)
+  (org-agenda-check-no-diary)
+  (let* ((marker (or (org-get-at-bol 'org-marker)
+		     (org-agenda-error)))
+	 (buffer (marker-buffer marker))
+	 (pos (marker-position marker))
+	 cdate today
+
+	 org-time-was-given
+	 org-end-time-was-given
+        (time
+	  (if (equal arg '(16)) (current-time)
+	    ;; Preserve `this-command' and `last-command'.
+	    (let ((this-command this-command)
+		  (last-command last-command))
+	      (org-read-date
+	       arg 'totime nil nil nil nil
+	       nil))))
+
+         )
+    (org-with-remote-undo buffer
+      (with-current-buffer buffer
+	(widen)
+	(goto-char pos)
+
+        (let* (
+                (plan (org-entry-get nil "plan"))
+                (timestamp-str (with-temp-buffer
+                                (org-insert-time-stamp
+                                        time (or org-time-was-given arg)
+                                        nil nil nil (list org-end-time-was-given))
+                                (buffer-string)))
+               ;; (pom (org-get-at-point 'org-entry-property))
+                ;; (has-plan (org-entry-get pom "PLAN" nil t))
+                )
+        ;; (when (not plan)
+        ;; (org-set-property "PLAN" " ")
+
+        ;; )
+          (progn
+
+
+        ;; (if plan
+
+        ;;         (message "PLAN FOUND %s" plan)
+        ;;         (insert ":PLAN: ")
+        ;;    )
+
+        (message "Klimi date selected: %s : %s -- %s" time org-time-was-given org-end-time-was-given)
+        (org-set-property "PLAN" (concat plan timestamp-str))
+        ;(insert-char ?\  )
+
+;; (let* (
+;;        (timestamp-str (with-temp-buffer
+;;                        (org-insert-time-stamp
+;;                         time (or org-time-was-given arg)
+;;                         nil nil nil (list org-end-time-was-given))
+;;                        (buffer-string)))))
+  ;; (progn
+  ;;       (message "Timestamp: %s" timestamp-str)
+  ;;       (org-set-propert "PLAN" (concat plan timestamp-str))
+
+  ;;   )
+
+  ;; )
+
+      ;;  (message "Klim klim buffer string %s" buffer-string)
+      ;; (setq org-last-changed-timestamp
+      ;;       (org-insert-time-stamp
+      ;;        time (or org-time-was-given arg)
+      ;;        nil nil nil (list org-end-time-was-given)))
+      ;; (if plan (insert "\n"))
+
+        )
+        )
+
+
+	;; (unless (org-at-timestamp-p 'lax) (error "Cannot find time stamp"))
+	;; (when (and org-agenda-move-date-from-past-immediately-to-today
+	;; 	   (equal arg 1)
+	;; 	   (or (not what) (eq what 'day))
+	;; 	   (not (save-match-data (org-at-date-range-p))))
+	;;   (setq cdate (org-parse-time-string (match-string 0) 'nodefault)
+	;; 	cdate (calendar-absolute-from-gregorian
+	;; 	       (list (nth 4 cdate) (nth 3 cdate) (nth 5 cdate)))
+	;; 	today (org-today))
+	;;   (when (> today cdate)
+	;;     ;; immediately shift to today
+	;;     (setq arg (- today cdate))))
+
+	; (org-timestamp-change arg (or what 'day))
+	)
+      (org-agenda-show-new-time marker org-last-changed-timestamp))
+    (message "KLIMIIIIIII Time stamp changed to %s" org-last-changed-timestamp)))
+
+;;; ;TODO
+(defun org-agenda-adjust-date-later-by-hour ()
+  "Adjust the timestamp of the current item in the agenda by 1 hour later."
+  (interactive)
+  (org-agenda-do-date-later '(4)))
+
+(defun org-agenda-adjust-date-earlier-by-hour ()
+  "Adjust the timestamp of the current item in the agenda by 1 hour earlier."
+  (interactive)
+  (org-agenda-do-date-earlier '(4)))
+
+;; (map :after org
+;;       :map org-agenda-mode-map
+;;       "S-k" #'org-agenda-adjust-date-later-by-hour
+;;       "S-j" #'org-agenda-adjust-date-earlier-by-hour
+;;       )
+; :map org-agenda-mode-map
+(after! org
+(map!
+      :map evil-org-agenda-mode-map
+      :mn "K" #'org-agenda-adjust-date-later-by-hour
+      :mn "J" #'org-agenda-adjust-date-earlier-by-hour
+      :mn ";" #'klimi-org-agenda-magic
+      )
+  )
+
+;;; Projectile
+(setq projectile-track-known-projects-automatically nil)
+
+;;; SMAZ!
+(add-to-list 'org-latex-packages-alist '("" "minted" nil))
+(setq org-latex-src-block-backend 'minted)
+
+(setq load-prefer-newer t)
+
+
+  (setq-default ediff-auto-refine 'on)
+  (setq ediff-auto-refine 'on)
+(after! ediff
+  (setq ediff-auto-refine 'on)
+)
