@@ -2884,12 +2884,20 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 
 (setq load-prefer-newer t)
 
+;; TODO: Testing hack
+  (add-hook 'org-mode-hook
+          '(lambda ()
+             (auto-revert-mode 1)))
 
+
+; TODO: only one of these should be required...
   (setq-default ediff-auto-refine 'on)
   (setq ediff-auto-refine 'on)
 (after! ediff
   (setq ediff-auto-refine 'on)
 )
+
+
 (after! mu4e
 (setq! message-citation-line-function 'message-insert-formatted-citation-line)
   )
