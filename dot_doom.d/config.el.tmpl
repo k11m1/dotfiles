@@ -324,35 +324,49 @@
 
 
 (setq org-agenda-custom-commands
-      '(("h" "Agenda and Home-related tasks"
+      '(("o" "Agenda Overall view"
          ((agenda ""
                   (
                    (org-super-agenda-groups
-                    '((:name "Today"
-                       :time-grid t
-                       :date today
-                       :todo "TODAY"
-                       :scheduled today
-                       :order 1)
-                      (:name "Lmao"
-                       :tag "unix")
+                    '(
+                        (:name "Phone"
+                        :tag "phone")
+                        (:name "Today"
+                        :time-grid t
+                        :date today
+                        :todo "TODAY"
+                        :scheduled today
+                        )
+                        ;; (:name "PROGress"
+                        ;;        :tag ("PROG" "P"))
+                        (:name "Homework"  ; Optionally specify section name
+                        :tag ("hw")  ; Items that appear on the time grid
+                        )  ; Items that have this TODO keyword
+                        (:name "Past"
+                        :scheduled past
+                        :deadline past
+                        )
                       ))
                    ))
           (todo ""
                 (
                  (org-super-agenda-groups '(
-                                            (:name "Homework"  ; Optionally specify section name
-                                             :tag ("hw")  ; Items that appear on the time grid
-                                             )  ; Items that have this TODO keyword
                                             (:name "Progress"
                                              :todo ("PROG" "P")
                                              )
+                                            (:name "Homework"  ; Optionally specify section name
+                                             :tag ("hw")  ; Items that appear on the time grid
+                                             )  ; Items that have this TODO keyword
                                             (:name "Next"
                                              ;; Single arguments given alone
                                              :todo ("NEXT" "N")
                                              )
                                             (:discard (:anything t))
-                                            ))))))))
+                                            ))))
+          (tags "-hw/!-PROG-P-NEXT-N"
+                (
+                 ))
+          ))))
 
 
 ;; (setq org-agenda-custom-commands
@@ -685,7 +699,7 @@
 ;;;; mu4e - citation style
 ; Don't have the \n at the write format style because my boss doesn't like it
 ; (and honestly I don't find it useful also)
-(setq! message-citation-line-format "On %a, %b %d %Y, %N wrote:"
+(setq! message-citation-line-format "On %a, %b %d %Y, %N wrote:")
 
 ;;;; mu4e - gnus article hiding / reply
 
@@ -698,6 +712,9 @@
 
 (defun mu4e--enable-hide-citation ()
   (setq gnus-treat-hide-citation t))
+
+(defun klimi-mu4e--show-citation ()
+  (setq gnus-treat-hide-citation nil))
 
 ;; TODO add hack for PGP sign button also?
 (add-hook 'mu4e-compose-pre-hook 'mu4e--disable-hide-citation)
@@ -745,9 +762,11 @@
 ;  (add-to-list 'mu4e-view-actions
 ;               '("org-contact-add" . mu4e-action-add-org-contact) t)
 
-  (setq gnus-icalendar-org-capture-file "~/org/notes.org")
-  (setq gnus-icalendar-org-capture-headline '("Calendar"))
-  (gnus-icalendar-org-setup)
+ ;;; TODO: ORG MSG IS DISABLED
+  ;; (setq gnus-icalendar-org-capture-file "~/org/notes.org")
+  ;; (setq gnus-icalendar-org-capture-headline '("Calendar"))
+  ;; (gnus-icalendar-org-setup)
+
 ; DONT forget to include the contact cleaner
 
 ;;;; mu4e - main
@@ -1070,6 +1089,7 @@ by the date of first mail of group."
 ;;; org - agenda 2024 configuration
 ;(setq org-agenda-overriding-columns-format "%60ITEM %TODO %PRIORITY %7EFFORT 100%TAGS")
 (setq org-columns-default-format "%60ITEM(Task) %TODO $PRIORITY %9Effort(Estim){:} %8CLOCKSUM{:} %10Budget_day(Daily budget){:} %TAGS")
+(setq org-agenda-overriding-columns-format "%60ITEM(Task) %TODO $PRIORITY %9Effort(Estim){:} %8CLOCKSUM{:} %10Budget_day(Daily budget){:} %30CREATED(CREATED) %TAGS")
 (setq! org-agenda-time-grid '((daily today require-timed remove-match) (800 1000
         1200 1400 1600 1800 2000) " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 
@@ -1159,7 +1179,7 @@ SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
 ;(advice-remove 'org-clock-in       (η #'org-save-all-org-buffers))
 ;(advice-remove 'org-clock-out      (η #'org-save-all-org-buffers))
 
-;(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling (sad)
+(add-hook 'auto-save-hook 'org-save-all-org-buffers) ; it lags when scrolling (sad)
 
 (setq org-clock-persist t)
 
@@ -1796,9 +1816,11 @@ is tomorrow.  With two prefixes, select the deadline."
 (add-hook 'emacs-lisp-mode-hook 'outshine-mode)
 ;;; Small things
 ;;;; wakatime
+
+; cli path is set in custom.el
 (global-wakatime-mode)
 {{ if eq .chezmoi.hostname "klimovo" }}
-(global-activity-watch-mode)
+;; (global-activity-watch-mode)
 {{ end }}
 ;;;; plantuml
 (setq plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
@@ -2865,3 +2887,59 @@ Prevents a series of redisplays from being called (when set to an appropriate va
 (after! ediff
   (setq ediff-auto-refine 'on)
 )
+(after! mu4e
+(setq! message-citation-line-function 'message-insert-formatted-citation-line)
+  )
+
+
+
+
+
+
+(use-package! org-timeblock
+  :after org  ; Load after org-mode
+  :config
+  (defun my/org-timeblock-evil-map ()
+    "Set the keybindings for 'org-timeblock' to be compatible with evil mode"
+    (evil-define-key 'normal org-timeblock-mode-map
+      "+" 'org-timeblock-new-task
+      "q" 'org-timeblock-quit
+      "j" 'org-timeblock-forward-block
+      "l" 'org-timeblock-forward-column
+      "h" 'org-timeblock-backward-column
+      "k" 'org-timeblock-backward-block
+      (kbd "C-<down>") 'org-timeblock-day-later
+      (kbd "C-<up>") 'org-timeblock-day-earlier
+      (kbd "RET") 'org-timeblock-goto
+      (kbd "TAB") 'org-timeblock-goto-other-window
+      "d" 'org-timeblock-set-duration
+      "r" 'org-timeblock-redraw-buffers
+      "gd" 'org-timeblock-jump-to-day
+      "s" 'org-timeblock-schedule
+      "t" 'org-timeblock-toggle-timeblock-list
+      "v" 'org-timeblock-switch-scaling
+      "V" 'org-timeblock-switch-view)
+    (evil-define-key 'normal org-timeblock-list-mode-map
+      "+" 'org-timeblock-new-task
+      "j" 'org-timeblock-list-next-line
+      "k" 'org-timeblock-list-previous-line
+      (kbd "C-<down>") 'org-timeblock-day-later
+      (kbd "C-<up>") 'org-timeblock-day-earlier
+      (kbd "C-s") 'org-timeblock-list-save
+      (kbd "M-<down>") 'org-timeblock-list-drag-line-forward
+      (kbd "M-<up>") 'org-timeblock-list-drag-line-backward
+      (kbd "RET") 'org-timeblock-list-goto
+      (kbd "TAB") 'org-timeblock-list-goto-other-window
+      "S" 'org-timeblock-list-toggle-sort-function
+      "d" 'org-timeblock-list-set-duration
+      "r" 'org-timeblock-redraw-buffers
+      "gd" 'org-timeblock-jump-to-day
+      "q" 'org-timeblock-quit
+      "s" 'org-timeblock-list-schedule
+      "t" 'org-timeblock-list-toggle-timeblock
+      "v" 'org-timeblock-switch-scaling
+      "V" 'org-timeblock-switch-view))
+
+  ;; Attach custom evil mappings
+  (add-hook 'org-timeblock-mode-hook #'my/org-timeblock-evil-map)
+  (add-hook 'org-timeblock-list-mode-hook #'my/org-timeblock-evil-map))
