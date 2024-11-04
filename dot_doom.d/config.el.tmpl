@@ -2,7 +2,6 @@
 ;; TODO fix org-download?
 ;; TODO fix org-drag and drop
 
-
 (setq org-latex-packages-alist '(("margin=1in" "geometry" nil)))
 (setq org-pomodoro-length 30)
 (setq org-pomodoro-short-break-length 0)
@@ -187,7 +186,9 @@
 
 (setq org-directory "~/org/")
 (setq org-deadline-warning-days 7)
-(setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
+;; TODO: This seems to be duplicated
+;;(setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
+(setq org-columns-default-format "%TODO %PRIORITY %40ITEM(Task) %Effort %17Effort(Estimated Effort){:} %CLOCKSUM %TAGS")
 
 
 ;;;; ORG - priorities
@@ -244,6 +245,7 @@
 
 ;;;; Agenda look
 (setq
+ org-agenda-tags-column 0
  org-agenda-block-separator ?─
  org-agenda-time-grid
  '((daily today require-timed)
@@ -321,6 +323,7 @@
       )))
 ;
 (setq org-agenda-cmp-user-defined 'jarfar/org-agenda-cmp-user-defined-created-date)
+
 
 
 (setq org-agenda-custom-commands
